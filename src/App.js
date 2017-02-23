@@ -1,0 +1,69 @@
+import React, { Component } from 'react';
+import ROSLIB from 'roslib';
+import logo from './logo.svg';
+import './App.css';
+
+
+class App extends Component {
+
+    constructor() {
+        super();
+        console.log('Constructing');
+        this.state = {
+            message: "empty",
+            nodes: "",
+        }
+
+        this.ros = new ROSLIB.Ros({
+            url : 'ws://hecate.seebyte.com:9090'
+          });
+
+        this.ros.getNodes((list) => {
+            const listItems = list.map((list) =>
+              <li key={list} style={{textAlign: "left"}}>{list}</li>
+            );
+            this.setState({
+                nodes: listItems,
+            })
+        });
+
+        this.ros.on('connection', function() {
+          console.log('Connected to websocket server.');
+        });
+
+        this.listener = new ROSLIB.Topic({
+            ros : this.ros,
+            name : '/listener',
+            messageType : 'std_msgs/String'
+        });
+
+        this.listener.subscribe((message) => {
+            this.setState({
+              message: message.data,
+            });
+            console.log("hello " + message.data);
+        });
+    }
+
+  render() {
+
+    console.log('Rendering');// + ': ' + message.data);
+
+    return (
+      <div className="App">
+        <div className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h2>Welcome to React</h2>
+        </div>
+        <p className="App-intro">
+            {this.state.message}
+        </p>
+        <ul className="App-intro">
+            {this.state.nodes}
+        </ul>
+      </div>
+    );
+  }
+}
+
+export default App;
