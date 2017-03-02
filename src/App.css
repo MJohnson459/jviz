@@ -18,6 +18,14 @@
   font-size: large;
 }
 
+.NodeList {
+    border: 1px;
+    border-style: solid;
+
+    padding: 20px;
+    float: left;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

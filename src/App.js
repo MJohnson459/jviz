@@ -3,21 +3,8 @@ import ROSLIB from 'roslib';
 import logo from './logo.svg';
 import './App.css';
 
-
-class App extends Component {
-
-    constructor() {
-        super();
-        console.log('Constructing');
-        this.state = {
-            message: "empty",
-            nodes: "",
-        }
-
-        this.ros = new ROSLIB.Ros({
-            url : 'ws://hecate.seebyte.com:9090'
-          });
-
+class NodeList extends Component {
+    updateNodeList() {
         this.ros.getNodes((list) => {
             const listItems = list.map((list) =>
               <li key={list} style={{textAlign: "left"}}>{list}</li>
@@ -26,6 +13,50 @@ class App extends Component {
                 nodes: listItems,
             })
         });
+    }
+
+    constructor(props) {
+        super();
+        console.log('Constructing NodeList');
+
+        this.ros = props.ros;
+
+        this.state = {
+            nodes: "",
+        }
+
+        this.updateNodeList = this.updateNodeList.bind(this);
+        this.updateNodeList();
+    }
+
+    render() {
+        console.log('Rendering NodeList');
+
+        return (
+        <div className="NodeList">
+            <ul className="App-intro">
+                {this.state.nodes}
+            </ul>
+            <button onClick={this.updateNodeList}>
+                updateNodeList
+            </button>
+        </div>
+        );
+    }
+}
+
+class App extends Component {
+
+    constructor() {
+        super();
+        console.log('Constructing');
+        this.state = {
+            message: "empty",
+        }
+
+        this.ros = new ROSLIB.Ros({
+            url : 'ws://hecate.seebyte.com:9090'
+          });
 
         this.ros.on('connection', function() {
           console.log('Connected to websocket server.');
@@ -58,9 +89,7 @@ class App extends Component {
         <p className="App-intro">
             {this.state.message}
         </p>
-        <ul className="App-intro">
-            {this.state.nodes}
-        </ul>
+        <NodeList ros={this.ros} />
       </div>
     );
   }
