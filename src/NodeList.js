@@ -7,9 +7,9 @@ class NodeList extends Component {
         console.log('NodeList updateNodeList');
 
         this.ros.getNodes((list) => {
-            const listItems = list.map((item) =>
+            const listItems = list.map((item) => {
                 <li key={item} style={{textAlign: "left"}}>{item}</li>
-            );
+            });
             this.setState({
                 nodes: listItems,
             });

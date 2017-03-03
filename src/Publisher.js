@@ -26,12 +26,23 @@ class Publisher extends Component {
             topic: '/listener', //props.topic,
             messageType: 'std_msgs/String', //props.type,
             count: 0,
+            topics: "",
         }
 
         this.publisher = new ROSLIB.Topic({
             ros : this.ros,
             name : this.state.topic,
             messageType : this.state.messageType,
+        });
+
+        this.ros.getTopics((topicList) => {
+            const listItems = topicList.topics.map((item, i) =>
+                <option key={item} value={topicList.types[i]}>{item}</option>
+            );
+            this.setState({
+                topics: listItems,
+            });
+            console.log('NodeList updateNodeList');
         });
 
         this.publish = this.publish.bind(this);
@@ -42,6 +53,9 @@ class Publisher extends Component {
 
         return (
         <div className="NodeList">
+            <select>
+            {this.state.topics}
+            </select>
             <p>Topic: {this.state.topic}</p>
             <p>Type: {this.state.messageType}</p>
             <button onClick={this.publish}>
