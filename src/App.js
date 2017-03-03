@@ -1,84 +1,60 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
 import logo from './logo.svg';
+import NodeList from './NodeList'
+import Publisher from './Publisher'
+import Subscriber from './Subscriber'
 import './App.css';
 
-class NodeList extends Component {
-    updateNodeList() {
-        this.ros.getNodes((list) => {
-            const listItems = list.map((list) =>
-              <li key={list} style={{textAlign: "left"}}>{list}</li>
-            );
-            this.setState({
-                nodes: listItems,
-            })
+class App extends Component {
+
+    connect() {
+        this.ros.connect({
+            url : 'ws://hecate.seebyte.com:9090',
         });
     }
-
-    constructor(props) {
-        super();
-        console.log('Constructing NodeList');
-
-        this.ros = props.ros;
-
-        this.state = {
-            nodes: "",
-        }
-
-        this.updateNodeList = this.updateNodeList.bind(this);
-        this.updateNodeList();
-    }
-
-    render() {
-        console.log('Rendering NodeList');
-
-        return (
-        <div className="NodeList">
-            <ul className="App-intro">
-                {this.state.nodes}
-            </ul>
-            <button onClick={this.updateNodeList}>
-                updateNodeList
-            </button>
-        </div>
-        );
-    }
-}
-
-class App extends Component {
 
     constructor() {
         super();
         console.log('Constructing');
         this.state = {
             message: "empty",
+            connected: false,
         }
 
         this.ros = new ROSLIB.Ros({
             url : 'ws://hecate.seebyte.com:9090'
           });
 
-        this.ros.on('connection', function() {
+        this.ros.on('connection', () => {
           console.log('Connected to websocket server.');
-        });
-
-        this.listener = new ROSLIB.Topic({
-            ros : this.ros,
-            name : '/listener',
-            messageType : 'std_msgs/String'
-        });
-
-        this.listener.subscribe((message) => {
-            this.setState({
-              message: message.data,
-            });
-            console.log("hello " + message.data);
+          this.setState({
+              connected: true,
+          });
         });
     }
 
   render() {
 
-    console.log('Rendering');// + ': ' + message.data);
+    console.log('Rendering');
+    var x = "";
+    if (this.state.connected) {
+        x = (
+            <div>
+                <NodeList ros={this.ros} />
+                <Publisher ros={this.ros} />
+                <Subscriber ros={this.ros} />
+            </div>
+        );
+    } else {
+        x = (
+            <div>
+                <p>Failed to connect to ROS</p>
+                <button onClick={this.connect} value="Connect" />
+            </div>
+
+        );
+    }
 
     return (
       <div className="App">
@@ -86,10 +62,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>
         </div>
-        <p className="App-intro">
-            {this.state.message}
-        </p>
-        <NodeList ros={this.ros} />
+        {x}
       </div>
     );
   }
