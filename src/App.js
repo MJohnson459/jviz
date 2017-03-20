@@ -1,56 +1,57 @@
 import React, { Component } from 'react';
-import ROSLIB from 'roslib';
 import logo from './logo.svg';
-import NodeList from './NodeList'
-import Publisher from './Publisher'
-import Subscriber from './Subscriber'
+import JViz from './JViz'
 import './App.css';
+
+import ROSLIB from 'roslib';
 
 class App extends Component {
 
-    connect() {
-        this.ros.connect({
-            url : 'ws://hecate.seebyte.com:9090',
-        });
+  constructor() {
+    super();
+    console.log('Constructing');
+    this.state = {
+      url: "ws://localhost:9090",
+      connected: false,
     }
 
-    constructor() {
-        super();
-        console.log('Constructing');
-        this.state = {
-            message: "empty",
-            connected: false,
-        }
+    this.handleConnect = this.handleConnect.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
 
-        this.ros = new ROSLIB.Ros({
-            url : 'ws://hecate.seebyte.com:9090'
-          });
+  handleChange(event) {
+    this.setState({url: event.target.value});
+  }
 
-        this.ros.on('connection', () => {
-          console.log('Connected to websocket server.');
-          this.setState({
-              connected: true,
-          });
-        });
-    }
+  handleConnect() {
+    this.ros = new ROSLIB.Ros({
+        url : this.state.url,
+      });
+
+    this.ros.on('connection', () => {
+      console.log('Connected to websocket server.');
+      this.setState({
+          connected: true,
+      });
+    });
+  }
 
   render() {
 
-    console.log('Rendering');
+    console.log('App Rendering');
     var x = "";
     if (this.state.connected) {
         x = (
-            <div>
-                <NodeList ros={this.ros} />
-                <Publisher ros={this.ros} />
-                <Subscriber ros={this.ros} />
-            </div>
+            <JViz ros={this.ros} />
         );
     } else {
         x = (
             <div>
-                <p>Failed to connect to ROS</p>
-                <button onClick={this.connect} value="Connect" />
+                <p>Connect to url</p>
+                <input type="url" name="url" value={this.state.url} onChange={this.handleChange}/>
+                <button onClick={this.handleConnect} value="Connect">
+                  Connect
+                </button>
             </div>
 
         );
@@ -60,7 +61,7 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>Welcome to JViz</h2>
         </div>
         {x}
       </div>

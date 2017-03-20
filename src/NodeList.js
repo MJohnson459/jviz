@@ -7,13 +7,10 @@ class NodeList extends Component {
         console.log('NodeList updateNodeList');
 
         this.ros.getNodes((list) => {
-            const listItems = list.map((item) => {
-                <li key={item} style={{textAlign: "left"}}>{item}</li>
-            });
+          // console.log(list);
             this.setState({
-                nodes: listItems,
+                nodes: list,
             });
-            console.log('NodeList updateNodeList');
         }, (message) => {
             console.log('NodeList updateNodeList failed: ' + message);
         });
@@ -27,7 +24,7 @@ class NodeList extends Component {
         this.ros = props.ros;
 
         this.state = {
-            nodes: "",
+            nodes: [],
         }
 
         this.updateNodeList = this.updateNodeList.bind(this);
@@ -39,8 +36,11 @@ class NodeList extends Component {
 
         return (
         <div className="NodeList">
+            <h2>Node List</h2>
             <ul className="App-intro">
-                {this.state.nodes}
+                {this.state.nodes.map((item) =>
+                  <li key={item} style={{textAlign: "left"}}>{item}</li>
+                )}
             </ul>
             <button onClick={this.updateNodeList}>
                 Update

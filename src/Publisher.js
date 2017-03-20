@@ -53,6 +53,7 @@ class Publisher extends Component {
 
         return (
         <div className="NodeList">
+          <h2>Publisher</h2>
             <select>
             {this.state.topics}
             </select>
