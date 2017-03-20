@@ -1,0 +1,39 @@
+version: "3"
+services:
+  master:
+    image: ros:kinetic-robot
+    environment:
+      ROS_MASTER_URI: "http://master:11311"
+      ROS_HOSTNAME: "master"
+    command: roscore
+    ports:
+      - "11311:11311"
+
+  rosbridge-server:
+    image: rosbridge-server
+    environment:
+      ROS_MASTER_URI: "http://master:11311"
+      ROS_HOSTNAME: "rosbridge-server"
+    command: roslaunch rosbridge_server rosbridge_websocket.launch --wait
+    ports:
+      - "9090:9090"
+    depends_on:
+      - master
+
+  listener:
+    image: ros:kinetic-robot
+    environment:
+      ROS_MASTER_URI: "http://master:11311"
+      ROS_HOSTNAME: "listener"
+    command: rostopic echo /listener
+    depends_on:
+      - master
+
+  publisher:
+    image: ros:kinetic-robot
+    environment:
+      ROS_MASTER_URI: "http://master:11311"
+      ROS_HOSTNAME: "publisher"
+    command: rostopic pub /publisher std_msgs/UInt32 459 -r 1
+    depends_on:
+      - master
