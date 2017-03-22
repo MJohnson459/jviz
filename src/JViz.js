@@ -36,7 +36,7 @@ class JViz extends Component {
   render() {
     console.log('Rendering JViz', this.state);
     return (
-      <div className="App">
+      <div className="JViz">
         <div>
             <NodeList ros={this.ros} />
             <TopicList ros={this.ros} createSubscriber={this.createSubscriber}/>

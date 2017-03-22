@@ -9,6 +9,7 @@
     "react": "^15.4.2",
     "react-custom-scrollbars": "^4.0.2",
     "react-dom": "^15.4.2",
+    "react-syntax-highlighter": "^5.1.2",
     "roslib": "git+https://github.com/RobotWebTools/roslibjs.git#cb51d2c"
   },
   "scripts": {

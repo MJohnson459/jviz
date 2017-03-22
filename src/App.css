@@ -1,5 +1,9 @@
 .App {
-  /*text-align: center;*/
+  text-align: center;
+}
+
+.JViz {
+  text-align: left;
 }
 
 .App-logo {

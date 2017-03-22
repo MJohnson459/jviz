@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/styles';
 
 class Subscriber extends Component {
 
@@ -12,7 +14,7 @@ class Subscriber extends Component {
         this.state = {
             topic: props.topic,
             messageType: props.type,
-            message: "",
+            message: {},
         }
 
         this.subscribe();
@@ -28,7 +30,7 @@ class Subscriber extends Component {
 
       this.subscriber.subscribe((message) => {
           this.setState({
-              message: message.data,
+              message: message,
           });
       });
     }
@@ -37,8 +39,7 @@ class Subscriber extends Component {
         console.log('Rendering Subscriber');
         var x = "";
         try {
-            var jsonobj = JSON.parse(this.state.message);
-            x = JSON.stringify(jsonobj,null,'\t');
+            x = JSON.stringify(this.state.message,null,'\t');
         } catch(e) {
             x = this.state.message;
         }
@@ -48,7 +49,9 @@ class Subscriber extends Component {
             <h2>{this.state.topic}</h2>
             <p>Type: {this.state.messageType}</p>
             <p>Message: </p>
-            <pre>{x}</pre>
+            <SyntaxHighlighter language="javascript" style={docco}>
+                {x}
+            </SyntaxHighlighter>
         </div>
         );
     }
