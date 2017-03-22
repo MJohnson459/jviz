@@ -35,12 +35,20 @@ class Subscriber extends Component {
 
     render() {
         console.log('Rendering Subscriber');
+        var x = "";
+        try {
+            var jsonobj = JSON.parse(this.state.message);
+            x = JSON.stringify(jsonobj,null,'\t');
+        } catch(e) {
+            x = this.state.message;
+        }
 
         return (
         <div className="NodeList">
             <h2>{this.state.topic}</h2>
             <p>Type: {this.state.messageType}</p>
-            <p>Message: {this.state.message}</p>
+            <p>Message: </p>
+            <pre>{x}</pre>
         </div>
         );
     }
