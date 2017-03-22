@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
+import Widget from './Widget.js';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 class NodeList extends Component {
 
@@ -35,17 +37,21 @@ class NodeList extends Component {
         console.log('Rendering NodeList');
 
         return (
-        <div className="NodeList">
-            <h2>Node List</h2>
-            <ul className="App-intro">
-                {this.state.nodes.map((item) =>
-                  <li key={item} style={{textAlign: "left"}}>{item}</li>
-                )}
-            </ul>
-            <button onClick={this.updateNodeList}>
-                Update
-            </button>
-        </div>
+        <Widget>
+            <div className="NodeList">
+                <h2>Node List</h2>
+                <Scrollbars className="NodeList" style={{ width: 300, height: 300, backgroundColor: "#DDDDDD" }}>
+                    <ul className="App-intro">
+                        {this.state.nodes.map((item) =>
+                          <li key={item} style={{textAlign: "left"}}>{item}</li>
+                        )}
+                    </ul>
+                </Scrollbars>
+                <button onClick={this.updateNodeList}>
+                    Update
+                </button>
+            </div>
+        </Widget>
         );
     }
 }

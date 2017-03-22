@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
+import Widget from './Widget.js'
 
 class Publisher extends Component {
 
@@ -52,17 +53,19 @@ class Publisher extends Component {
         console.log('Rendering Publisher');
 
         return (
-        <div className="NodeList">
-          <h2>Publisher</h2>
-            <select>
-            {this.state.topics}
-            </select>
-            <p>Topic: {this.state.topic}</p>
-            <p>Type: {this.state.messageType}</p>
-            <button onClick={this.publish}>
-                publish {this.state.count}
-            </button>
-        </div>
+        <Widget>
+            <div className="Publisher">
+              <h2>Publisher</h2>
+                <select>
+                {this.state.topics}
+                </select>
+                <p>Topic: {this.state.topic}</p>
+                <p>Type: {this.state.messageType}</p>
+                <button onClick={this.publish}>
+                    publish {this.state.count}
+                </button>
+            </div>
+        </Widget>
         );
     }
 }

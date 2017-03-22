@@ -38,12 +38,12 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div>
-            <NodeList ros={this.ros} />
+            <NodeList ros={this.ros}/>
             <TopicList ros={this.ros} createSubscriber={this.createSubscriber}/>
-            <Publisher ros={this.ros} />
+            <Publisher ros={this.ros}/>
             {
                 this.state.subscribers.map((item) =>
-                    <Subscriber key={item[0]} ros={this.ros} topic={item[0]} type={item[1]} />
+                    <Subscriber key={item[0]} ros={this.ros} topic={item[0]} type={item[1]}/>
                 )
             }
         </div>

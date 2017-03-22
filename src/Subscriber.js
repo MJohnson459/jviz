@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ROSLIB from 'roslib';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/styles';
+import Widget from './Widget.js';
+import YAML from 'yamljs';
 
 class Subscriber extends Component {
 
@@ -39,20 +41,22 @@ class Subscriber extends Component {
         console.log('Rendering Subscriber');
         var x = "";
         try {
-            x = JSON.stringify(this.state.message,null,'\t');
+            x = YAML.stringify(this.state.message, 2);
         } catch(e) {
             x = this.state.message;
         }
 
         return (
-        <div className="NodeList">
-            <h2>{this.state.topic}</h2>
-            <p>Type: {this.state.messageType}</p>
-            <p>Message: </p>
-            <SyntaxHighlighter language="javascript" style={docco}>
-                {x}
-            </SyntaxHighlighter>
-        </div>
+        <Widget>
+            <div className="Subscriber">
+                <h2>{this.state.topic}</h2>
+                <p>Type: {this.state.messageType}</p>
+                <p>Message: </p>
+                <SyntaxHighlighter language="yaml" style={docco}>
+                    {x}
+                </SyntaxHighlighter>
+            </div>
+        </Widget>
         );
     }
 }
