@@ -53,9 +53,8 @@ class Publisher extends Component {
         console.log('Rendering Publisher');
 
         return (
-        <Widget>
+        <Widget name="Publisher">
             <div className="Publisher">
-              <h2>Publisher</h2>
                 <select>
                 {this.state.topics}
                 </select>

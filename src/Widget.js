@@ -3,7 +3,11 @@ import React, { Component } from 'react';
 function Widget(props) {
   return (
     <div className={'Widget'}>
-      {props.children}
+        <div className={'Header'}>
+            <h2 className={'HeaderName'}>{props.name}</h2>
+            <button className={'HeaderClose'} onClick={props.onRequestHide}>X</button>
+        </div>
+        {props.children}
     </div>
   );
 }

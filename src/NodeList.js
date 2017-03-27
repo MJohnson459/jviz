@@ -37,9 +37,8 @@ class NodeList extends Component {
         console.log('Rendering NodeList');
 
         return (
-        <Widget>
+        <Widget name="Node List">
             <div className="NodeList">
-                <h2>Node List</h2>
                 <Scrollbars className="NodeList" style={{ width: 300, height: 300, backgroundColor: "#DDDDDD" }}>
                     <ul className="App-intro">
                         {this.state.nodes.map((item) =>

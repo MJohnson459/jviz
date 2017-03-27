@@ -24,6 +24,10 @@ class Subscriber extends Component {
         this.subscribe();
     }
 
+    // componentWillUnmount() {
+    //     // this.subscriber.unsubscribe();
+    // }
+
     subscribe() {
       console.log("this.state.topic: " + this.state.topic)
       this.subscriber = new ROSLIB.Topic({
@@ -34,7 +38,7 @@ class Subscriber extends Component {
 
       this.subscriber.subscribe((message) => {
           this.setState(prevState => ({
-            messages: [...prevState.messages, message],
+            // messages: [...prevState.messages, message],
             message: message,
           }));
       });
@@ -43,7 +47,7 @@ class Subscriber extends Component {
     render() {
         console.log('Rendering Subscriber');
 
-        console.log("Subscriber render: ", this.state.messages);
+        // console.log("Subscriber render: ", this.state.messages);
 
         // <ul>
         // {
@@ -58,9 +62,8 @@ class Subscriber extends Component {
         // </ul>
 
         return (
-        <Widget>
+        <Widget name={this.state.topic}>
             <div className="Subscriber">
-                <h2>{this.state.topic}</h2>
                 <Scrollbars className="NodeList" style={{ width: 300, height: 300, backgroundColor: "#DDDDDD" }}>
                     <SyntaxHighlighter language="yaml" style={docco}>
                         {YAML.stringify(this.state.message, 2)}

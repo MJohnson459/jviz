@@ -20,6 +20,22 @@
     padding: 20px;
 }
 
+.Header {
+    display: inline-block;
+    height: 100px;
+    width: 100%;
+}
+
+.HeaderName {
+    display: inline-block;
+    width: 70%;
+}
+
+.HeaderClose {
+    display: inline-block;
+    width: 30%;
+}
+
 .NodeList {
 
 }
