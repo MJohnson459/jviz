@@ -4,6 +4,8 @@
 
 .JViz {
   text-align: left;
+  display: flex;
+  flex-flow: row wrap;
 }
 
 .Subscriber {
@@ -16,18 +18,17 @@
     padding: 0px;
     height: 400px;
     width: 300px;
-    float: left;
+    display: flex;
+    flex-direction: column;
 }
 
 .WidgetMain {
-    padding: 20px;
-    height: 310px;
-    width: 260px;
+    padding: 0px;
+    height: 350px;
     vertical-align: middle;
 }
 
-.Header {
-    display: flex;
+.WidgetHeader {
     height: 50px;
     width: 100%;
     background-color: #36393e;
@@ -35,12 +36,13 @@
 }
 
 .HeaderName {
-    width: 90%;
+    width: 250px;
     height: 100%;
     margin: 0;
     padding: 10px;
     color: hsla(0,0%,100%,.6);
     vertical-align: middle;
+    float: left;
 }
 
 .HeaderClose {
@@ -51,10 +53,11 @@
     margin: 0;
     text-align: center;
     cursor: pointer;
-    line-height: 50px;
+    line-height: 30px;
     vertical-align: middle;
     font-weight: bold;
     color: hsla(0,0%,100%,.6);
+    float: right;
 }
 
 .NodeList {
@@ -75,6 +78,32 @@
 
 .App-intro {
   font-size: large;
+}
+
+.Topic {
+    height: 60px;
+    background-color: rgb(78, 84, 93);
+    border: 0px;
+    border-bottom: 1px solid hsla(0,0%,100%,.06);
+    border-style: solid;
+    color: hsla(0,0%,100%,.6);
+    border-left: 3px solid;
+    padding: 5px;
+}
+
+.Active {
+    border-left: rgb(2, 150, 245);
+    border-left-style: solid;
+    border-left-width: 3px;
+}
+
+.TopicList {
+    background-color: rgb(78, 84, 93);
+}
+
+.Message {
+    margin: 0px;
+    max-height: 60px;
 }
 
 

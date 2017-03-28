@@ -38,18 +38,16 @@ class NodeList extends Component {
 
         return (
         <Widget name="Node List">
-            <div className="NodeList">
-                <Scrollbars className="NodeList" style={{ height: 300, backgroundColor: "#DDDDDD" }}>
-                    <ul className="App-intro">
-                        {this.state.nodes.map((item) =>
-                          <li key={item} style={{textAlign: "left"}}>{item}</li>
-                        )}
-                    </ul>
-                </Scrollbars>
-                <button onClick={this.updateNodeList}>
-                    Update
-                </button>
-            </div>
+            <Scrollbars className="NodeList" style={{ height: "inherit", backgroundColor: "#DDDDDD" }}>
+                <ul className="App-intro">
+                    {this.state.nodes.map((item) =>
+                      <li key={item} style={{textAlign: "left"}}>{item}</li>
+                    )}
+                </ul>
+            </Scrollbars>
+            <button onClick={this.updateNodeList}>
+                Update
+            </button>
         </Widget>
         );
     }

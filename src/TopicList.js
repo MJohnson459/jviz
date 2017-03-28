@@ -5,23 +5,21 @@ import Subscriber from './Subscriber';
 import Widget from './Widget.js'
 
 function Topic(props) {
-  if (props.selected) {
-    return (
-      <div onClick={props.onClick} style={{ width: 298, height: 60, backgroundColor: "#AAAAAA", border: 1, borderStyle: "solid" }}>
-          <p style={{margin: 5, padding: 0, height: 20}}>{props.topic}</p>
-          <p style={{margin: 5, padding: 0, height: 20}}>{props.type}</p>
-      </div>
-    )
-  } else {
-    return (
-      <div onClick={props.onClick} style={{ width: 298, height: 60, backgroundColor: "#EEEEEE", border: 1, borderStyle: "solid" }}>
-          <p style={{margin: 5, padding: 0, height: 20}}>{props.topic}</p>
-          <p style={{margin: 5, padding: 0, height: 20}}>{props.type}</p>
-      </div>
-    )
-  }
-
-
+    if (props.selected) {
+        return (
+            <div onClick={props.onClick} className={'Topic Active'} >
+                <p style={{margin: 5, padding: 0, height: 20}}>{props.topic}</p>
+                <p style={{margin: 5, padding: 0, height: 20}}>{props.type}</p>
+            </div>
+        )
+    } else {
+        return (
+            <div onClick={props.onClick} className={'Topic'} >
+                <p style={{margin: 5, padding: 0, height: 20}}>{props.topic}</p>
+                <p style={{margin: 5, padding: 0, height: 20}}>{props.type}</p>
+            </div>
+        )
+    }
 }
 
 class TopicList extends Component {
@@ -33,13 +31,24 @@ class TopicList extends Component {
         this.ros = props.ros;
 
         this.state = {
-            topics: {topics: [], types: []},
+            topics: [],
         }
 
         this.ros.getTopics((topics) => {
             console.log(topics);
+
+            var x = topics.topics.map((item, i) =>
+                {
+                    return {
+                        topic: item,
+                        type: topics.types[i],
+                        selected: false,
+                    }
+                }
+            )
+
             this.setState({
-                topics: topics,
+                topics: x,
             });
         });
 
@@ -55,16 +64,15 @@ class TopicList extends Component {
         console.log('Rendering TopicList');
 
         return (
-        <Widget name="TopicList">
-            <div className="NodeList">
-                <Scrollbars className="TopicList" style={{ height: 300, backgroundColor: "#DDDDDD" }}>
-                    {this.state.topics.topics.map((item, i) =>
-                        <Topic key={item} topic={item} type={this.state.topics.types[i]} selected={Math.random() < 0.5} onClick={() =>  this.createSubscriber(item, this.state.topics.types[i]
-                          // <Subscriber key={item} ros={this.ros} topic={item} type={this.state.topics.types[i]} />
-                        )} />
-                    )}
-                </Scrollbars>
-            </div>
+        <Widget name="Topic List">
+            <Scrollbars className="TopicList" style={{ height: "inherit" }}>
+                {this.state.topics.map((item, i) =>
+                    <Topic key={item.topic} topic={item.topic} type={item.type} selected={item.selected} onClick={() =>  {
+                            item.selected=true;
+                            this.createSubscriber(item.topic, item.type);
+                        }} />
+                )}
+            </Scrollbars>
         </Widget>
         );
     }

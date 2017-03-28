@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/dist/styles';
+import { dark } from 'react-syntax-highlighter/dist/styles';
 import Widget from './Widget.js';
 import YAML from 'yamljs';
 import { Scrollbars } from 'react-custom-scrollbars';
@@ -63,14 +63,12 @@ class Subscriber extends Component {
 
         return (
         <Widget name={this.state.topic}>
-            <div className="Subscriber">
-                <Scrollbars className="NodeList" style={{ height: 300, backgroundColor: "#DDDDDD" }}>
-                    <SyntaxHighlighter language="yaml" style={docco}>
-                        {YAML.stringify(this.state.message, 2)}
-                    </SyntaxHighlighter>
+            <Scrollbars className={"NodeList Subscriber"} style={{ height: "inherit", backgroundColor: "#DDDDDD" }}>
+                <SyntaxHighlighter language="yaml" className={"Message"} style={dark}>
+                    {YAML.stringify(this.state.message, 2)}
+                </SyntaxHighlighter>
 
-                </Scrollbars>
-            </div>
+            </Scrollbars>
         </Widget>
         );
     }
