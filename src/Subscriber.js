@@ -64,7 +64,7 @@ class Subscriber extends Component {
         return (
         <Widget name={this.state.topic}>
             <div className="Subscriber">
-                <Scrollbars className="NodeList" style={{ width: 300, height: 300, backgroundColor: "#DDDDDD" }}>
+                <Scrollbars className="NodeList" style={{ height: 300, backgroundColor: "#DDDDDD" }}>
                     <SyntaxHighlighter language="yaml" style={docco}>
                         {YAML.stringify(this.state.message, 2)}
                     </SyntaxHighlighter>

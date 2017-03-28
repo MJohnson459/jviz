@@ -39,7 +39,7 @@ class NodeList extends Component {
         return (
         <Widget name="Node List">
             <div className="NodeList">
-                <Scrollbars className="NodeList" style={{ width: 300, height: 300, backgroundColor: "#DDDDDD" }}>
+                <Scrollbars className="NodeList" style={{ height: 300, backgroundColor: "#DDDDDD" }}>
                     <ul className="App-intro">
                         {this.state.nodes.map((item) =>
                           <li key={item} style={{textAlign: "left"}}>{item}</li>

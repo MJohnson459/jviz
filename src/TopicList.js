@@ -57,7 +57,7 @@ class TopicList extends Component {
         return (
         <Widget name="TopicList">
             <div className="NodeList">
-                <Scrollbars className="TopicList" style={{ width: 300, height: 300, backgroundColor: "#DDDDDD" }}>
+                <Scrollbars className="TopicList" style={{ height: 300, backgroundColor: "#DDDDDD" }}>
                     {this.state.topics.topics.map((item, i) =>
                         <Topic key={item} topic={item} type={this.state.topics.types[i]} selected={Math.random() < 0.5} onClick={() =>  this.createSubscriber(item, this.state.topics.types[i]
                           // <Subscriber key={item} ros={this.ros} topic={item} type={this.state.topics.types[i]} />
