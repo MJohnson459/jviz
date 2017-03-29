@@ -1,4 +1,4 @@
-version: "3"
+version: "2"
 services:
   master:
     image: ros:kinetic-robot
@@ -10,6 +10,7 @@ services:
       - "11311:11311"
 
   rosbridge-server:
+    build: .
     image: rosbridge-server
     environment:
       ROS_MASTER_URI: "http://master:11311"
