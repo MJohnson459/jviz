@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { Resizable, ResizableBox } from 'react-resizable';
-import './styles/resizable.css'
 
 class Widget extends Component {
   constructor(props) {
