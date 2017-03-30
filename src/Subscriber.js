@@ -62,8 +62,8 @@ class Subscriber extends Component {
         // </ul>
 
         return (
-        <Widget name={this.state.topic}>
-            <Scrollbars className={"Subscriber"} style={{ height: "inherit", backgroundColor: "#DDDDDD" }}>
+        <Widget {...this.props} name={this.state.topic}>
+            <Scrollbars className={"Subscriber"} style={{ height: "100%" }}>
                 <SyntaxHighlighter language="yaml" className={"Message"} useInlineStyles={false}>
                     {YAML.stringify(this.state.message, 2)}
                 </SyntaxHighlighter>

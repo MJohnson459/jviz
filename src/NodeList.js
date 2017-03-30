@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
-import Widget from './Widget.js';
+import SidebarItem from './SidebarItem.js';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 class NodeList extends Component {
@@ -38,7 +38,7 @@ class NodeList extends Component {
         console.log('Rendering NodeList');
 
         return (
-        <Widget name="Node List" hidden={this.state.hidden}>
+        <SidebarItem name="Node List" hidden={this.state.hidden}>
             <Scrollbars className="NodeList" style={{ height: "inherit", backgroundColor: "#DDDDDD" }}>
                 <ul className="App-intro">
                     {this.state.nodes.map((item) =>
@@ -49,7 +49,7 @@ class NodeList extends Component {
             <button onClick={this.updateNodeList}>
                 Update
             </button>
-        </Widget>
+        </SidebarItem>
         );
     }
 }

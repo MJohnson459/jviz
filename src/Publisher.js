@@ -20,14 +20,15 @@ class Publisher extends Component {
         super();
         console.log('Constructing Publisher');
 
-
-        this.ros = props.ros;
+        const {ros, ...rest} = props;
+        this.ros = ros;
 
         this.state = {
             topic: '/listener', //props.topic,
             messageType: 'std_msgs/String', //props.type,
             count: 0,
             topics: "",
+            props: rest,
         }
 
         this.publisher = new ROSLIB.Topic({
@@ -53,7 +54,7 @@ class Publisher extends Component {
         console.log('Rendering Publisher');
 
         return (
-        <Widget name="Publisher">
+        <Widget {...this.props} name="Publisher">
             <div className="Publisher">
                 <select>
                 {this.state.topics}

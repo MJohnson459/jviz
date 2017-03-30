@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Resizable, ResizableBox } from 'react-resizable';
+import './styles/resizable.css'
 
 class Widget extends Component {
   constructor(props) {
@@ -12,14 +14,12 @@ class Widget extends Component {
   }
 
   onRequestHide() {
-      this.setState({
-            hidden: !this.state.hidden,
-      });
+    //   const hidden = this.state.hidden;
   }
 
   render() {
     return (
-        <div className={'Widget'}>
+        <div {...this.props} className={'Widget'} >
             <div className={'WidgetHeader'} onClick={this.onRequestHide}>
                 <div className={'HeaderName'}>{this.state.name}</div>
                 <div className={'HeaderClose'} onClick={this.props.onRequestHide}>X</div>

@@ -10,6 +10,8 @@
     "react": "^15.4.2",
     "react-custom-scrollbars": "^4.0.2",
     "react-dom": "^15.4.2",
+    "react-grid-layout": "^0.14.4",
+    "react-resizable": "^1.6.0",
     "react-syntax-highlighter": "^5.1.2",
     "roslib": "git+https://github.com/RobotWebTools/roslibjs.git#cb51d2c",
     "yamljs": "^0.2.8"

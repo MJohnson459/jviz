@@ -5,6 +5,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  color: hsla(0,0%,100%,.7);
 }
 
 .App-logo {
@@ -44,24 +45,23 @@
 .JViz-main {
   display: flex;
   flex-flow: row wrap;
-}
-
-.Subscriber {
-    width: 300px;
+  width: 100%;
 }
 
 .Widget {
     border-bottom: 1px solid hsla(0,0%,100%,.06);
+    border-right: 1px solid hsla(0,0%,100%,.06);
     padding: 0px;
     display: flex;
     flex-direction: column;
-    width: 250px;
 }
 
 .WidgetMain {
     padding: 0px;
-    height: 350px;
     vertical-align: middle;
+    background-color: rgb(78, 84, 93);
+    color: hsla(0,0%,100%,.7);
+    flex: 1;
 }
 
 .WidgetHeader {
@@ -95,8 +95,62 @@
     float: right;
 }
 
+.SidebarItem {
+    border-bottom: 1px solid hsla(0,0%,100%,.06);
+    border-right: 1px solid hsla(0,0%,100%,.06);
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.SidebarItemMain {
+    padding: 0px;
+    height: 350px;
+    vertical-align: middle;
+    background-color: rgb(78, 84, 93);
+    color: hsla(0,0%,100%,.7);
+}
+
+.SidebarItemHeader {
+    height: 50px;
+    width: 100%;
+    background-color: #36393e;
+    border-bottom: 1px solid #282b30;
+}
+
+.SidebarItemHeaderName {
+    height: 100%;
+    margin: 0;
+    padding: 10px;
+    color: hsla(0,0%,100%,.7);
+    vertical-align: middle;
+    float: left;
+}
+
+.SidebarItemHeaderClose {
+    width: 10%;
+    background-color: #2e3136;
+    line-height: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    cursor: pointer;
+    line-height: 30px;
+    vertical-align: middle;
+    font-weight: bold;
+    color: hsla(0,0%,100%,.7);
+    float: right;
+}
+
 .NodeList {
 
+}
+
+.Subscriber {
+}
+
+.Publisher {
+    padding: 10px;
 }
 
 .Topic {
@@ -117,7 +171,6 @@
 }
 
 .TopicList {
-    background-color: rgb(78, 84, 93);
 }
 
 .Message {
