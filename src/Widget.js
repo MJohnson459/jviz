@@ -4,7 +4,8 @@ class Widget extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        hidden: false,
+        hidden: props.hidden,
+        name: props.name,
     }
 
     this.onRequestHide = this.onRequestHide.bind(this);
@@ -20,7 +21,7 @@ class Widget extends Component {
     return (
         <div className={'Widget'}>
             <div className={'WidgetHeader'} onClick={this.onRequestHide}>
-                <div className={'HeaderName'}>{this.props.name}</div>
+                <div className={'HeaderName'}>{this.state.name}</div>
                 <div className={'HeaderClose'} onClick={this.props.onRequestHide}>X</div>
             </div>
             { this.state.hidden ||

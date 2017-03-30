@@ -27,6 +27,7 @@ class NodeList extends Component {
 
         this.state = {
             nodes: [],
+            hidden: props.hidden,
         }
 
         this.updateNodeList = this.updateNodeList.bind(this);
@@ -37,7 +38,7 @@ class NodeList extends Component {
         console.log('Rendering NodeList');
 
         return (
-        <Widget name="Node List">
+        <Widget name="Node List" hidden={this.state.hidden}>
             <Scrollbars className="NodeList" style={{ height: "inherit", backgroundColor: "#DDDDDD" }}>
                 <ul className="App-intro">
                     {this.state.nodes.map((item) =>
