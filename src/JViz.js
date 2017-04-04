@@ -21,7 +21,7 @@ class JViz extends Component {
             connected: false,
             subscribers: [],
             layout: [
-                {i: 'a', x: 0, y: 0, w: 3, h: 6},
+                {i: 'a', x: 0, y: 0, w: 3, h: 6, isDraggable: true, isResizable: true},
             ],
         }
 
@@ -31,13 +31,10 @@ class JViz extends Component {
 
     createSubscriber(topic, type) {
         console.log("Creating subscriber", topic, type)
-        const subscribers = this.state.subscribers;
-        subscribers.push([topic, type]);
         this.setState(prevState => ({
-            subscribers: subscribers,
-            layout: [...prevState.layout, {i: topic, x: 3, y: 0, w: 3, h: 6}],
+            subscribers: [...prevState.subscribers, [topic, type]],
+            layout: [...prevState.layout, {i: topic, x: 3, y: 0, w: 3, h: 6, isDraggable: true, isResizable: true}],
         }));
-        console.log("Subscribers", subscribers);
     }
 
   render() {
@@ -52,6 +49,7 @@ class JViz extends Component {
                 this.setState({
                     layout: layout,
                 })
+                console.log(layout)
             }}>
             <Publisher key={'a'} ros={this.ros}/>
             {this.state.subscribers.map((item) =>

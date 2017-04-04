@@ -64,6 +64,7 @@ class Publisher extends Component {
                 <button onClick={this.publish}>
                     publish {this.state.count}
                 </button>
+                {this.props.children}
             </div>
         </Widget>
         );

@@ -67,7 +67,7 @@ class Subscriber extends Component {
                 <SyntaxHighlighter language="yaml" className={"Message"} useInlineStyles={false}>
                     {YAML.stringify(this.state.message, 2)}
                 </SyntaxHighlighter>
-
+                {this.props.children}
             </Scrollbars>
         </Widget>
         );
