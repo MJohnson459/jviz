@@ -29,8 +29,8 @@
 .JViz {
   text-align: left;
   display: flex;
-  height: inherit;
   width: 100%;
+  flex: 1;
 }
 
 .JViz-side {
@@ -62,6 +62,7 @@
     background-color: rgb(78, 84, 93);
     color: hsla(0,0%,100%,.7);
     flex: 1;
+    display: flex;
 }
 
 .WidgetHeader {
@@ -143,14 +144,16 @@
 }
 
 .NodeList {
-
+    flex: 1;
 }
 
 .Subscriber {
+    flex: 1;
 }
 
 .Publisher {
     padding: 10px;
+    flex: 1;
 }
 
 .Topic {

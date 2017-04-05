@@ -12,11 +12,7 @@ class Subscriber extends Component {
         super(props);
         console.log('Constructing Subscriber');
 
-        this.ros = props.ros;
-
         this.state = {
-            topic: props.topic,
-            messageType: props.type,
             messages: [],
             message: {},
         }
@@ -29,11 +25,11 @@ class Subscriber extends Component {
     // }
 
     subscribe() {
-      console.log("this.state.topic: " + this.state.topic)
+      console.log("this.state.topic: " + this.props.topic)
       this.subscriber = new ROSLIB.Topic({
-          ros : this.ros,
-          name : this.state.topic,
-          messageType : this.state.messageType,
+          ros : this.props.ros,
+          name : this.props.topic,
+          messageType : this.props.type,
       });
 
       this.subscriber.subscribe((message) => {
@@ -62,8 +58,8 @@ class Subscriber extends Component {
         // </ul>
 
         return (
-        <Widget {...this.props} name={this.state.topic}>
-            <Scrollbars className={"Subscriber"} style={{ height: "100%" }}>
+        <Widget {...this.props} name={this.props.topic}>
+            <Scrollbars className={"Subscriber"} style={{ height: "inherit" }}>
                 <SyntaxHighlighter language="yaml" className={"Message"} useInlineStyles={false}>
                     {YAML.stringify(this.state.message, 2)}
                 </SyntaxHighlighter>
