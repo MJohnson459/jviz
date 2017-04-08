@@ -5,11 +5,12 @@ import TopicList from './TopicList';
 import Publisher from './Publisher';
 import Subscriber from './Subscriber';
 import {Responsive, WidthProvider} from 'react-grid-layout';
-var ReactGridLayout = require('react-grid-layout');
 import "../node_modules/react-grid-layout/css/styles.css"
 import "../node_modules/react-resizable/css/styles.css"
 import './App.css';
 import Widget from './Widget.js'
+
+const ResponsiveReactGridLayout  = WidthProvider(Responsive);
 
 class JViz extends Component {
     constructor(props) {
@@ -20,42 +21,73 @@ class JViz extends Component {
             message: "empty",
             connected: false,
             subscribers: [],
-            layout: [
-                {i: 'a', x: 0, y: 0, w: 3, h: 6, isDraggable: true, isResizable: true},
-            ],
         }
 
         this.ros = props.ros;
-        this.createSubscriber = this.createSubscriber.bind(this)
+        this.addSubscriber = this.addSubscriber.bind(this)
+        this.createElement = this.createElement.bind(this)
     }
 
-    createSubscriber(topic, type) {
+    addSubscriber(topic, type) {
         console.log("Creating subscriber", topic, type)
         this.setState(prevState => ({
-            subscribers: [...prevState.subscribers, [topic, type]],
-            layout: [...prevState.layout, {i: topic, x: 3, y: 0, w: 3, h: 6, isDraggable: true, isResizable: true}],
+            subscribers: [...prevState.subscribers, {topic: topic, type: type, layout:
+                {
+                    i: topic,
+                    x: 3,
+                    y: Infinity,
+                    w: 2,
+                    h: 6
+                }
+            }],
         }));
+    }
+
+    createElement(el) {
+        var removeStyle = {
+          position: 'absolute',
+          right: '2px',
+          top: 0,
+          cursor: 'pointer'
+        };
+        return (
+
+            <Subscriber key={el.topic} data-grid={el.layout} ros={this.ros} topic={el.topic} type={el.topic}/>
+
+        );
     }
 
   render() {
     console.log('Rendering JViz', this.state);
+
+    const pubLayout = {i: 'a',
+        x: 0,
+        y: Infinity,
+        w: 2,
+        h: 6
+    }
+
     return (
       <div className="JViz">
         <div className="JViz-side">
             <NodeList ros={this.ros} hidden={true} />
-            <TopicList ros={this.ros} createSubscriber={this.createSubscriber} hidden={true} />
+            <TopicList ros={this.ros} createSubscriber={this.addSubscriber} hidden={true} />
         </div>
-        <ReactGridLayout className="JViz-main" layout={this.state.layout} cols={12} rowHeight={30} width={1200}  onLayoutChange={(layout) => {
+
+        <ResponsiveReactGridLayout
+            className="JViz-main"
+            breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+            cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}
+            rowHeight={30}
+            onLayoutChange={(layout, layouts) => {
                 this.setState({
-                    layout: layout,
+                    layouts: layouts,
                 })
-                console.log(layout)
+                console.log(layouts)
             }}>
-            <Publisher key={'a'} ros={this.ros}/>
-            {this.state.subscribers.map((item) =>
-                <Subscriber key={item[0]} ros={this.ros} topic={item[0]} type={item[1]}/>
-            )}
-        </ReactGridLayout>
+            <Publisher key={'a'} ros={this.ros} data-grid={pubLayout}/>
+            {this.state.subscribers.map(this.createElement)}
+        </ResponsiveReactGridLayout>
 
       </div>
     );
