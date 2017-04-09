@@ -18,12 +18,9 @@ class JViz extends Component {
         console.log('Constructing JViz');
 
         this.state = {
-            message: "empty",
-            connected: false,
             subscribers: [],
         }
 
-        this.ros = props.ros;
         this.addSubscriber = this.addSubscriber.bind(this)
         this.createElement = this.createElement.bind(this)
     }
@@ -34,7 +31,7 @@ class JViz extends Component {
             subscribers: [...prevState.subscribers, {topic: topic, type: type, layout:
                 {
                     i: topic,
-                    x: 3,
+                    x: 2,
                     y: Infinity,
                     w: 2,
                     h: 6
@@ -45,15 +42,14 @@ class JViz extends Component {
 
     createElement(el) {
         var removeStyle = {
-          position: 'absolute',
-          right: '2px',
-          top: 0,
-          cursor: 'pointer'
+            position: 'absolute',
+            right: '2px',
+            top: 0,
+            cursor: 'pointer'
         };
+        console.log(el)
         return (
-
-            <Subscriber key={el.topic} data-grid={el.layout} ros={this.ros} topic={el.topic} type={el.topic}/>
-
+            <Subscriber key={el.topic} data-grid={el.layout} ros={this.props.ros} topic={el.topic} type={el.type}/>
         );
     }
 
@@ -70,8 +66,8 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.ros} hidden={true} />
-            <TopicList ros={this.ros} createSubscriber={this.addSubscriber} hidden={true} />
+            <NodeList ros={this.props.ros} hidden={true} />
+            <TopicList ros={this.props.ros} createSubscriber={this.addSubscriber} hidden={true} />
         </div>
 
         <ResponsiveReactGridLayout
@@ -85,7 +81,7 @@ class JViz extends Component {
                 })
                 console.log(layouts)
             }}>
-            <Publisher key={'a'} ros={this.ros} data-grid={pubLayout}/>
+            <Publisher key={'a'} ros={this.props.ros} data-grid={pubLayout}/>
             {this.state.subscribers.map(this.createElement)}
         </ResponsiveReactGridLayout>
 

@@ -7,16 +7,13 @@ class Messages extends Component {
         super();
         console.log('Constructing Messages');
 
-
-        this.ros = props.ros;
-
         this.state = {
             topics: [], //props.topic,
             messageType: 'std_msgs/String', //props.type,
             message: "",
         }
 
-        this.ros.getTopics((topicList) => {
+        this.props.ros.getTopics((topicList) => {
             const listItems = topicList.topics.map((item, i) =>
                 <option key={item} value={topicList.types[i]}>{item}</option>
             );
@@ -27,7 +24,7 @@ class Messages extends Component {
         });
 
         this.messages = new ROSLIB.Topic({
-            ros : this.ros,
+            ros : this.props.ros,
             name : this.state.topic,
             messageType : this.state.messageType,
         });

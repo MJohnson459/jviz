@@ -25,7 +25,7 @@ class Subscriber extends Component {
     // }
 
     subscribe() {
-      console.log("this.state.topic: " + this.props.topic)
+      console.log("this.props: ", this.props)
       this.subscriber = new ROSLIB.Topic({
           ros : this.props.ros,
           name : this.props.topic,
@@ -38,6 +38,7 @@ class Subscriber extends Component {
             message: message,
           }));
       });
+
     }
 
     render() {
@@ -63,8 +64,8 @@ class Subscriber extends Component {
                 <SyntaxHighlighter language="yaml" className={"Message"} useInlineStyles={false}>
                     {YAML.stringify(this.state.message, 2)}
                 </SyntaxHighlighter>
-                {this.props.children}
             </Scrollbars>
+            {this.props.children}
         </Widget>
         );
     }
