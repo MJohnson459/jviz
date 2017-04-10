@@ -26,10 +26,12 @@ class Subscriber extends Component {
         this.state = {
             messages: [],
             message: {},
+            scrolled: false,
         }
 
         this.subscribe();
         this.rowRenderer = this.rowRenderer.bind(this);
+        this.onRowsRendered = this.onRowsRendered.bind(this);
     }
 
     // componentWillUnmount() {
@@ -70,8 +72,27 @@ class Subscriber extends Component {
             </div>)
     }
 
+    onRowsRendered({
+        overscanStartIndex,
+        overscanStopIndex,
+        startIndex,
+        stopIndex
+    }) {
+       this.setState({
+            scrolled: stopIndex !== this.state.messages.length - 1,
+        })
+    }
+
     render() {
-        console.log('Rendering Subscriber');
+        console.log('Rendering Subscriber', this.state.messages.length);
+
+        var scroll = {}
+        if (!this.state.scrolled) {
+            scroll = {
+                scrollToIndex: this.state.messages.length-1,
+                scrollToAlignment: "end",
+            }
+        }
 
         return (
         <Widget {...this.props} name={this.props.topic}>
@@ -85,8 +106,9 @@ class Subscriber extends Component {
                     rowCount={this.state.messages.length}
                     rowRenderer={this.rowRenderer}
                     width={width}
-                    scrollToIndex={this.state.messages.length}
-                    scrollToAlignment="end"
+                    onRowsRendered={this.onRowsRendered}
+                    {...scroll}
+
                 />
               )}
             </AutoSizer>
