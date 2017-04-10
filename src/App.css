@@ -63,6 +63,7 @@
     color: hsla(0,0%,100%,.7);
     flex: 1;
     display: flex;
+    flex-direction: column;
 }
 
 .WidgetHeader {
@@ -178,8 +179,10 @@
 
 .Message {
     margin: 0px;
-    height: 100%;
+    height: 59px;
+    width: 100%;
     display: inline-block;
+    border-bottom: 1px solid hsla(0,0%,100%,.06);
 }
 
 

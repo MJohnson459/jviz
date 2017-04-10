@@ -9,9 +9,11 @@ import {List, AutoSizer} from 'react-virtualized'
 
 function Message(props) {
     return (
-        <SyntaxHighlighter language="yaml" className={"Message"} useInlineStyles={false}>
-            {YAML.stringify(props.message, 2)}
-        </SyntaxHighlighter>
+        <div className="Message">
+            <SyntaxHighlighter language="yaml" className="Message" useInlineStyles={false}>
+                {YAML.stringify(props.message, 2)}
+            </SyntaxHighlighter>
+        </div>
     )
 }
 
@@ -83,6 +85,8 @@ class Subscriber extends Component {
                     rowCount={this.state.messages.length}
                     rowRenderer={this.rowRenderer}
                     width={width}
+                    scrollToIndex={this.state.messages.length}
+                    scrollToAlignment="end"
                 />
               )}
             </AutoSizer>
