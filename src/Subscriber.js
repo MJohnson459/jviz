@@ -23,20 +23,21 @@ class Subscriber extends Component {
         super(props);
         console.log('Constructing Subscriber');
 
+        this.updateDuration = 500; //ms
+        this.messageBuffer = [];
+
         this.state = {
             messages: [],
             message: {},
             scrolled: false,
         }
 
+        this.nextUpdate = Date.now() + this.updateDuration; // ms
+
         this.subscribe();
         this.rowRenderer = this.rowRenderer.bind(this);
         this.onRowsRendered = this.onRowsRendered.bind(this);
     }
-
-    // componentWillUnmount() {
-    //     // this.subscriber.unsubscribe();
-    // }
 
     subscribe() {
         console.log("this.props: ", this.props)
@@ -47,10 +48,21 @@ class Subscriber extends Component {
         });
 
         this.subscriber.subscribe((message) => {
-            this.setState(prevState => ({
-                messages: [...prevState.messages, message],
-                message: message,
-          }));
+            this.messageBuffer = [...this.messageBuffer, message];
+            console.log("messagebuffer", this.messageBuffer);
+
+            // Check if time to update
+            if (Date.now() >= this.nextUpdate) {
+
+                this.setState(prevState => ({
+                    messages: [...prevState.messages, ...this.messageBuffer],
+                    message: message,
+                }));
+
+                // Clear buffer
+                this.messageBuffer = [];
+                this.nextUpdate = Date.now() + this.updateDuration;
+            }
         });
     }
 
