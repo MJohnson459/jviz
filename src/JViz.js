@@ -67,7 +67,7 @@ class JViz extends Component {
       <div className="JViz">
         <div className="JViz-side">
             <NodeList ros={this.props.ros} hidden={true} />
-            <TopicList ros={this.props.ros} createSubscriber={this.addSubscriber} hidden={true} />
+            <TopicList ros={this.props.ros} createSubscriber={this.addSubscriber} hidden={false} />
         </div>
 
         <ResponsiveReactGridLayout
@@ -75,6 +75,7 @@ class JViz extends Component {
             breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
             cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}
             rowHeight={30}
+            draggableCancel=".WidgetMain"
             onLayoutChange={(layout, layouts) => {
                 this.setState({
                     layouts: layouts,

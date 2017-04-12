@@ -66,6 +66,7 @@ class Subscriber extends Component {
         });
     }
 
+    // draw a single message row
     rowRenderer({
       key,         // Unique key within array of rows
       index,       // Index of row within collection
@@ -108,7 +109,7 @@ class Subscriber extends Component {
 
         return (
         <Widget {...this.props} name={this.props.topic}>
-            <div>{this.state.messages.length}</div>
+
             <div style={{ flex: '1 1 auto' }}>
             <AutoSizer>
               {({ height, width }) => (
@@ -125,6 +126,7 @@ class Subscriber extends Component {
               )}
             </AutoSizer>
             </div>
+            <div style={{margin: 5}}>Received: {this.state.messages.length}</div>
             {this.props.children}
         </Widget>
         );
