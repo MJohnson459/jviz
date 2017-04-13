@@ -37,6 +37,17 @@ class Subscriber extends Component {
         this.subscribe();
         this.rowRenderer = this.rowRenderer.bind(this);
         this.onRowsRendered = this.onRowsRendered.bind(this);
+        this.calculateRowHeight = this.calculateRowHeight.bind(this);
+    }
+
+    calculateRowHeight({
+        index
+    }) {
+        const rowHeight = 15;
+        const message = this.state.messages[index];
+        const yamlMessage = YAML.stringify(message, 2);
+        const size = yamlMessage.split(/\r\n|\r|\n/).length
+        return  size * rowHeight;
     }
 
     subscribe() {
@@ -115,7 +126,7 @@ class Subscriber extends Component {
               {({ height, width }) => (
                 <List
                     height={height}
-                    rowHeight={60}
+                    rowHeight={this.calculateRowHeight}
                     rowCount={this.state.messages.length}
                     rowRenderer={this.rowRenderer}
                     width={width}
