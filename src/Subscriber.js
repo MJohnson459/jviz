@@ -5,7 +5,7 @@ import Widget from './Widget.js';
 import YAML from 'yamljs';
 import { Scrollbars } from 'react-custom-scrollbars';
 import './styles/dark.css';
-import {List, AutoSizer} from 'react-virtualized'
+import {List, AutoSizer} from 'react-virtualized';
 
 function Message(props) {
     return (
@@ -122,20 +122,20 @@ class Subscriber extends Component {
         <Widget {...this.props} name={this.props.topic}>
 
             <div style={{ flex: '1 1 auto' }}>
-            <AutoSizer>
-              {({ height, width }) => (
-                <List
-                    height={height}
-                    rowHeight={this.calculateRowHeight}
-                    rowCount={this.state.messages.length}
-                    rowRenderer={this.rowRenderer}
-                    width={width}
-                    onRowsRendered={this.onRowsRendered}
-                    {...scroll}
+                <AutoSizer>
+                  {({ height, width }) => (
+                    <List
+                        height={height}
+                        rowHeight={this.calculateRowHeight}
+                        rowCount={this.state.messages.length}
+                        rowRenderer={this.rowRenderer}
+                        width={width}
+                        onRowsRendered={this.onRowsRendered}
+                        {...scroll}
 
-                />
-              )}
-            </AutoSizer>
+                    />
+                  )}
+                </AutoSizer>
             </div>
             <div style={{margin: 5}}>Received: {this.state.messages.length}</div>
             {this.props.children}
