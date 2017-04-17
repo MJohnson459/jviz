@@ -24,9 +24,16 @@ class NodeGraph extends Component {
 
         this.props.ros.getNodes((list) => {
           // console.log(list);
+            var edges = [];
+            var nodes = {};
+            this.props.ros.getNodeDetails(list[0], (publications, subscriptions, services) => {
+                edges = publications.map((pub) => {
+                    return {from: list[0], to: pub}
+                })
+            });
 
             this.setState({
-                nodes: list.map((node)=> {
+                nodes: list.map((node) => {
                     return {id: node, label: node}
                 }),
                 edges: list.map((node, i) => {
@@ -55,7 +62,7 @@ class NodeGraph extends Component {
         };
         return (
         <Widget {...this.props} name="Node Graph">
-            <Graph graph={{nodes: this.state.nodes, edges: this.state.edges}} options={options} />
+            <Graph graph={{nodes: this.state.nodes, edges: this.state.edges}} options={options} style={{width: "100%", height: "100%"}}/>
 
 
             {this.props.children}
