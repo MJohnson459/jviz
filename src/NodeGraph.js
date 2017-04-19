@@ -17,7 +17,14 @@ class NodeGraph extends Component {
             topics: [],
             edges: [],
             hierarchical: false,
+            debug: true,
         }
+
+        this.debugNodes = [
+            "/rosout",
+            "/rosout_agg",
+            "/rosapi",
+        ];
 
         this.updateNodeList = this.updateNodeList.bind(this);
         this.drawNode = this.drawNode.bind(this);
@@ -29,14 +36,15 @@ class NodeGraph extends Component {
         console.log('NodeList updateNodeList');
 
         this.props.ros.getNodes((list) => {
+
           // console.log(list);
             var edges = [];
             var nodes = [];
 
             list.map((node) => {
                 const node_id = "n_" + node;
+
                 this.props.ros.getNodeDetails(node, (details) => {
-                    console.log("details", node, details);
                     var edges = [];
 
                     details.publishing.map((topic) => {
@@ -50,13 +58,9 @@ class NodeGraph extends Component {
                     this.setState(prevState => ({
                         edges: [...prevState.edges, ...edges],
                     }));
-
-                    console.log("edges", edges);
-
                 });
 
                 nodes.push({id: node_id, label: node, shape: "box", group: "node"});
-                console.log("nodes", nodes);
             });
 
             this.setState(prevState => ({
@@ -68,8 +72,6 @@ class NodeGraph extends Component {
         });
 
         this.props.ros.getTopics((topics) => {
-            console.log(topics);
-
             const topicNodes = topics.topics.map((topic) =>
                 {
                     return {id: "t_" + topic, label: topic, shape: "ellipse", group: "topic"}
@@ -89,13 +91,25 @@ class NodeGraph extends Component {
 
     render() {
         console.log('Rendering NodeGraph');
+
+        var nodes = this.state.nodes;
+        var edges = this.state.edges;
+
+        if (this.state.debug) {
+            nodes = nodes.filter((node)=> {
+                return !this.debugNodes.includes(node.label);
+            })
+            edges = edges.filter((edge)=> {
+                return !this.debugNodes.includes(edge.from) &&
+                    !this.debugNodes.includes(edge.to);
+            })
+        }
+
         return (
         <Widget {...this.props} name="Node Graph">
             <div style={{ flex: '1 1 auto' }}>
                 <AutoSizer>
                   {({ height, width }) => {
-                      console.log("resized");
-
                       const options = {
                           layout: {
                               hierarchical: {
@@ -142,7 +156,7 @@ class NodeGraph extends Component {
                           width: width + 'px',
                       };
                       return (
-                          <Graph graph={{nodes: this.state.nodes, edges: this.state.edges}} options={options} style={{height: height, width: width}}/>
+                          <Graph graph={{nodes: nodes, edges: edges}} options={options} style={{height: height, width: width}}/>
                   )}}
                 </AutoSizer>
             </div>
@@ -153,6 +167,7 @@ class NodeGraph extends Component {
             <div style={{height: 25}}>
                 <span style={{height: 20, backgroundColor: "rgba(122, 192, 210, 0.86)", margin: 1, padding: 4, cursor: "pointer"}} onClick={this.updateNodeList}>refresh</span>
                 <span style={{height: 20, backgroundColor: "rgba(128, 177, 18, 0.67)", margin: 1, padding: 4, cursor: "pointer"}} onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
+                <span style={{height: 20, backgroundColor: "rgba(177, 147, 18, 0.67)", margin: 1, padding: 4, cursor: "pointer"}} onClick={() => {this.setState({debug: !this.state.debug})}}>{this.state.debug ? "debug" : "all"}</span>
             </div>
         </Widget>
         );
