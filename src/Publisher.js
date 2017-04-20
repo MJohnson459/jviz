@@ -4,6 +4,26 @@ import Widget from './Widget.js'
 
 class Publisher extends Component {
 
+    constructor(props) {
+        super(props);
+        console.log('Constructing Publisher');
+
+        this.state = {
+            topic: "-1",
+            count: 0,
+            topics: {
+                topics: [],
+                types: [],
+            }
+        }
+
+        this.getTopics();
+
+        this.publish = this.publish.bind(this);
+        this.getTopics = this.getTopics.bind(this);
+        this.changeTopic = this.changeTopic.bind(this);
+    }
+
     publish() {
         console.log('Publishing ' + this.state.count);
         var message = new ROSLIB.Message({
@@ -16,39 +36,37 @@ class Publisher extends Component {
         });
     }
 
-    constructor(props) {
-        super();
-        console.log('Constructing Publisher');
-
-        const {ros, ...rest} = props;
-        this.ros = ros;
-
-        this.state = {
-            topic: '/listener', //props.topic,
-            messageType: 'std_msgs/String', //props.type,
-            count: 0,
-            topics: "",
-            props: rest,
-        }
-
-        this.publisher = new ROSLIB.Topic({
-            ros : this.ros,
-            name : this.state.topic,
-            messageType : this.state.messageType,
-        });
-
-        this.ros.getTopics((topicList) => {
+    getTopics() {
+        this.props.ros.getTopics((topicList) => {
             const listItems = topicList.topics.map((item, i) =>
                 <option key={item} value={topicList.types[i]}>{item}</option>
             );
             this.setState({
-                topics: listItems,
+                topics: topicList,
             });
             console.log('NodeList updateNodeList');
         });
-
-        this.publish = this.publish.bind(this);
     }
+
+    changeTopic(event) {
+        console.log(event)
+        const topic_index = event.target.value
+
+        this.setState({
+            topic: topic_index,
+        });
+
+        if (topic_index != -1) {
+            this.publisher = new ROSLIB.Topic({
+                ros : this.props.ros,
+                name : this.state.topics.topics[topic_index],
+                messageType : this.state.topics.types[topic_index],
+            });
+        } else {
+            this.publisher.unadvertise();
+        }
+    }
+
 
     render() {
         console.log('Rendering Publisher');
@@ -56,14 +74,21 @@ class Publisher extends Component {
         return (
         <Widget {...this.props} name="Publisher">
             <div className="Publisher">
-                <select>
-                {this.state.topics}
+                <select onChange={this.changeTopic}>
+                    <option key={null} value={-1}>select topic...</option>
+                {this.state.topics.topics.map((item, i) =>
+                    <option key={item} value={i}>{item}</option>
+                )}
                 </select>
-                <p>Topic: {this.state.topic}</p>
-                <p>Type: {this.state.messageType}</p>
-                <button onClick={this.publish}>
-                    publish {this.state.count}
-                </button>
+                { this.state.topic == -1 ||
+                <div>
+                    <p>Topic: {this.state.topics.topics[this.state.topic]}</p>
+                    <p>Type: {this.state.topics.types[this.state.topic]}</p>
+                    <button onClick={this.publish}>
+                        publish {this.state.count}
+                    </button>
+                </div>
+                }
                 {this.props.children}
             </div>
         </Widget>
