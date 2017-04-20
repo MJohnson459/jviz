@@ -4,6 +4,7 @@ import NodeList from './NodeList';
 import TopicList from './TopicList';
 import Publisher from './Publisher';
 import Subscriber from './Subscriber';
+import NodeGraph from './NodeGraph';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import "../node_modules/react-grid-layout/css/styles.css"
 import "../node_modules/react-resizable/css/styles.css"
@@ -63,6 +64,13 @@ class JViz extends Component {
         h: 6
     }
 
+    const topicGraphLayout = {i: 'nodegraph',
+        x: 3,
+        y: Infinity,
+        w: 4,
+        h: 12
+    }
+
     return (
       <div className="JViz">
         <div className="JViz-side">
@@ -83,6 +91,7 @@ class JViz extends Component {
                 console.log(layouts)
             }}>
             <Publisher key={'a'} ros={this.props.ros} data-grid={pubLayout}/>
+            <NodeGraph key={'nodegraph'} ros={this.props.ros} data-grid={topicGraphLayout} />
             {this.state.subscribers.map(this.createElement)}
         </ResponsiveReactGridLayout>
 
