@@ -114,10 +114,13 @@
 
 .SidebarItemMain {
     padding: 0px;
-    height: 350px;
+    max-height: 350px;
     vertical-align: middle;
     background-color: rgb(78, 84, 93);
     color: hsla(0,0%,100%,.7);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .SidebarItemHeader {
@@ -169,11 +172,30 @@
 .TopicList {
 }
 
+.TopicListFooter {
+    height: 30px;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
 .Message {
     margin: 0px;
     width: 100%;
     display: inline-block;
     border-bottom: 1px solid hsla(0,0%,100%,.06);
+}
+
+.smallButton {
+    height: 20px;
+    background-color: rgba(0,0,0, 0.2);
+    cursor: pointer;
+    padding:2px;
+    margin:3px;
+    border: 1px solid rgba(200, 200, 200, 0.2);
+}
+
+.smallButton:hover {
+    background-color: rgba(0,0,0, 0.4);
 }
 
 

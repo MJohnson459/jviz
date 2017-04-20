@@ -28,13 +28,19 @@ class TopicList extends Component {
         super(props);
         console.log('Constructing TopicList');
 
-        this.ros = props.ros;
-
         this.state = {
             topics: [],
         }
 
-        this.ros.getTopics((topics) => {
+        this.getTopics();
+
+        this.getTopics = this.getTopics.bind(this);
+        this.createElement = this.createElement.bind(this);
+
+    }
+
+    getTopics() {
+        this.props.ros.getTopics((topics) => {
             console.log(topics);
 
             var x = topics.topics.map((item, i) =>
@@ -51,13 +57,13 @@ class TopicList extends Component {
                 topics: x,
             });
         });
-
-        this.handleChange = this.handleChange.bind(this);
-        this.createSubscriber = props.createSubscriber;
     }
 
-    handleChange(event) {
-
+    createElement(el) {
+        return (<Topic key={el.topic} topic={el.topic} type={el.type} selected={el.selected} onClick={() =>  {
+                el.selected=true;
+                this.props.createSubscriber(el.topic, el.type);
+            }} />);
     }
 
     render() {
@@ -65,14 +71,14 @@ class TopicList extends Component {
 
         return (
         <SidebarItem name="Topic List">
-            <Scrollbars className="TopicList" style={{ height: "inherit" }}>
-                {this.state.topics.map((item, i) =>
-                    <Topic key={item.topic} topic={item.topic} type={item.type} selected={item.selected} onClick={() =>  {
-                            item.selected=true;
-                            this.createSubscriber(item.topic, item.type);
-                        }} />
-                )}
+            <Scrollbars className="TopicList" autoHeight autoHeightMax={350}>
+                {this.state.topics.map(this.createElement)}
             </Scrollbars>
+            <div className="TopicListFooter">
+                <div className="smallButton" onClick={this.getTopics}>
+                    refresh
+                </div>
+            </div>
         </SidebarItem>
         );
     }

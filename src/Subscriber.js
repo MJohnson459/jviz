@@ -60,7 +60,7 @@ class Subscriber extends Component {
 
         this.subscriber.subscribe((message) => {
             this.messageBuffer = [...this.messageBuffer, message];
-            console.log("messagebuffer", this.messageBuffer);
+            // console.log("messagebuffer", this.messageBuffer);
 
             // Check if time to update
             if (Date.now() >= this.nextUpdate) {
@@ -108,8 +108,9 @@ class Subscriber extends Component {
     }
 
     render() {
-        console.log('Rendering Subscriber', this.state.messages.length);
+        // console.log('Rendering Subscriber', this.state.messages.length);
 
+        // Auto-scroll at the bottom only if the user hasn't scrolled up
         var scroll = {}
         if (!this.state.scrolled) {
             scroll = {
