@@ -11,7 +11,7 @@ services:
 
   rosbridge-server:
     build: .
-    image: rosbridge-server
+    image: ros-jviz-test
     environment:
       ROS_MASTER_URI: "http://master:11311"
       ROS_HOSTNAME: "rosbridge-server"
@@ -21,20 +21,38 @@ services:
     depends_on:
       - master
 
-  listener:
-    image: ros:kinetic-robot
+  talker-one:
+    image: ros-jviz-test
     environment:
       ROS_MASTER_URI: "http://master:11311"
-      ROS_HOSTNAME: "listener"
-    command: rostopic echo /listener
+      ROS_HOSTNAME: "talker-one"
+    command: rosrun roscpp_tutorials talker __name:=talker_one
     depends_on:
       - master
 
-  publisher:
-    image: ros:kinetic-robot
+  talker-two:
+    image: ros-jviz-test
     environment:
       ROS_MASTER_URI: "http://master:11311"
-      ROS_HOSTNAME: "publisher"
-    command: rostopic pub /publisher std_msgs/UInt32 459 -r 1
+      ROS_HOSTNAME: "talker-two"
+    command: rosrun roscpp_tutorials talker __name:=talker_two
+    depends_on:
+      - master
+
+  listener-one:
+    image: ros-jviz-test
+    environment:
+      ROS_MASTER_URI: "http://master:11311"
+      ROS_HOSTNAME: "listener-one"
+    command: rosrun roscpp_tutorials listener __name:=listener_one
+    depends_on:
+      - master
+
+  listener-two:
+    image: ros-jviz-test
+    environment:
+      ROS_MASTER_URI: "http://master:11311"
+      ROS_HOSTNAME: "listener-two"
+    command: rosrun roscpp_tutorials listener __name:=listener_two
     depends_on:
       - master
