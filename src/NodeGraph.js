@@ -20,16 +20,22 @@ class NodeGraph extends Component {
             debug: true,
         }
 
-        this.debugNodes = [
-            "/rosout",
-            "/rosout_agg",
-            "/rosapi",
+        this.quietNames = [
+            '/diag_agg', '/runtime_logger', '/pr2_dashboard', '/rviz', '/rosout', '/cpu_monitor', '/monitor', '/hd_monitor', '/rxloggerlevel', '/clock', '/rqt', '/statistics', '/rosapi','/rosout_agg',
         ];
 
         this.updateNodeList = this.updateNodeList.bind(this);
         this.drawNode = this.drawNode.bind(this);
 
         this.updateNodeList();
+    }
+
+    getNamespace(node) {
+        const names = node.split('/')
+        if (names.length > 1) {
+            return names[0];
+        }
+        return '';
     }
 
     updateNodeList() {
@@ -40,6 +46,7 @@ class NodeGraph extends Component {
           // console.log(list);
             var edges = [];
             var nodes = [];
+            var namespaces = [];
 
             list.map((node) => {
                 const node_id = "n_" + node;
@@ -60,7 +67,7 @@ class NodeGraph extends Component {
                     }));
                 });
 
-                nodes.push({id: node_id, label: node, shape: "box", group: "node"});
+                nodes.push({id: node_id, label: node, shape: "box", group: "nodes"});
             });
 
             this.setState(prevState => ({
@@ -97,11 +104,11 @@ class NodeGraph extends Component {
 
         if (this.state.debug) {
             nodes = nodes.filter((node)=> {
-                return !this.debugNodes.includes(node.label);
+                return !this.quietNames.includes(node.label);
             })
             edges = edges.filter((edge)=> {
-                return !this.debugNodes.includes(edge.from) &&
-                    !this.debugNodes.includes(edge.to);
+                return !this.quietNames.includes(edge.from) &&
+                    !this.quietNames.includes(edge.to);
             })
         }
 
