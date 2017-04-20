@@ -67,7 +67,7 @@ class NodeGraph extends Component {
                     }));
                 });
 
-                nodes.push({id: node_id, label: node, shape: "box", group: "nodes"});
+                nodes.push({id: node_id, label: node, shape: "box", group: "node"});
             });
 
             this.setState(prevState => ({
@@ -132,10 +132,13 @@ class NodeGraph extends Component {
                           nodes: {
                               color: {
                                   border: 'rgb(50, 185, 210)',
-                                  background: 'rgb(100, 185, 210)',
-                                  highlight: 'rgb(150, 185, 210)',
+                                  background: 'rgba(122, 192, 210, 0.9)',
+                                  highlight: 'rgba(177, 147, 18, 0.9)',
                                   hover: 'rgb(150, 185, 210)',
                               },
+                              font: {
+                                  color: 'rgb(223, 223, 223)',
+                              }
                           },
                           interaction: {
                               hover: true,
@@ -143,19 +146,18 @@ class NodeGraph extends Component {
                           groups: {
                               node: {
                                   color: {
-                                      border: 'rgb(50, 185, 210)',
-                                      background: 'rgb(100, 185, 210)',
-                                      highlight: 'rgb(150, 185, 210)',
-                                      hover: 'rgb(150, 185, 210)',
+                                      border: 'rgba(122, 192, 210, 0.99)',
+                                      background: 'rgba(122, 192, 210, 0.9)',
+                                      highlight: 'rgba(177, 147, 18, 0.9)',
+                                      hover: 'rgba(150, 185, 210, 0.9)',
                                   },
                               },
                               topic: {
                                   color: {
-                                      border: 'rgb(50, 140, 210)',
-                                      background: 'rgb(80, 150, 210)',
-                                      highlight: 'rgb(120, 170, 210)',
+                                      border: 'rgba(128, 177, 18, 0.99)',
+                                      background: 'rgba(128, 177, 18, 0.9)',
+                                      highlight: 'rgba(177, 147, 18, 0.9)',
                                       hover: 'rgb(150, 185, 210)',
-
                                   },
                               },
                           },
