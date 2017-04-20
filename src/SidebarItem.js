@@ -19,8 +19,8 @@ class SidebarItem extends Component {
     return (
         <div {...this.props} className={'SidebarItem'} >
             <div className={'SidebarItemHeader'} onClick={this.onRequestHide}>
-                <div className={'SidebarItemHeaderName'}>{this.state.name}</div>
-                <div className={'SidebarItemHeaderClose'} onClick={this.props.onRequestHide}>X</div>
+                <div className={'HeaderName'}>{this.state.name}</div>
+                <div className={'HeaderClose'} onClick={this.props.onRequestHide}>X</div>
             </div>
             { this.state.hidden ||
                 <div className={'SidebarItemMain'}>
