@@ -65,7 +65,7 @@ class JViz extends Component {
     }
 
     const topicGraphLayout = {i: 'nodegraph',
-        x: 3,
+        x: 2,
         y: Infinity,
         w: 4,
         h: 12

@@ -173,7 +173,7 @@
 }
 
 .TopicListFooter {
-    height: 30px;
+    height: 25px;
     display: flex;
     flex-direction: row-reverse;
 }
@@ -186,18 +186,11 @@
 }
 
 .smallButton {
-    height: 20px;
-    background-color: rgba(0,0,0, 0.2);
+    background-color: rgba(122, 192, 210, 0.86);
     cursor: pointer;
-    padding:2px;
-    margin:3px;
-    border: 1px solid rgba(200, 200, 200, 0.2);
+    padding: 4px;
+    margin: 1px;
 }
-
-.smallButton:hover {
-    background-color: rgba(0,0,0, 0.4);
-}
-
 
 
 @keyframes App-logo-spin {
