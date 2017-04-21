@@ -9,9 +9,12 @@ import YAML from 'yamljs';
 function MessageType(props) {
     return (
         <div style={{backgroundColor: "#444444", padding: 5, margin: 3}}>
-            <SyntaxHighlighter  language="yaml" className="Message" useInlineStyles={false}>
-                {YAML.stringify(props.ros.decodeTypeDefs(props.message), 2)}
-            </SyntaxHighlighter>
+            {
+                props.message.map((messageDef)=>{
+                return messageDef.fieldnames.map((field)=>{
+                    return (<div>{field}</div>);
+                });
+            })}
         </div>
     )
 }
@@ -30,6 +33,7 @@ class Publisher extends Component {
                 types: [],
             },
             messageDetails: "",
+            connected: false,
         }
 
         this.getTopics();
@@ -69,6 +73,7 @@ class Publisher extends Component {
 
         this.setState({
             topic: topic_index,
+            connected: false,
         });
 
         if (topic_index != -1) {
@@ -81,12 +86,11 @@ class Publisher extends Component {
             });
 
             this.props.ros.getMessageDetails(topicType, (details)=>{
-                const decodedMessage = this.props.ros.decodeTypeDefs(details);
                 this.setState({
                     messageDetails: details,
+                    connected: true,
                 })
-                console.log("decoded details", decodedMessage)
-                console.log("msg details", details)
+                console.log("messageDetails", details)
             }, (message)=>{
                 console.log(topicType)
                 console.log("msg details FAILED", topicType, message)
@@ -112,7 +116,7 @@ class Publisher extends Component {
                     <option key={item} value={i}>{item}</option>
                 )}
                 </select>
-                { this.state.topic == -1 ||
+                { !this.state.connected ||
                 <div>
                     <p>Topic: {this.state.topics.topics[this.state.topic]}</p>
                     <p>Type: {this.state.topics.types[this.state.topic]}</p>
