@@ -2,6 +2,20 @@ import React, { Component } from 'react';
 import ROSLIB from 'roslib';
 import Widget from './Widget.js'
 
+// MessageType
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import YAML from 'yamljs';
+
+function MessageType(props) {
+    return (
+        <div style={{backgroundColor: "#444444", padding: 5, margin: 3}}>
+            <SyntaxHighlighter  language="yaml" className="Message" useInlineStyles={false}>
+                {YAML.stringify(props.ros.decodeTypeDefs(props.message), 2)}
+            </SyntaxHighlighter>
+        </div>
+    )
+}
+
 class Publisher extends Component {
 
     constructor(props) {
@@ -14,7 +28,8 @@ class Publisher extends Component {
             topics: {
                 topics: [],
                 types: [],
-            }
+            },
+            messageDetails: "",
         }
 
         this.getTopics();
@@ -57,11 +72,28 @@ class Publisher extends Component {
         });
 
         if (topic_index != -1) {
+            const topicName = this.state.topics.topics[topic_index];
+            const topicType = this.state.topics.types[topic_index];
             this.publisher = new ROSLIB.Topic({
                 ros : this.props.ros,
-                name : this.state.topics.topics[topic_index],
-                messageType : this.state.topics.types[topic_index],
+                name : topicName,
+                messageType : topicType,
             });
+
+            this.props.ros.getMessageDetails(topicType, (details)=>{
+                const decodedMessage = this.props.ros.decodeTypeDefs(details);
+                this.setState({
+                    messageDetails: details,
+                })
+                console.log("decoded details", decodedMessage)
+                console.log("msg details", details)
+            }, (message)=>{
+                console.log(topicType)
+                console.log("msg details FAILED", topicType, message)
+            });
+
+
+
         } else {
             this.publisher.unadvertise();
         }
@@ -84,6 +116,7 @@ class Publisher extends Component {
                 <div>
                     <p>Topic: {this.state.topics.topics[this.state.topic]}</p>
                     <p>Type: {this.state.topics.types[this.state.topic]}</p>
+                    <MessageType ros={this.props.ros} message={this.state.messageDetails} />
                     <button onClick={this.publish}>
                         publish {this.state.count}
                     </button>
