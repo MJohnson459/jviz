@@ -6,17 +6,64 @@ import Widget from './Widget.js'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import YAML from 'yamljs';
 
-function MessageType(props) {
-    return (
-        <div style={{backgroundColor: "#444444", padding: 5, margin: 3}}>
-            {
-                props.message.map((messageDef)=>{
-                return messageDef.fieldnames.map((field)=>{
-                    return (<div>{field}</div>);
-                });
-            })}
-        </div>
-    )
+class MessageType extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.primitives = [
+            "byte",
+            "bool",
+            "int8",
+            "uint8",
+            "int16",
+            "uint16",
+            "int32",
+            "uint32",
+            "int64",
+            "uint64",
+            "float32",
+            "float64",
+            "string",
+            //time           // API gives time definition
+            //duration      // API gives duration definition
+        ];
+
+        this.displayMessage = this.displayMessage.bind(this);
+    }
+
+    displayMessage(messages, index) {
+        const message = messages[index];
+        return message.fieldtypes.map((field, i)=>{
+            if (this.primitives.includes(field)) {
+                return (
+                    <div style={{display: "flex", marginLeft: 5*index}}>
+                        <span style={{marginRight: 5}}>{message.fieldnames[i]}: </span>
+                        <input className="MessageTypeInput" value={message.examples[i]} style={{width: "100%" }}></input>
+                    </div>
+                );
+            } else {
+                return(
+                    <div style={{marginLeft: 5*index}}>
+                        <span style={{marginRight: 5}}>{message.fieldnames[i]}: </span>
+                        {this.displayMessage(messages, ++index)}
+                    </div>
+
+                )
+            }
+        })
+    }
+
+    render() {
+        const messages = this.props.message;
+
+        return (
+            <div style={{backgroundColor: "#444444", padding: 5, overflowY: "auto"}}>
+                {this.displayMessage(messages, 0)}
+            </div>
+        )
+    }
+
 }
 
 class Publisher extends Component {
@@ -110,20 +157,23 @@ class Publisher extends Component {
         return (
         <Widget {...this.props} name="Publisher">
             <div className="Publisher">
-                <select onChange={this.changeTopic}>
+                <select className="MessageTypeInput" onChange={this.changeTopic} style={{height: 25, flex: "0 0 2em"}}>
                     <option key={null} value={-1}>select topic...</option>
                 {this.state.topics.topics.map((item, i) =>
                     <option key={item} value={i}>{item}</option>
                 )}
                 </select>
                 { !this.state.connected ||
-                <div>
-                    <p>Topic: {this.state.topics.topics[this.state.topic]}</p>
-                    <p>Type: {this.state.topics.types[this.state.topic]}</p>
+                <div style={{display: "flex", flexDirection: "column"}}>
                     <MessageType ros={this.props.ros} message={this.state.messageDetails} />
-                    <button onClick={this.publish}>
-                        publish {this.state.count}
-                    </button>
+                    <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row-reverse"}}>
+                        <div className="smallButton" onClick={this.publish} >
+                            publish {this.state.count}
+                        </div>
+                        <div className="smallButton" onClick={this.publish} style={{backgroundColor: "rgba(128, 177, 18, 0.67)"}} >
+                            repeat
+                        </div>
+                    </div>
                 </div>
                 }
                 {this.props.children}
