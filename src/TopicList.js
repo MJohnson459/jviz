@@ -7,16 +7,22 @@ import SidebarItem from './SidebarItem.js'
 function Topic(props) {
     if (props.selected) {
         return (
-            <div onClick={props.onClick} className={'Topic Active'} >
-                <p style={{margin: 5, padding: 0, height: 20}}>{props.topic}</p>
-                <p style={{margin: 5, padding: 0, height: 20}}>{props.type}</p>
+            <div onClick={props.onClick} className={'Topic'} >
+                <div className="TopicSelected Active"></div>
+                <div>
+                    <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
+                    <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
+                </div>
             </div>
         )
     } else {
         return (
             <div onClick={props.onClick} className={'Topic'} >
-                <p style={{margin: 5, padding: 0, height: 20}}>{props.topic}</p>
-                <p style={{margin: 5, padding: 0, height: 20}}>{props.type}</p>
+                <div className="TopicSelected"></div>
+                <div>
+                    <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
+                    <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
+                </div>
             </div>
         )
     }

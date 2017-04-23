@@ -105,8 +105,7 @@
 }
 
 .SidebarItem {
-    border-bottom: 1px solid hsla(0,0%,100%,.06);
-    border-right: 1px solid hsla(0,0%,100%,.06);
+    border-top: 1px solid hsla(0,0%,100%,.06);
     padding: 0px;
     display: flex;
     flex-direction: column;
@@ -116,7 +115,6 @@
     padding: 0px;
     max-height: 350px;
     vertical-align: middle;
-    background-color: rgb(78, 84, 93);
     color: hsla(0,0%,100%,.7);
     display: flex;
     flex-direction: column;
@@ -154,19 +152,24 @@
 
 .Topic {
     height: 60px;
-    background-color: rgb(78, 84, 93);
     border: 0px;
-    border-bottom: 1px solid hsla(0,0%,100%,.06);
     border-style: solid;
     color: hsla(0,0%,100%,.6);
-    border-left: 3px solid rgba(2, 150, 245, 0.6);
     padding: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.TopicSelected {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(2, 150, 245, 0.2);
+    margin-right: 10px;
 }
 
 .Active {
-    border-left: rgb(2, 187, 245);
-    border-left-style: solid;
-    border-left-width: 3px;
+    background-color: rgba(66, 199, 240, 0.8);
 }
 
 .TopicList {
