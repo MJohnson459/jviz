@@ -50,7 +50,18 @@ class JViz extends Component {
         };
         console.log(el)
         return (
-            <Subscriber key={el.topic} data-grid={el.layout} ros={this.props.ros} topic={el.topic} type={el.type}/>
+            <Subscriber key={el.topic} data-grid={el.layout} ros={this.props.ros} topic={el.topic} type={el.type} onRequestClose={() => {
+                    console.log("removing", el.topic)
+
+                    const subscribers = this.state.subscribers.filter((item)=>{
+                        console.log("comparison", item.topic, el.topic, item.topic !== el.topic)
+                        return item.topic !== el.topic;
+                    });
+
+                    this.setState({
+                        subscribers: subscribers,
+                    })
+                }}/>
         );
     }
 
