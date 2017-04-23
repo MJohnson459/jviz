@@ -6,62 +6,101 @@ import Widget from './Widget.js'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import YAML from 'yamljs';
 
+class MessageHeader extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            auto: true,
+        }
+    }
+
+    render() {
+        const message = this.props.messages[this.props.index];
+        return (
+            <div>
+                <span style={{marginRight: 5}}>{this.props.name}: </span>
+                    <select className="MessageTypeInput" onChange={(event)=>this.setState({auto: !this.state.auto})}>
+                        <option>auto</option>
+                        <option>manual</option>
+                    </select>
+                    {
+                        this.state.auto ||
+                        <MessageFields messages={this.props.messages} index={this.props.index} />
+                    }
+            </div>
+        )
+    }
+}
+
+function MessageField(props) {
+    return (
+        <div style={{display: "flex"}}>
+            <span style={{marginRight: 5}}>{props.name}: </span>
+            <input className="MessageTypeInput" value={props.example} style={{width: "100%" }} />
+        </div>
+    )
+}
+
+function MessageFields(props) {
+    const message = props.messages[props.index];
+    const primitives = [
+        "byte",
+        "bool",
+        "int8",
+        "uint8",
+        "int16",
+        "uint16",
+        "int32",
+        "uint32",
+        "int64",
+        "uint64",
+        "float32",
+        "float64",
+        "string",
+        //time           // API gives time definition
+        //duration      // API gives duration definition
+    ];
+
+    const x = message.fieldtypes.map((field, i)=>{
+        if (primitives.includes(field)) {
+            return (
+                <MessageField name={message.fieldnames[i]} example={message.examples[i]} />
+            );
+        } else if (field == "std_msgs/Header") {
+            return (
+                <MessageHeader name={message.fieldnames[i]} messages={props.messages} index={props.index + 1} />
+            )
+        } else {
+            return (
+                <MessageType name={message.fieldnames[i]} messages={props.messages} index={props.index + 1}/>
+            )
+        }
+    })
+
+    return (
+        <div style={{marginLeft: 10}}>{x}</div>
+    )
+}
+
 class MessageType extends Component {
 
     constructor(props) {
         super(props);
 
-        this.primitives = [
-            "byte",
-            "bool",
-            "int8",
-            "uint8",
-            "int16",
-            "uint16",
-            "int32",
-            "uint32",
-            "int64",
-            "uint64",
-            "float32",
-            "float64",
-            "string",
-            //time           // API gives time definition
-            //duration      // API gives duration definition
-        ];
 
-        this.displayMessage = this.displayMessage.bind(this);
-    }
 
-    displayMessage(messages, index) {
-        const message = messages[index];
-        return message.fieldtypes.map((field, i)=>{
-            if (this.primitives.includes(field)) {
-                return (
-                    <div style={{display: "flex", marginLeft: 5*index}}>
-                        <span style={{marginRight: 5}}>{message.fieldnames[i]}: </span>
-                        <input className="MessageTypeInput" value={message.examples[i]} style={{width: "100%" }}></input>
-                    </div>
-                );
-            } else {
-                return(
-                    <div style={{marginLeft: 5*index}}>
-                        <span style={{marginRight: 5}}>{message.fieldnames[i]}: </span>
-                        {this.displayMessage(messages, ++index)}
-                    </div>
-
-                )
-            }
-        })
     }
 
     render() {
-        const messages = this.props.message;
+        console.log("props", this.props)
 
         return (
-            <div style={{backgroundColor: "#444444", padding: 5, overflowY: "auto"}}>
-                {this.displayMessage(messages, 0)}
+            <div>
+                <span style={{marginRight: 5}}>{this.props.name}: </span>
+                <MessageFields messages={this.props.messages} index={this.props.index} />
             </div>
-        )
+        );
     }
 
 }
@@ -165,7 +204,10 @@ class Publisher extends Component {
                 </select>
                 { !this.state.connected ||
                 <div style={{display: "flex", flexDirection: "column"}}>
-                    <MessageType ros={this.props.ros} message={this.state.messageDetails} />
+                    <div style={{backgroundColor: "#444444", padding: 5, overflowY: "auto"}}>
+                        <MessageType name={this.state.messageDetails[0].type} messages={this.state.messageDetails} index={0} indent={0} />
+                    </div>
+
                     <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row-reverse"}}>
                         <div className="smallButton" onClick={this.publish} >
                             publish {this.state.count}
