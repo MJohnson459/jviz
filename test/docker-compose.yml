@@ -56,3 +56,12 @@ services:
     command: rosrun roscpp_tutorials listener __name:=listener_two
     depends_on:
       - master
+
+  image-publisher:
+    image: ros-jviz-test
+    environment:
+      ROS_MASTER_URI: "http://master:11311"
+      ROS_HOSTNAME: "image-publisher"
+    command: rosrun image_transport_tutorial publisher /catkin_ws/image.jpeg
+    depends_on:
+      - master
