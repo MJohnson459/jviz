@@ -1,4 +1,10 @@
+[![Build Status](https://travis-ci.org/MJohnson459/jviz.svg?branch=master)](https://travis-ci.org/MJohnson459/jviz) 
+[![Dependency Status](https://david-dm.org/MJohnson459/jviz.svg)](https://david-dm.org/MJohnson459/jviz) 
+[![devDependency Status](https://david-dm.org/MJohnson459/jviz/dev-status.svg)](https://david-dm.org/MJohnson459/jviz#info=devDependencies)
+
 Demo https://mjohnson459.github.io/jviz/
+
+---
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
