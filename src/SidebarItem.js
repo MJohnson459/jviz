@@ -12,7 +12,7 @@ class SidebarItem extends Component {
   }
 
   onRequestHide() {
-      const hidden = this.state.hidden;
+
   }
 
   render() {

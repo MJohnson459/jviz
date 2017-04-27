@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import ROSLIB from 'roslib';
 import { Scrollbars } from 'react-custom-scrollbars';
-import Subscriber from './Subscriber';
 import SidebarItem from './SidebarItem.js'
 
 function Topic(props) {

@@ -53,9 +53,6 @@ class Publisher extends Component {
 
     getTopics() {
         this.props.ros.getTopics((topicList) => {
-            const listItems = topicList.topics.map((item, i) =>
-                <option key={item} value={topicList.types[i]}>{item}</option>
-            );
             this.setState({
                 topics: topicList,
             });
@@ -71,7 +68,7 @@ class Publisher extends Component {
             topic: topic_index,
         });
 
-        if (topic_index != -1) {
+        if (topic_index !== -1) {
             const topicName = this.state.topics.topics[topic_index];
             const topicType = this.state.topics.types[topic_index];
             this.publisher = new ROSLIB.Topic({
@@ -112,7 +109,7 @@ class Publisher extends Component {
                     <option key={item} value={i}>{item}</option>
                 )}
                 </select>
-                { this.state.topic == -1 ||
+                { this.state.topic === -1 ||
                 <div>
                     <p>Topic: {this.state.topics.topics[this.state.topic]}</p>
                     <p>Type: {this.state.topics.types[this.state.topic]}</p>
