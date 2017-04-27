@@ -4,6 +4,9 @@ node_js:
 cache:
   directories:
     - node_modules
+env:
+  global:
+    - CI=false
 script:
   - npm test
   - npm run build
