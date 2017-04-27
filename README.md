@@ -1,6 +1,7 @@
-[![Build Status](https://travis-ci.org/MJohnson459/jviz.svg?branch=master)](https://travis-ci.org/MJohnson459/jviz) 
-[![Dependency Status](https://david-dm.org/MJohnson459/jviz.svg)](https://david-dm.org/MJohnson459/jviz) 
+[![Build Status](https://travis-ci.org/MJohnson459/jviz.svg?branch=master)](https://travis-ci.org/MJohnson459/jviz)
+[![Dependency Status](https://david-dm.org/MJohnson459/jviz.svg)](https://david-dm.org/MJohnson459/jviz)
 [![devDependency Status](https://david-dm.org/MJohnson459/jviz/dev-status.svg)](https://david-dm.org/MJohnson459/jviz#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/github/MJohnson459/jviz/badge.svg?branch=master)](https://coveralls.io/github/MJohnson459/jviz?branch=master)
 
 Demo https://mjohnson459.github.io/jviz/
 
