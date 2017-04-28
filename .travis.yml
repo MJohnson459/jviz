@@ -4,8 +4,8 @@ node_js:
 cache:
   directories:
     - node_modules
-env:
-  - CI=false
+
 script:
   - npm test
+  - unset CI
   - npm run build
