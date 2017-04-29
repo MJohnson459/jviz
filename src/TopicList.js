@@ -6,33 +6,24 @@ import Publisher from './Publisher.js'
 import Subscriber from './Subscriber.js'
 
 function Topic(props) {
-    if (props.selected) {
-        return (
-            <div className={'Topic'} >
-                <div classname='TopicOptions'>
-                  <div className="TopicButton Active" onClick={props.createSubscriber}>Subscribe</div>
-                  <div className="TopicButton Active" onClick={props.createPublisher}>Publish</div>
-                </div>
-                <div>
-                    <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
-                    <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
-                </div>
+
+    const subClassName = "SmallButton ColorOne " + (props.subActive ? "Active" : "")
+    const pubClassName = "SmallButton ColorTwo " + (props.pubActive ? "Active" : "")
+
+    console.log("classnames", subClassName, pubClassName)
+
+    return (
+        <div className={'Topic'} >
+            <div style={{flex: 1}}>
+                <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
+                <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
             </div>
-        )
-    } else {
-        return (
-            <div className={'Topic'} >
-                <div classname='TopicOptions'>
-                  <div className="TopicButton" onClick={props.createSubscriber}>Subscribe</div>
-                  <div className="TopicButton" onClick={props.createPublisher}>Publish</div>
-                </div>
-                <div>
-                    <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
-                    <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
-                </div>
+            <div className='TopicOptions'>
+              <div className={subClassName} onClick={props.createSubscriber}>sub</div>
+              <div className={pubClassName} onClick={props.createPublisher}>pub</div>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 class TopicList extends Component {
@@ -99,7 +90,7 @@ class TopicList extends Component {
                 {this.state.topics.map(this.createElement)}
             </Scrollbars>
             <div className="TopicListFooter">
-                <div className="smallButton" onClick={this.getTopics}>
+                <div className="SmallButton ColorThree" onClick={this.getTopics}>
                     refresh
                 </div>
             </div>

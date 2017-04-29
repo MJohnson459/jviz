@@ -169,9 +169,9 @@ class NodeGraph extends Component {
 
             {this.props.children}
             <div style={{height: 25}}>
-                <span className={"smallButton"} style={{backgroundColor: "rgba(122, 192, 210, 0.86)"}} onClick={this.updateNodeList}>refresh</span>
-                <span className={"smallButton"} style={{backgroundColor: "rgba(128, 177, 18, 0.67)"}} onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
-                <span className={"smallButton"} style={{backgroundColor: "rgba(177, 147, 18, 0.67)"}} onClick={() => {this.setState({debug: !this.state.debug})}}>{this.state.debug ? "debug" : "all"}</span>
+                <span className='SmallButton ColorOne' onClick={this.updateNodeList}>refresh</span>
+                <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
+                <span className='SmallButton ColorThree' onClick={() => {this.setState({debug: !this.state.debug})}}>{this.state.debug ? "debug" : "all"}</span>
             </div>
         </Widget>
         );

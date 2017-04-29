@@ -19,15 +19,15 @@
 
 
 .ColorOne {
-  background-color: "rgba(122, 192, 210, 0.86)";
+  background-color: rgba(122, 192, 210, 0.86);
 }
 
 .ColorTwo {
-  background-color: "rgba(128, 177, 18, 0.67)";
+  background-color: rgba(128, 177, 18, 0.67);
 }
 
 .ColorThree {
-  background-color: "rgba(177, 147, 18, 0.67)";
+  background-color: rgba(177, 147, 18, 0.67);
 }
 
 
@@ -184,14 +184,6 @@
   flex-direction: column;
 }
 
-.TopicButton {
-    background-color: rgba(122, 192, 210, 0.86);
-    cursor: pointer;
-    padding: 4px;
-    margin: 1px;
-    user-select: none;
-}
-
 .TopicSelected {
     width: 30px;
     height: 30px;
@@ -220,8 +212,7 @@
     border-bottom: 1px solid hsla(0,0%,100%,.06);
 }
 
-.smallButton {
-    background-color: rgba(122, 192, 210, 0.86);
+.SmallButton {
     cursor: pointer;
     padding: 4px;
     margin: 1px;
