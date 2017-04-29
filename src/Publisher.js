@@ -93,21 +93,25 @@ class Publisher extends Component {
         super(props);
 
         this.state = {
-            topic: "-1",
             count: 0,
-            topics: {
-                topics: [],
-                types: [],
-            },
-            messageDetails: "",
-            connected: false,
+            messageDetails: null,
         }
 
-        this.getTopics();
+        this.publisher = new ROSLIB.Topic({
+            ros : this.props.ros,
+            name : this.props.topic,
+            messageType : this.props.type,
+        });
+
+        this.props.ros.getMessageDetails(this.props.type, (details)=>{
+            this.setState({
+                messageDetails: details,
+            })
+        }, (message)=>{
+            console.log("msg details FAILED", this.props.type, message)
+        });
 
         this.publish = this.publish.bind(this);
-        this.getTopics = this.getTopics.bind(this);
-        this.changeTopic = this.changeTopic.bind(this);
     }
 
     publish() {
@@ -121,71 +125,19 @@ class Publisher extends Component {
         });
     }
 
-    getTopics() {
-        this.props.ros.getTopics((topicList) => {
-            this.setState({
-                topics: topicList,
-            });
-        });
-    }
-
-    changeTopic(event) {
-        console.log(event)
-        const topic_index = event.target.value
-
-        this.setState({
-            topic: topic_index,
-            connected: false,
-        });
-
-        if (topic_index !== -1) {
-            const topicName = this.state.topics.topics[topic_index];
-            const topicType = this.state.topics.types[topic_index];
-            this.publisher = new ROSLIB.Topic({
-                ros : this.props.ros,
-                name : topicName,
-                messageType : topicType,
-            });
-
-            this.props.ros.getMessageDetails(topicType, (details)=>{
-                this.setState({
-                    messageDetails: details,
-                    connected: true,
-                })
-                console.log("messageDetails", details)
-            }, (message)=>{
-                console.log(topicType)
-                console.log("msg details FAILED", topicType, message)
-            });
-
-
-
-        } else {
-            this.publisher.unadvertise();
-        }
-    }
-
-
     render() {
         return (
             <div className="Publisher">
-                <select className="MessageTypeInput" onChange={this.changeTopic} style={{height: 25, flex: "0 0 2em"}}>
-                    <option key={null} value={-1}>select topic...</option>
-                {this.state.topics.topics.map((item, i) =>
-                    <option key={item} value={i}>{item}</option>
-                )}
-                </select>
-                { !this.state.connected ||
-                <div style={{display: "flex", flexDirection: "column"}}>
-                    <div style={{backgroundColor: "#444444", padding: 5, overflowY: "auto"}}>
-                        <MessageType name={this.state.messageDetails[0].type} messages={this.state.messageDetails} index={0} indent={0} />
-                    </div>
-
-                    <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row-reverse"}}>
-                        <div className="smallButton" onClick={this.publish} >
+                { this.state.messageDetails === null ||
+                <div style={{display: "flex", flexDirection: "column", flex: 1}}>
+                      <div style={{padding: 5, overflowY: "auto", flex: 1}}>
+                        <MessageType name={this.props.type} messages={this.state.messageDetails} index={0} indent={0} />
+                      </div>
+                      <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row"}}>
+                        <div className="SmallButton ColorOne" onClick={this.publish}>
                             publish {this.state.count}
                         </div>
-                        <div className="smallButton" onClick={this.publish} style={{backgroundColor: "rgba(128, 177, 18, 0.67)"}} >
+                        <div className="SmallButton ColorTwo" onClick={this.publish}>
                             repeat
                         </div>
                     </div>

@@ -71,7 +71,7 @@ class TopicList extends Component {
                 el.selected=true;
                 const id = 'pub_' + el.topic
                 this.props.createWidget(id, (
-                  <Publisher key={id} ros={this.props.ros}/>
+                  <Publisher key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
             ))}}
             />);
     }
