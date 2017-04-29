@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ROSLIB from 'roslib';
 import SidebarItem from './SidebarItem.js';
 import { Scrollbars } from 'react-custom-scrollbars';
 

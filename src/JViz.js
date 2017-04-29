@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ROSLIB from 'roslib';
 import NodeList from './NodeList';
 import TopicList from './TopicList';
 import Publisher from './Publisher';
@@ -9,7 +8,6 @@ import {Responsive, WidthProvider} from 'react-grid-layout';
 import "../node_modules/react-grid-layout/css/styles.css"
 import "../node_modules/react-resizable/css/styles.css"
 import './App.css';
-import Widget from './Widget.js'
 
 const ResponsiveReactGridLayout  = WidthProvider(Responsive);
 
@@ -42,15 +40,20 @@ class JViz extends Component {
     }
 
     createElement(el) {
-        var removeStyle = {
-            position: 'absolute',
-            right: '2px',
-            top: 0,
-            cursor: 'pointer'
-        };
         console.log(el)
         return (
-            <Subscriber key={el.topic} data-grid={el.layout} ros={this.props.ros} topic={el.topic} type={el.type}/>
+            <Subscriber key={el.topic} data-grid={el.layout} ros={this.props.ros} topic={el.topic} type={el.type} onRequestClose={() => {
+                    console.log("removing", el.topic)
+
+                    const subscribers = this.state.subscribers.filter((item)=>{
+                        console.log("comparison", item.topic, el.topic, item.topic !== el.topic)
+                        return item.topic !== el.topic;
+                    });
+
+                    this.setState({
+                        subscribers: subscribers,
+                    })
+                }}/>
         );
     }
 

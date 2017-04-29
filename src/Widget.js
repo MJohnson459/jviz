@@ -19,7 +19,7 @@ class Widget extends Component {
         <div {...this.props} className={'Widget'} >
             <div className={'WidgetHeader'} onClick={this.onRequestHide}>
                 <div className={'HeaderName'}>{this.state.name}</div>
-                <div className={'HeaderClose'} onClick={this.props.onRequestHide}>X</div>
+                <div className={'HeaderClose'} onClick={this.props.onRequestClose}>X</div>
             </div>
             <div className={'WidgetMain'}>
                 {this.props.children}

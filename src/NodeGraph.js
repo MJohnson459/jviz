@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ROSLIB from 'roslib';
 import Widget from './Widget.js';
 import Graph from 'react-graph-vis';
 import _ from 'lodash';
@@ -14,7 +13,6 @@ class NodeGraph extends Component {
 
         this.state = {
             nodes: [],
-            topics: [],
             edges: [],
             hierarchical: false,
             debug: true,
@@ -45,29 +43,26 @@ class NodeGraph extends Component {
 
           // console.log(list);
             var edges = [];
-            var nodes = [];
-            var namespaces = [];
 
-            list.map((node) => {
+            const nodes = list.map((node) => {
                 const node_id = "n_" + node;
 
                 this.props.ros.getNodeDetails(node, (details) => {
-                    var edges = [];
 
-                    details.publishing.map((topic) => {
-                        edges.push({from: node_id, to: "t_" + topic});
+                    var edges = details.publishing.map((topic) => {
+                        return {from: node_id, to: "t_" + topic}
                     });
 
-                    details.subscribing.map((topic) => {
-                        edges.push({from: "t_" + topic, to: node_id});
-                    });
+                    edges.concat(details.subscribing.map((topic) => {
+                        return {from: "t_" + topic, to: node_id}
+                    }));
 
                     this.setState(prevState => ({
                         edges: [...prevState.edges, ...edges],
                     }));
                 });
 
-                nodes.push({id: node_id, label: node, shape: "box", group: "node"});
+                return {id: node_id, label: node, shape: "box", group: "node"};
             });
 
             this.setState(prevState => ({

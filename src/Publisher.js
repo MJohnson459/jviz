@@ -143,9 +143,6 @@ class Publisher extends Component {
 
     getTopics() {
         this.props.ros.getTopics((topicList) => {
-            const listItems = topicList.topics.map((item, i) =>
-                <option key={item} value={topicList.types[i]}>{item}</option>
-            );
             this.setState({
                 topics: topicList,
             });
@@ -162,7 +159,7 @@ class Publisher extends Component {
             connected: false,
         });
 
-        if (topic_index != -1) {
+        if (topic_index !== -1) {
             const topicName = this.state.topics.topics[topic_index];
             const topicType = this.state.topics.types[topic_index];
             this.publisher = new ROSLIB.Topic({

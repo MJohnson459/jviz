@@ -3,7 +3,7 @@ import ROSLIB from 'roslib';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import Widget from './Widget.js';
 import YAML from 'yamljs';
-import { Scrollbars } from 'react-custom-scrollbars';
+// import { Scrollbars } from 'react-custom-scrollbars';
 import './styles/dark.css';
 import {List, AutoSizer} from 'react-virtualized';
 
@@ -34,7 +34,6 @@ class Subscriber extends Component {
 
         this.nextUpdate = Date.now() + this.updateDuration; // ms
 
-        this.subscribe();
         this.rowRenderer = this.rowRenderer.bind(this);
         this.onRowsRendered = this.onRowsRendered.bind(this);
         this.calculateRowHeight = this.calculateRowHeight.bind(this);
@@ -48,6 +47,14 @@ class Subscriber extends Component {
         const yamlMessage = YAML.stringify(message, 2);
         const size = yamlMessage.split(/\r\n|\r|\n/).length
         return  size * rowHeight;
+    }
+
+    componentDidMount() {
+        this.subscribe();
+    }
+
+    componentWillUnmount() {
+        this.subscriber.unsubscribe();
     }
 
     subscribe() {
