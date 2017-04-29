@@ -1,4 +1,3 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bd5e1055fd7b44ea8d57b7512d85c779)](https://www.codacy.com/app/MJohnson459/jviz?utm_source=github.com&utm_medium=referral&utm_content=MJohnson459/jviz&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/MJohnson459/jviz.svg?branch=master)](https://travis-ci.org/MJohnson459/jviz)
 [![Dependency Status](https://david-dm.org/MJohnson459/jviz.svg)](https://david-dm.org/MJohnson459/jviz)
 [![devDependency Status](https://david-dm.org/MJohnson459/jviz/dev-status.svg)](https://david-dm.org/MJohnson459/jviz#info=devDependencies)
