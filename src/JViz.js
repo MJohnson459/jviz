@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import {Responsive, WidthProvider} from 'react-grid-layout';
+
 import NodeList from './NodeList';
 import TopicList from './TopicList';
-import Publisher from './Publisher';
-import Subscriber from './Subscriber';
+import Widget from './Widget';
 import NodeGraph from './NodeGraph';
-import {Responsive, WidthProvider} from 'react-grid-layout';
 import "../node_modules/react-grid-layout/css/styles.css"
 import "../node_modules/react-resizable/css/styles.css"
 import './App.css';
@@ -18,44 +18,58 @@ class JViz extends Component {
 
         this.state = {
             subscribers: [],
+            widgets: [],
         }
 
-        this.addSubscriber = this.addSubscriber.bind(this)
-        this.createElement = this.createElement.bind(this)
+        this.addWidget = this.addWidget.bind(this)
+        this.createWidget = this.createWidget.bind(this)
+        this.removeWidget = this.removeWidget.bind(this)
     }
 
-    addSubscriber(topic, type) {
-        console.log("Creating subscriber", topic, type)
+    addWidget(id, element) {
+        console.log("Adding widget: ", id, element)
+
+        // TODO: calculate layout
+        const layout =
+        {
+            i: id,
+            x: 2,
+            y: Infinity,
+            w: 2,
+            h: 6
+        }
+
         this.setState(prevState => ({
-            subscribers: [...prevState.subscribers, {topic: topic, type: type, layout:
-                {
-                    i: topic,
-                    x: 2,
-                    y: Infinity,
-                    w: 2,
-                    h: 6
-                }
-            }],
+            widgets: [...prevState.widgets, {
+              id: id,
+              element: element,
+              layout: layout}],
         }));
     }
 
-    createElement(el) {
-        console.log(el)
+    createWidget(widget) {
+        console.log("Creating widget: ", widget)
         return (
-            <Subscriber key={el.topic} data-grid={el.layout} ros={this.props.ros} topic={el.topic} type={el.type} onRequestClose={() => {
-                    console.log("removing", el.topic)
-
-                    const subscribers = this.state.subscribers.filter((item)=>{
-                        console.log("comparison", item.topic, el.topic, item.topic !== el.topic)
-                        return item.topic !== el.topic;
-                    });
-
-                    this.setState({
-                        subscribers: subscribers,
-                    })
-                }}/>
+            <Widget key={widget.id} data-grid={widget.layout} name={widget.id} onRequestClose={() => this.removeWidget(widget)}>
+                {widget.element}
+            </Widget>
         );
+
     }
+
+    removeWidget(widget) {
+        console.log("Removing", widget.id)
+
+        const widgets = this.state.widgets.filter((item)=>{
+            return item.id !== widget.id;
+        });
+
+        this.setState({
+            widgets: widgets,
+        })
+
+    }
+
 
   render() {
     console.log('Rendering JViz', this.state);
@@ -78,7 +92,7 @@ class JViz extends Component {
       <div className="JViz">
         <div className="JViz-side">
             <NodeList ros={this.props.ros} hidden={true} />
-            <TopicList ros={this.props.ros} createSubscriber={this.addSubscriber} hidden={false} />
+            <TopicList ros={this.props.ros} createWidget={this.addWidget} hidden={false} />
         </div>
 
         <ResponsiveReactGridLayout
@@ -93,9 +107,8 @@ class JViz extends Component {
                 })
                 console.log(layouts)
             }}>
-            <Publisher key={'a'} ros={this.props.ros} data-grid={pubLayout}/>
             <NodeGraph key={'nodegraph'} ros={this.props.ros} data-grid={topicGraphLayout} />
-            {this.state.subscribers.map(this.createElement)}
+            {this.state.widgets.map(this.createWidget)}
         </ResponsiveReactGridLayout>
 
       </div>

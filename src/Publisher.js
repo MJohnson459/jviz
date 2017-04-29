@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
-import Widget from './Widget.js'
 
 // MessageType
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -191,7 +190,6 @@ class Publisher extends Component {
         console.log('Rendering Publisher');
 
         return (
-        <Widget {...this.props} name="Publisher">
             <div className="Publisher">
                 <select className="MessageTypeInput" onChange={this.changeTopic} style={{height: 25, flex: "0 0 2em"}}>
                     <option key={null} value={-1}>select topic...</option>
@@ -217,7 +215,6 @@ class Publisher extends Component {
                 }
                 {this.props.children}
             </div>
-        </Widget>
         );
     }
 }

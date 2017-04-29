@@ -127,7 +127,7 @@ class Subscriber extends Component {
         }
 
         return (
-        <Widget {...this.props} name={this.props.topic}>
+        <div className='Subscriber'>
 
             <div style={{ flex: '1 1 auto' }}>
                 <AutoSizer>
@@ -147,7 +147,7 @@ class Subscriber extends Component {
             </div>
             <div style={{margin: 5}}>Received: {this.state.messages.length}</div>
             {this.props.children}
-        </Widget>
+        </div>
         );
     }
 }

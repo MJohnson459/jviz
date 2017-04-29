@@ -9,12 +9,27 @@
   flex: 1;
 }
 
+/* Theme */
 .Colors {
     background-color: #36393e;
     background-color: #2e3136;
     background-color: #1e2124;
     border-bottom: 1px solid #303337;
 }
+
+
+.ColorOne {
+  background-color: "rgba(122, 192, 210, 0.86)";
+}
+
+.ColorTwo {
+  background-color: "rgba(128, 177, 18, 0.67)";
+}
+
+.ColorThree {
+  background-color: "rgba(177, 147, 18, 0.67)";
+}
+
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
@@ -144,10 +159,11 @@
 
 .Subscriber {
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .Publisher {
-    padding: 10px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -161,6 +177,19 @@
     padding: 5px;
     display: flex;
     align-items: center;
+}
+
+.TopicOptions {
+  display: flex;
+  flex-direction: column;
+}
+
+.TopicButton {
+    background-color: rgba(122, 192, 210, 0.86);
+    cursor: pointer;
+    padding: 4px;
+    margin: 1px;
+    user-select: none;
 }
 
 .TopicSelected {

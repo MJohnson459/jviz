@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
+
 import SidebarItem from './SidebarItem.js'
+import Publisher from './Publisher.js'
+import Subscriber from './Subscriber.js'
 
 function Topic(props) {
     if (props.selected) {
         return (
-            <div onClick={props.onClick} className={'Topic'} >
-                <div className="TopicSelected Active"></div>
+            <div className={'Topic'} >
+                <div classname='TopicOptions'>
+                  <div className="TopicButton Active" onClick={props.createSubscriber}>Subscribe</div>
+                  <div className="TopicButton Active" onClick={props.createPublisher}>Publish</div>
+                </div>
                 <div>
                     <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
                     <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
@@ -15,8 +21,11 @@ function Topic(props) {
         )
     } else {
         return (
-            <div onClick={props.onClick} className={'Topic'} >
-                <div className="TopicSelected"></div>
+            <div className={'Topic'} >
+                <div classname='TopicOptions'>
+                  <div className="TopicButton" onClick={props.createSubscriber}>Subscribe</div>
+                  <div className="TopicButton" onClick={props.createPublisher}>Publish</div>
+                </div>
                 <div>
                     <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
                     <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
@@ -64,10 +73,21 @@ class TopicList extends Component {
     }
 
     createElement(el) {
-        return (<Topic key={el.topic} topic={el.topic} type={el.type} selected={el.selected} onClick={() =>  {
+        return (<Topic key={el.topic} topic={el.topic} type={el.type} selected={el.selected}
+            createSubscriber={() => {
                 el.selected=true;
-                this.props.createSubscriber(el.topic, el.type);
-            }} />);
+                const id = 'sub_' + el.topic
+                this.props.createWidget(id, (
+                  <Subscriber key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
+                ))
+            }}
+            createPublisher={() => {
+                el.selected=true;
+                const id = 'pub_' + el.topic
+                this.props.createWidget(id, (
+                  <Publisher key={id} ros={this.props.ros}/>
+            ))}}
+            />);
     }
 
     render() {
