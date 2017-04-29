@@ -57,8 +57,6 @@ The immediate focus is to match the functionality of the `rostopic` tool.
 - [x] Subscriber
   - [x] Format received messages
   - [x] Steady scroll
-  - [ ] Message filter
-  - [ ] Subscribe to sub-fields
 - [ ] Publisher
   - [x] Choose topic
   - [ ] Fill message
