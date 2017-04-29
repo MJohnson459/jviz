@@ -9,9 +9,6 @@ import YAML from 'yamljs';
 function MessageType(props) {
     return (
         <div style={{backgroundColor: "#444444", padding: 5, margin: 3}}>
-            <SyntaxHighlighter  language="yaml" className="Message" useInlineStyles={false}>
-                {YAML.stringify(props.ros.decodeTypeDefs(props.message), 2)}
-            </SyntaxHighlighter>
         </div>
     )
 }
