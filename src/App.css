@@ -211,13 +211,6 @@
     flex-direction: row-reverse;
 }
 
-.Message {
-    margin: 0px;
-    width: 100%;
-    display: inline-block;
-    border-bottom: 1px solid hsla(0,0%,100%,.06);
-}
-
 .SmallButton {
     cursor: pointer;
     padding: 4px;
@@ -225,9 +218,23 @@
     user-select: none;
 }
 
+.Message {
+    margin: 0px;
+    width: 100%;
+    display: inline-block;
+    border-bottom: 1px solid hsla(0,0%,100%,.06);
+}
+
+.MessageLine {
+    display: flex;
+    flex-direction: row;
+    padding: 1px;
+}
+
+
 .MessageTypeInput {
     background-color: #36393e;
-    border: 1px solid hsla(0,0%,100%,.06);
+    border: 0px solid hsla(0,0%,100%,.06);
     color: hsla(0,0%,100%,.7);
     padding-left: 5px;
 }

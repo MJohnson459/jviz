@@ -32,7 +32,7 @@ class JViz extends Component {
         const layout =
         {
             i: id,
-            x: 2,
+            x: 4,
             y: Infinity,
             w: 2,
             h: 6
@@ -72,7 +72,7 @@ class JViz extends Component {
   render() {
 
     const topicGraphLayout = {i: 'nodegraph',
-        x: 2,
+        x: 0,
         y: Infinity,
         w: 4,
         h: 12

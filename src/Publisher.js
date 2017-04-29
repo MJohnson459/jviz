@@ -14,15 +14,17 @@ class MessageHeader extends Component {
     render() {
         return (
             <div>
-                <span style={{marginRight: 5}}>{this.props.name}: </span>
+                <div className="MessageLine">
+                    <span style={{marginRight: 5}}>{this.props.name}: </span>
                     <select className="MessageTypeInput" onChange={(event)=>this.setState({auto: !this.state.auto})}>
                         <option>auto</option>
                         <option>manual</option>
                     </select>
-                    {
-                        this.state.auto ||
-                        <MessageFields messages={this.props.messages} index={this.props.index} />
-                    }
+                </div>
+                {
+                    this.state.auto ||
+                    <MessageFields messages={this.props.messages} index={this.props.index} />
+                }
             </div>
         )
     }
@@ -30,7 +32,7 @@ class MessageHeader extends Component {
 
 function MessageField(props) {
     return (
-        <div style={{display: "flex"}}>
+        <div className="MessageLine" >
             <span style={{marginRight: 5}}>{props.name}: </span>
             <input className="MessageTypeInput" value={props.example} style={{width: "100%" }} />
         </div>
@@ -81,7 +83,7 @@ function MessageFields(props) {
 function MessageType(props) {
     return (
         <div>
-            <span style={{marginRight: 5}}>{props.name}: </span>
+            <span className="MessageLine" style={{marginRight: 5}}>{props.name}: </span>
             <MessageFields messages={props.messages} index={props.index} />
         </div>
     );
