@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Widget from './Widget.js';
 import Graph from 'react-graph-vis';
 import _ from 'lodash';
 import {AutoSizer} from 'react-virtualized';
@@ -9,7 +8,6 @@ class NodeGraph extends Component {
 
     constructor(props) {
         super(props);
-        console.log('Constructing NodeGraph');
 
         this.state = {
             nodes: [],
@@ -37,8 +35,6 @@ class NodeGraph extends Component {
     }
 
     updateNodeList() {
-        console.log('NodeList updateNodeList');
-
         this.props.ros.getNodes((list) => {
 
           // console.log(list);
@@ -92,8 +88,6 @@ class NodeGraph extends Component {
     }
 
     render() {
-        console.log('Rendering NodeGraph');
-
         var nodes = this.state.nodes;
         var edges = this.state.edges;
 
@@ -108,7 +102,7 @@ class NodeGraph extends Component {
         }
 
         return (
-        <Widget {...this.props} name="Node Graph">
+        <div className="NodeGraph">
             <div style={{ flex: '1 1 auto' }}>
                 <AutoSizer>
                   {({ height, width }) => {
@@ -173,7 +167,7 @@ class NodeGraph extends Component {
                 <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
                 <span className='SmallButton ColorThree' onClick={() => {this.setState({debug: !this.state.debug})}}>{this.state.debug ? "debug" : "all"}</span>
             </div>
-        </Widget>
+        </div>
         );
     }
 }

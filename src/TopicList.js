@@ -10,8 +10,6 @@ function Topic(props) {
     const subClassName = "SmallButton ColorOne " + (props.subActive ? "Active" : "")
     const pubClassName = "SmallButton ColorTwo " + (props.pubActive ? "Active" : "")
 
-    console.log("classnames", subClassName, pubClassName)
-
     return (
         <div className={'Topic'} >
             <div style={{flex: 1}}>
@@ -30,7 +28,6 @@ class TopicList extends Component {
 
     constructor(props) {
         super(props);
-        console.log('Constructing TopicList');
 
         this.state = {
             topics: [],
@@ -45,8 +42,6 @@ class TopicList extends Component {
 
     getTopics() {
         this.props.ros.getTopics((topics) => {
-            console.log(topics);
-
             var x = topics.topics.map((item, i) =>
                 {
                     return {
@@ -82,8 +77,6 @@ class TopicList extends Component {
     }
 
     render() {
-        console.log('Rendering TopicList');
-
         return (
         <SidebarItem name="Topic List">
             <Scrollbars className="TopicList" autoHeight autoHeightMax={350}>

@@ -20,7 +20,6 @@ class Subscriber extends Component {
 
     constructor(props) {
         super(props);
-        console.log('Constructing Subscriber');
 
         this.updateDuration = 500; //ms
         this.messageBuffer = [];
@@ -57,7 +56,6 @@ class Subscriber extends Component {
     }
 
     subscribe() {
-        console.log("this.props: ", this.props)
         this.subscriber = new ROSLIB.Topic({
             ros : this.props.ros,
             name : this.props.topic,
@@ -127,7 +125,6 @@ class Subscriber extends Component {
 
         return (
         <div className='Subscriber'>
-
             <div style={{ flex: '1 1 auto' }}>
                 <AutoSizer>
                   {({ height, width }) => (

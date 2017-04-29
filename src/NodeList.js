@@ -5,9 +5,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 class NodeList extends Component {
 
     updateNodeList() {
-        console.log('NodeList updateNodeList');
-
-        this.ros.getNodes((list) => {
+        this.props.ros.getNodes((list) => {
           // console.log(list);
             this.setState({
                 nodes: list,
@@ -19,10 +17,7 @@ class NodeList extends Component {
     }
 
     constructor(props) {
-        super();
-        console.log('Constructing NodeList');
-
-        this.ros = props.ros;
+        super(props);
 
         this.state = {
             nodes: [],
@@ -34,8 +29,6 @@ class NodeList extends Component {
     }
 
     render() {
-        console.log('Rendering NodeList');
-
         return (
         <SidebarItem name="Node List" hidden={this.state.hidden}>
             <Scrollbars className="NodeList" style={{ height: "inherit", backgroundColor: "#DDDDDD" }}>
@@ -45,9 +38,9 @@ class NodeList extends Component {
                     )}
                 </ul>
             </Scrollbars>
-            <button onClick={this.updateNodeList}>
+            <div className="SmallButton ColorThree" onClick={this.updateNodeList}>
                 Update
-            </button>
+            </div>
         </SidebarItem>
         );
     }

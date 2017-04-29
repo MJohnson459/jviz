@@ -5,7 +5,6 @@ class Messages extends Component {
 
     constructor(props) {
         super();
-        console.log('Constructing Messages');
 
         this.state = {
             topics: [], //props.topic,
@@ -20,7 +19,6 @@ class Messages extends Component {
             this.setState({
                 topics: topicList,
             });
-            console.log('NodeList updateNodeList');
         });
 
         this.messages = new ROSLIB.Topic({
@@ -37,8 +35,6 @@ class Messages extends Component {
     }
 
     render() {
-        console.log('Rendering Messages');
-
         return (
         <div className="NodeList">
             <p>Topic: {this.state.topic}</p>

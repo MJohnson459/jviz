@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
 
-// MessageType
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import YAML from 'yamljs';
 
 class MessageHeader extends Component {
     constructor(props) {
@@ -15,7 +12,6 @@ class MessageHeader extends Component {
     }
 
     render() {
-        const message = this.props.messages[this.props.index];
         return (
             <div>
                 <span style={{marginRight: 5}}>{this.props.name}: </span>
@@ -66,7 +62,7 @@ function MessageFields(props) {
             return (
                 <MessageField name={message.fieldnames[i]} example={message.examples[i]} />
             );
-        } else if (field == "std_msgs/Header") {
+        } else if (field === "std_msgs/Header") {
             return (
                 <MessageHeader name={message.fieldnames[i]} messages={props.messages} index={props.index + 1} />
             )
@@ -82,33 +78,19 @@ function MessageFields(props) {
     )
 }
 
-class MessageType extends Component {
-
-    constructor(props) {
-        super(props);
-
-
-
-    }
-
-    render() {
-        console.log("props", this.props)
-
-        return (
-            <div>
-                <span style={{marginRight: 5}}>{this.props.name}: </span>
-                <MessageFields messages={this.props.messages} index={this.props.index} />
-            </div>
-        );
-    }
-
+function MessageType(props) {
+    return (
+        <div>
+            <span style={{marginRight: 5}}>{props.name}: </span>
+            <MessageFields messages={props.messages} index={props.index} />
+        </div>
+    );
 }
 
 class Publisher extends Component {
 
     constructor(props) {
         super(props);
-        console.log('Constructing Publisher');
 
         this.state = {
             topic: "-1",
@@ -129,7 +111,6 @@ class Publisher extends Component {
     }
 
     publish() {
-        console.log('Publishing ' + this.state.count);
         var message = new ROSLIB.Message({
             data: this.state.count.toString(),
         });
@@ -145,7 +126,6 @@ class Publisher extends Component {
             this.setState({
                 topics: topicList,
             });
-            console.log('NodeList updateNodeList');
         });
     }
 
@@ -187,8 +167,6 @@ class Publisher extends Component {
 
 
     render() {
-        console.log('Rendering Publisher');
-
         return (
             <div className="Publisher">
                 <select className="MessageTypeInput" onChange={this.changeTopic} style={{height: 25, flex: "0 0 2em"}}>

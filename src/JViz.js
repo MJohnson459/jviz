@@ -14,7 +14,6 @@ const ResponsiveReactGridLayout  = WidthProvider(Responsive);
 class JViz extends Component {
     constructor(props) {
         super();
-        console.log('Constructing JViz');
 
         this.state = {
             subscribers: [],
@@ -48,7 +47,6 @@ class JViz extends Component {
     }
 
     createWidget(widget) {
-        console.log("Creating widget: ", widget)
         return (
             <Widget key={widget.id} data-grid={widget.layout} name={widget.id} onRequestClose={() => this.removeWidget(widget)}>
                 {widget.element}
@@ -72,14 +70,6 @@ class JViz extends Component {
 
 
   render() {
-    console.log('Rendering JViz', this.state);
-
-    const pubLayout = {i: 'a',
-        x: 0,
-        y: Infinity,
-        w: 2,
-        h: 6
-    }
 
     const topicGraphLayout = {i: 'nodegraph',
         x: 2,
@@ -91,7 +81,7 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} hidden={true} />
+            <NodeList ros={this.props.ros} hidden={false} />
             <TopicList ros={this.props.ros} createWidget={this.addWidget} hidden={false} />
         </div>
 
@@ -105,9 +95,10 @@ class JViz extends Component {
                 this.setState({
                     layouts: layouts,
                 })
-                console.log(layouts)
             }}>
-            <NodeGraph key={'nodegraph'} ros={this.props.ros} data-grid={topicGraphLayout} />
+            <Widget key={'nodegraph'} data-grid={topicGraphLayout} name="Node Graph">
+              <NodeGraph  ros={this.props.ros} />
+            </Widget>
             {this.state.widgets.map(this.createWidget)}
         </ResponsiveReactGridLayout>
 

@@ -1,8 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 function Widget(props) {
+    const gridProps = Object.assign({}, props);
+    delete gridProps.name;
+    delete gridProps.onRequestClose;
+
     return (
-        <div {...props} className={'Widget'} >
+        <div {...gridProps} className={'Widget'} >
             <div className={'WidgetHeader'}>
                 <div className={'HeaderName'}>{props.name}</div>
                 <div className={'HeaderClose'} onClick={props.onRequestClose}>X</div>

@@ -9,7 +9,6 @@ class App extends Component {
 
   constructor() {
     super();
-    console.log('Constructing');
     this.state = {
       url: "ws://localhost:9090",
       connected: false,
@@ -37,8 +36,6 @@ class App extends Component {
   }
 
   render() {
-
-    console.log('App Rendering');
     var x = "";
     if (this.state.connected) {
         x = (
