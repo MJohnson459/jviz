@@ -26,7 +26,6 @@ class NodeGraph extends Component {
         this.options = {
             layout: {
                 hierarchical: {
-                    enabled: this.state.hierarchical,
                     direction: 'LR',
                     sortMethod: 'directed',
                 },
@@ -37,8 +36,6 @@ class NodeGraph extends Component {
             },
             nodes: {
                 color: {
-                    border: 'rgb(50, 185, 210)',
-                    background: 'rgba(122, 192, 210, 0.9)',
                     highlight: 'rgba(177, 147, 18, 0.9)',
                     hover: 'rgb(150, 185, 210)',
                 },
@@ -54,16 +51,12 @@ class NodeGraph extends Component {
                     color: {
                         border: 'rgba(122, 192, 210, 0.99)',
                         background: 'rgba(122, 192, 210, 0.9)',
-                        highlight: 'rgba(177, 147, 18, 0.9)',
-                        hover: 'rgba(150, 185, 210, 0.9)',
                     },
                 },
                 topic: {
                     color: {
                         border: 'rgba(128, 177, 18, 0.99)',
                         background: 'rgba(128, 177, 18, 0.9)',
-                        highlight: 'rgba(177, 147, 18, 0.9)',
-                        hover: 'rgb(150, 185, 210)',
                     },
                 },
             },
@@ -104,15 +97,15 @@ class NodeGraph extends Component {
 
                 this.props.ros.getNodeDetails(node, (details) => {
 
-                    var edges = details.publishing.map((topic) => {
+                    const pub_edges = details.publishing.map((topic) => {
                         return {from: node_id, to: "t_" + topic}
                     });
 
-                    edges.concat(details.subscribing.map((topic) => {
+                    const sub_edges = details.subscribing.map((topic) => {
                         return {from: "t_" + topic, to: node_id}
-                    }));
+                    });
 
-                    this.graphEdgesBuffer = [...this.graphEdgesBuffer, ...edges];
+                    this.graphEdgesBuffer = [...this.graphEdgesBuffer, ...pub_edges, ...sub_edges];
 
                     if (++updated_nodes === list.length) {
                         readyForUpdate.edges = true;
@@ -174,6 +167,50 @@ class NodeGraph extends Component {
 
     }
 
+    getOptions(width, height) {
+        return {
+            layout: {
+                hierarchical: {
+                    direction: 'LR',
+                    enabled: this.state.hierarchical,
+                    sortMethod: 'directed',
+                },
+            },
+            edges: {
+                color: "#d4d3d3",
+                smooth: true,
+            },
+            nodes: {
+                color: {
+                    highlight: 'rgba(177, 147, 18, 0.9)',
+                    hover: 'rgb(150, 185, 210)',
+                },
+                font: {
+                    color: 'rgb(223, 223, 223)',
+                }
+            },
+            interaction: {
+                hover: true,
+            },
+            groups: {
+                node: {
+                    color: {
+                        border: 'rgba(122, 192, 210, 0.99)',
+                        background: 'rgba(122, 192, 210, 0.9)',
+                    },
+                },
+                topic: {
+                    color: {
+                        border: 'rgba(128, 177, 18, 0.99)',
+                        background: 'rgba(128, 177, 18, 0.9)',
+                    },
+                },
+            },
+            width: width + 'px',
+            height: height + 'px',
+        };
+    }
+
     render() {
         console.log('Rendering NodeGraph');
 
@@ -200,14 +237,11 @@ class NodeGraph extends Component {
             <div style={{ flex: '1 1 auto' }}>
                 <AutoSizer>
                   {({ height, width }) => {
-                      var options = this.options;
-                      options.height = height + 'px';
-                      options.width = width + 'px';
-                      options.layout.hierarchical.enabled = this.state.hierarchical;
+                      const options = this.getOptions(width, height);
                       console.log("options", options)
                       return (
                           <Graph graph={{nodes: nodes, edges: edges}} options={options} style={{height: height, width: width}}/>
-                  )}}
+                      )}}
                 </AutoSizer>
             </div>
 
