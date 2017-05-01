@@ -90,19 +90,18 @@
 
 .WidgetHeader {
     height: 40px;
-    width: 100%;
+    display: flex;
     background-color: #32363c;
     border-bottom: 1px solid #36393e;
 }
 
 .HeaderName {
-    height: 100%;
     margin: 0;
     padding: 10px;
     color: hsla(0,0%,100%,.7);
     vertical-align: middle;
-    float: left;
     user-select: none;
+    flex: 1;
 }
 
 .HeaderClose {

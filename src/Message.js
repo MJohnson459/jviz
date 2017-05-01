@@ -21,7 +21,7 @@ class Message extends Component {
 
     MessageField(props) {
         return (
-            <div className="MessageLine" >
+            <div className="MessageLine" key={'' + props.messageIndex + '_'+ props.fieldIndex}>
                 <span style={{marginRight: 5}}>{props.name}: </span>
                 <input className="MessageTypeInput" style={{width: "100%" }} type="text" value={this.state.values[props.messageIndex][props.fieldIndex]} onChange={
                     (event) => {
@@ -72,7 +72,7 @@ class Message extends Component {
 
     MessageType(props) {
         return (
-            <div>
+            <div key={'' + props.messageIndex + '_'+ props.fieldIndex}>
                 <span className="MessageLine" style={{marginRight: 5}}>{props.name}: </span>
                 {this.MessageFieldArray({index: props.index})}
             </div>
@@ -81,7 +81,7 @@ class Message extends Component {
 
     MessageHeader(props) {
         return (
-            <div>
+            <div key={'' + props.messageIndex + '_'+ props.fieldIndex}>
                 <div className="MessageLine">
                     <span style={{marginRight: 5}}>{props.name}: </span>
                     <select className="MessageTypeInput" onChange={(event)=>this.setState({auto: !this.state.auto})}>
@@ -95,7 +95,7 @@ class Message extends Component {
     }
 
     render() {
-      return this.MessageFieldArray(this.props);
+      return this.MessageFieldArray({...this.props, index: 0});
     }
 }
 export default Message;

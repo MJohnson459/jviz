@@ -18,7 +18,7 @@ class SidebarItem extends Component {
   render() {
     return (
         <div {...this.props} className={'SidebarItem'} >
-            <div className={'SidebarItemHeader'} onClick={this.onRequestHide}>
+            <div className={'WidgetHeader'} onClick={this.onRequestHide}>
                 <div className={'HeaderName'}>{this.state.name}</div>
                 <div className={'HeaderClose'} onClick={this.props.onRequestHide}>X</div>
             </div>

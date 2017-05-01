@@ -232,7 +232,6 @@ class NodeGraph extends Component {
                 <AutoSizer>
                   {({ height, width }) => {
                       const options = this.getOptions(width, height);
-                      console.log("options", options)
                       return (
                           <Graph graph={{nodes: nodes, edges: edges}} options={options} style={{height: height, width: width}}/>
                       )}}
