@@ -23,7 +23,7 @@ class Publisher extends Component {
 
             this.setState({
                 messageDetails: details,
-                messageDef: this.decodeTypeDefsRec(details[0], details),
+                message: this.decodeTypeDefsRec(details[0], details),
             })
         }, (message)=>{
             console.log("msg details FAILED", this.props.type, message)
@@ -43,7 +43,7 @@ class Publisher extends Component {
         const fieldExample = theType.examples[i];
         if (fieldType.indexOf('/') === -1) { // check the fieldType includes '/' or not
           if (arrayLen === -1) {
-            typeDefDict[fieldName] = {type: fieldType, example: fieldExample};
+            typeDefDict[fieldName] = fieldExample;
           }
           else {
             typeDefDict[fieldName] = [fieldType];
@@ -76,9 +76,7 @@ class Publisher extends Component {
     }
 
     publish() {
-        var message = new ROSLIB.Message({
-            data: this.state.count.toString(),
-        });
+        const message = new ROSLIB.Message(this.state.message);
 
         this.publisher.publish(message);
         this.setState( {
@@ -92,7 +90,7 @@ class Publisher extends Component {
                 { this.state.messageDetails === null ||
                 <div style={{display: "flex", flexDirection: "column", flex: 1}}>
                       <div style={{padding: 5, overflowY: "auto", flex: 1}}>
-                        <Message name={this.props.type} messages={this.state.messageDetails} />
+                        <Message name={this.props.type} messages={this.state.messageDetails} onMessageChange={(message) => this.setState({message: message})} message={this.state.message} />
                       </div>
                       <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row"}}>
                         <div className="SmallButton ColorOne" onClick={this.publish}>

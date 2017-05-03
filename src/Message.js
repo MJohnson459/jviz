@@ -13,10 +13,11 @@ class Message extends Component {
             values: defaultValues,
         }
 
-        this.MessageField = this.MessageField.bind(this)
-        this.MessageFieldArray = this.MessageFieldArray.bind(this)
-        this.MessageType = this.MessageType.bind(this)
-        this.MessageHeader = this.MessageHeader.bind(this)
+        this.MessageField = this.MessageField.bind(this);
+        this.MessageFieldArray = this.MessageFieldArray.bind(this);
+        this.MessageType = this.MessageType.bind(this);
+        this.MessageHeader = this.MessageHeader.bind(this);
+        this.DisplayMessage = this.DisplayMessage.bind(this);
     }
 
     MessageField(props) {
@@ -26,6 +27,11 @@ class Message extends Component {
                 <input className="MessageTypeInput" style={{width: "100%" }} type="text" value={this.state.values[props.messageIndex][props.fieldIndex]} onChange={
                     (event) => {
                       const values = this.state.values;
+
+                    //   props.keys.reduce()
+                      //
+                    //   this.message[key1][key2][...]
+
                       values[props.messageIndex][props.fieldIndex] = event.target.value;
                       this.setState({
                         values: values,
@@ -94,7 +100,29 @@ class Message extends Component {
         )
     }
 
+    DisplayMessage(message) {
+        var x = [];
+        for (const field in message) {
+            if (typeof(field) === "boolean" ||
+                typeof(field) === "number" ||
+                typeof(field) === "string") {
+                console.log("DisplayMessage1", field, typeof(field))
+                x.push((<p>{field}</p>))
+            } else if (typeof(field) === "object") {
+                console.log("DisplayMessage2", field, typeof(field))
+                x.push(this.DisplayMessage(field))
+            } else {
+                console.log("DisplayMessage3", field, typeof(field))
+            }
+        }
+        return <div>{x}</div>;
+    }
+
     render() {
+
+        // return this.DisplayMessage(this.props.message);
+
+
       return this.MessageFieldArray({...this.props, index: 0});
     }
 }
