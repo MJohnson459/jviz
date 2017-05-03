@@ -63,14 +63,14 @@ class TopicList extends Component {
             createSubscriber={() => {
                 el.selected=true;
                 const id = 'sub_' + el.topic
-                this.props.createWidget(id, (
+                this.props.addWidget(id, (
                   <Subscriber key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
                 ))
             }}
             createPublisher={() => {
                 el.selected=true;
                 const id = 'pub_' + el.topic
-                this.props.createWidget(id, (
+                this.props.addWidget(id, (
                   <Publisher key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
             ))}}
             />);

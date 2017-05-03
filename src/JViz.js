@@ -81,8 +81,8 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} hidden={false} />
-            <TopicList ros={this.props.ros} createWidget={this.addWidget} hidden={false} />
+            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} />
+            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} />
         </div>
 
         <ResponsiveReactGridLayout
@@ -96,9 +96,6 @@ class JViz extends Component {
                     layouts: layouts,
                 })
             }}>
-            <Widget key={'nodegraph'} data-grid={topicGraphLayout} name="Node Graph">
-              <NodeGraph  ros={this.props.ros} />
-            </Widget>
             {this.state.widgets.map(this.createWidget)}
         </ResponsiveReactGridLayout>
 
