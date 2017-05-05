@@ -90,7 +90,7 @@ class Publisher extends Component {
                 { this.state.messageDetails === null ||
                 <div style={{display: "flex", flexDirection: "column", flex: 1}}>
                       <div style={{padding: 5, overflowY: "auto", flex: 1}}>
-                        <Message name={this.props.type} messages={this.state.messageDetails} onMessageChange={(message) => this.setState({message: message})} message={this.state.message} />
+                        <Message name={this.props.type} messages={this.state.messageDetails} updateMessage={(message) => this.setState({message: message})} message={this.state.message} />
                       </div>
                       <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row"}}>
                         <div className="SmallButton ColorOne" onClick={this.publish}>

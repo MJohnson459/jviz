@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 
 class Message extends Component {
     constructor(props) {
@@ -26,12 +27,14 @@ class Message extends Component {
                 <span style={{marginRight: 5}}>{props.name}: </span>
                 <input className="MessageTypeInput" style={{width: "100%" }} type="text" value={this.state.values[props.messageIndex][props.fieldIndex]} onChange={
                     (event) => {
+                      const message = this.props.message;
+
+                      // Update message
+                      _.set(message, props.path, event.target.value);
+                      console.log("message", message)
+                      this.props.updateMessage(message);
+
                       const values = this.state.values;
-
-                    //   props.keys.reduce()
-                      //
-                    //   this.message[key1][key2][...]
-
                       values[props.messageIndex][props.fieldIndex] = event.target.value;
                       this.setState({
                         values: values,
@@ -62,12 +65,14 @@ class Message extends Component {
         ];
 
         const x = message.fieldtypes.map((field, i)=>{
+            const name = message.fieldnames[i];
+            const path = [...props.path, name];
             if (primitives.includes(field)) {
-                return this.MessageField({name: message.fieldnames[i], fieldIndex: i, messageIndex: props.index});
+                return this.MessageField({name: name, fieldIndex: i, messageIndex: props.index, path: path});
             } else if (field === "std_msgs/Header") {
-                return this.MessageHeader({name: message.fieldnames[i], index: props.index + 1});
+                return this.MessageHeader({name: name, index: props.index + 1, path: path});
             } else {
-                return this.MessageType({name: message.fieldnames[i], index: props.index + 1});
+                return this.MessageType({name: name, index: props.index + 1, path: path});
             }
         })
 
@@ -80,7 +85,7 @@ class Message extends Component {
         return (
             <div key={'' + props.messageIndex + '_'+ props.fieldIndex}>
                 <span className="MessageLine" style={{marginRight: 5}}>{props.name}: </span>
-                {this.MessageFieldArray({index: props.index})}
+                {this.MessageFieldArray({index: props.index, path: props.path})}
             </div>
         );
     }
@@ -123,7 +128,7 @@ class Message extends Component {
         // return this.DisplayMessage(this.props.message);
 
 
-      return this.MessageFieldArray({...this.props, index: 0});
+      return this.MessageFieldArray({...this.props, index: 0, path: []});
     }
 }
 export default Message;
