@@ -31,6 +31,7 @@ class Publisher extends Component {
 
         this.publish = this.publish.bind(this);
         this.decodeTypeDefsRec = this.decodeTypeDefsRec.bind(this);
+        this.toggleRepeat = this.toggleRepeat.bind(this);
     }
 
     // calls itself recursively to resolve type definition using hints.
@@ -75,6 +76,13 @@ class Publisher extends Component {
       return typeDefDict;
     }
 
+    componentWillUnmount() {
+      if (this.state.repeat) {
+        clearInterval(this.intervalId);
+      }
+      this.setState({repeat: false})
+    }
+
     publish() {
         const message = new ROSLIB.Message(this.state.message);
 
@@ -82,6 +90,20 @@ class Publisher extends Component {
         this.setState( {
             count: this.state.count + 1,
         });
+    }
+
+    toggleRepeat() {
+      if (this.state.repeat) {
+        // Toggle off
+        clearInterval(this.intervalId)
+      } else {
+        // Toggle on
+        this.intervalId = setInterval(this.publish, 1000); // publish at 1Hz
+      }
+
+      this.setState({
+        repeat: !this.state.repeat,
+      })
     }
 
     render() {
@@ -96,8 +118,8 @@ class Publisher extends Component {
                         <div className="SmallButton ColorOne" onClick={this.publish}>
                             publish {this.state.count}
                         </div>
-                        <div className="SmallButton ColorTwo" onClick={this.publish}>
-                            repeat
+                        <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
+                            {this.state.repeat ? "1 Hz" : "repeat"}
                         </div>
                     </div>
                 </div>

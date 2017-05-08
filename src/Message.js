@@ -100,7 +100,7 @@ class Message extends Component {
                         <option>manual</option>
                     </select>
                 </div>
-                {this.state.auto || this.MessageFieldArray({index: props.index})}
+                {this.state.auto || this.MessageFieldArray({index: props.index, path: props.path})}
             </div>
         )
     }
