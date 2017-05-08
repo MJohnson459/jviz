@@ -231,6 +231,10 @@
     flex: 1;
 }
 
+.MessageLabel {
+    margin-right: 5px;
+    flex: 0 0 auto;
+}
 
 .MessageTypeInput {
     background-color: #36393e;

@@ -61,7 +61,7 @@ The immediate focus is to match the functionality of the `rostopic` tool.
   - [x] Steady scroll
 - [ ] Publisher
   - [x] Choose topic
-  - [ ] Fill message
+  - [x] Fill message
   - [ ] Auto fill header
   - [ ] Send frequency
 - [ ] Node Graph
