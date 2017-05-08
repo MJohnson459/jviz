@@ -4,7 +4,6 @@ import {Responsive, WidthProvider} from 'react-grid-layout';
 import NodeList from './NodeList';
 import TopicList from './TopicList';
 import Widget from './Widget';
-import NodeGraph from './NodeGraph';
 import "../node_modules/react-grid-layout/css/styles.css"
 import "../node_modules/react-resizable/css/styles.css"
 import './App.css';
@@ -70,13 +69,6 @@ class JViz extends Component {
 
 
   render() {
-
-    const topicGraphLayout = {i: 'nodegraph',
-        x: 0,
-        y: Infinity,
-        w: 4,
-        h: 12
-    }
 
     return (
       <div className="JViz">
