@@ -10,6 +10,7 @@ class Publisher extends Component {
     this.state = {
       count: 0,
       messageDetails: null,
+      auto: true,
     }
 
     this.publisher = new ROSLIB.Topic({
@@ -22,6 +23,7 @@ class Publisher extends Component {
       this.setState({
         messageDetails: details,
         message: this.decodeTypeDefsRec(details[0], details),
+        values: details.map((message, i) => message.examples),
       })
     }, (message)=>{
       console.log("msg details FAILED", this.props.type, message)
@@ -85,7 +87,7 @@ publish() {
   const message = new ROSLIB.Message(this.state.message);
 
   this.publisher.publish(message);
-  this.setState( {
+  this.setState({
     count: this.state.count + 1,
   });
 }
@@ -111,10 +113,11 @@ render() {
         <div style={{display: "flex", flexDirection: "column", flex: 1}}>
           <div style={{padding: 5, overflowY: "auto", flex: 1}}>
             <Message name={this.props.type}
-              messages={this.state.messageDetails}
-              updateMessage={(message) => this.setState({message: message})}
-
+              values={this.state.values}
+              messageDetails={this.state.messageDetails}
               message={this.state.message}
+              auto={this.state.auto}
+              updateState={(state) => this.setState(state)}
               />
           </div>
           <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row"}}>

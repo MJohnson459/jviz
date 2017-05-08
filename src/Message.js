@@ -5,15 +5,6 @@ class Message extends Component {
   constructor(props) {
     super(props);
 
-    const defaultValues = this.props.messages.map((message, i) => {
-      return message.examples;
-    })
-
-    this.state = {
-      auto: true,
-      values: defaultValues,
-    }
-
     this.MessageField = this.MessageField.bind(this);
     this.MessageFieldArray = this.MessageFieldArray.bind(this);
     this.MessageType = this.MessageType.bind(this);
@@ -24,19 +15,22 @@ class Message extends Component {
     return (
       <div className="MessageLine" key={props.messageIndex + '_'+ props.fieldIndex}>
         <span className="MessageLabel">{props.name}:</span>
-        <input className="MessageTypeInput" type="text" value={this.state.values[props.messageIndex][props.fieldIndex]} onChange={
+        <input className="MessageTypeInput"
+          type="text"
+          value={this.props.values[props.messageIndex][props.fieldIndex]}
+          onChange={
             (event) => {
-              const message = this.props.message;
-
               // Update message
+              const message = this.props.message;
               _.set(message, props.path, event.target.value);
-              this.props.updateMessage(message);
 
-              const values = this.state.values;
+              const values = this.props.values;
               values[props.messageIndex][props.fieldIndex] = event.target.value;
-              this.setState({
+
+              this.props.updateState({
+                message: message,
                 values: values,
-              })
+              });
             }
           }/>
         </div>
@@ -44,7 +38,7 @@ class Message extends Component {
     }
 
     MessageFieldArray(props) {
-      const message = this.props.messages[props.index];
+      const message = this.props.messageDetails[props.index];
       const primitives = [
         "byte",
         "bool",
@@ -92,12 +86,12 @@ class Message extends Component {
         <div key={props.messageIndex + '_'+ props.fieldIndex}>
           <div className="MessageLine">
             <span className="MessageLabel">{props.name}:</span>
-            <select className="MessageTypeInput" onChange={(event) => this.setState({auto: !this.state.auto})}>
-              <option>auto</option>
-              <option>manual</option>
+            <select className="MessageTypeInput" value={this.props.auto} onChange={(event) => this.props.updateState({auto: event.target.value === "true"})}>
+              <option value={true}>auto</option>
+              <option value={false}>manual</option>
             </select>
           </div>
-          {this.state.auto || this.MessageFieldArray({index: props.index, path: props.path})}
+          {this.props.auto || this.MessageFieldArray({index: props.index, path: props.path})}
         </div>
       )
     }
