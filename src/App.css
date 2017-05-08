@@ -93,6 +93,7 @@
     display: flex;
     background-color: #32363c;
     border-bottom: 1px solid #36393e;
+    flex: 0 0 40px;
 }
 
 .HeaderName {
@@ -119,6 +120,14 @@
     float: right;
 }
 
+.Footer {
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 25px;
+  padding: 2px;
+  
+}
+
 .SidebarItem {
     border-top: 1px solid hsla(0,0%,100%,.06);
     padding: 0px;
@@ -134,13 +143,6 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-}
-
-.SidebarItemHeader {
-    height: 40px;
-    width: 100%;
-    background-color: #32363c;
-    border-bottom: 1px solid #282b30;
 }
 
 .SidebarItemHeaderName {
@@ -174,6 +176,16 @@
     flex-direction: column;
 }
 
+.Node {
+    height: 20px;
+    border: 0px;
+    border-style: solid;
+    color: hsla(0,0%,100%,.6);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
 .Topic {
     height: 60px;
     border: 0px;
@@ -202,12 +214,6 @@
 }
 
 .TopicList {
-}
-
-.TopicListFooter {
-    height: 25px;
-    display: flex;
-    flex-direction: row-reverse;
 }
 
 .SmallButton {

@@ -134,7 +134,7 @@ class Publisher extends Component {
                 updateState={(state) => this.setState(state)}
                 />
             </div>
-            <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row"}}>
+            <div className="Footer">
               <div className="SmallButton ColorOne" onClick={this.publish}>
                 publish
               </div>

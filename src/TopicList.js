@@ -82,7 +82,7 @@ class TopicList extends Component {
             <Scrollbars className="TopicList" autoHeight autoHeightMax={350}>
                 {this.state.topics.map(this.createElement)}
             </Scrollbars>
-            <div className="TopicListFooter">
+            <div className="Footer">
                 <div className="SmallButton ColorThree" onClick={this.getTopics}>
                     refresh
                 </div>

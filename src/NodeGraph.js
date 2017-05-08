@@ -241,7 +241,7 @@ class NodeGraph extends Component {
 
 
             {this.props.children}
-            <div style={{height: 25}}>
+            <div className="Footer">
                 <span className='SmallButton ColorOne' onClick={this.updateNodeList}>refresh</span>
                 <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
                 <span className='SmallButton ColorThree' onClick={() => {this.setState({debug: !this.state.debug})}}>{this.state.debug ? "debug" : "all"}</span>
