@@ -24,8 +24,8 @@ class Message extends Component {
     MessageField(props) {
         return (
             <div className="MessageLine" key={'' + props.messageIndex + '_'+ props.fieldIndex}>
-                <span style={{marginRight: 5}}>{props.name}: </span>
-                <input className="MessageTypeInput" style={{width: "100%" }} type="text" value={this.state.values[props.messageIndex][props.fieldIndex]} onChange={
+                <span style={{marginRight: 5, flex: "0 0 auto"}}>{props.name}:</span>
+                <input className="MessageTypeInput" type="text" value={this.state.values[props.messageIndex][props.fieldIndex]} onChange={
                     (event) => {
                       const message = this.props.message;
 
@@ -84,7 +84,7 @@ class Message extends Component {
     MessageType(props) {
         return (
             <div key={'' + props.messageIndex + '_'+ props.fieldIndex}>
-                <span className="MessageLine" style={{marginRight: 5}}>{props.name}: </span>
+                <div className="MessageLine" style={{marginRight: 5}}>{props.name}: </div>
                 {this.MessageFieldArray({index: props.index, path: props.path})}
             </div>
         );
