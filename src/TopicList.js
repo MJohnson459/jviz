@@ -1,36 +1,33 @@
 import React, { Component } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
+
 import SidebarItem from './SidebarItem.js'
+import Publisher from './Publisher.js'
+import Subscriber from './Subscriber.js'
 
 function Topic(props) {
-    if (props.selected) {
-        return (
-            <div onClick={props.onClick} className={'Topic'} >
-                <div className="TopicSelected Active"></div>
-                <div>
-                    <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
-                    <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
-                </div>
+
+    const subClassName = "SmallButton ColorOne " + (props.subActive ? "Active" : "")
+    const pubClassName = "SmallButton ColorTwo " + (props.pubActive ? "Active" : "")
+
+    return (
+        <div className={'Topic'} >
+            <div style={{flex: 1}}>
+                <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
+                <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
             </div>
-        )
-    } else {
-        return (
-            <div onClick={props.onClick} className={'Topic'} >
-                <div className="TopicSelected"></div>
-                <div>
-                    <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
-                    <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
-                </div>
+            <div className='TopicOptions'>
+              <div className={subClassName} onClick={props.createSubscriber}>sub</div>
+              <div className={pubClassName} onClick={props.createPublisher}>pub</div>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 class TopicList extends Component {
 
     constructor(props) {
         super(props);
-        console.log('Constructing TopicList');
 
         this.state = {
             topics: [],
@@ -45,8 +42,6 @@ class TopicList extends Component {
 
     getTopics() {
         this.props.ros.getTopics((topics) => {
-            console.log(topics);
-
             var x = topics.topics.map((item, i) =>
                 {
                     return {
@@ -64,22 +59,31 @@ class TopicList extends Component {
     }
 
     createElement(el) {
-        return (<Topic key={el.topic} topic={el.topic} type={el.type} selected={el.selected} onClick={() =>  {
+        return (<Topic key={el.topic} topic={el.topic} type={el.type} selected={el.selected}
+            createSubscriber={() => {
                 el.selected=true;
-                this.props.createSubscriber(el.topic, el.type);
-            }} />);
+                const id = 'sub_' + el.topic
+                this.props.addWidget(id, (
+                  <Subscriber key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
+                ))
+            }}
+            createPublisher={() => {
+                el.selected=true;
+                const id = 'pub_' + el.topic
+                this.props.addWidget(id, (
+                  <Publisher key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
+            ))}}
+            />);
     }
 
     render() {
-        console.log('Rendering TopicList');
-
         return (
         <SidebarItem name="Topic List">
             <Scrollbars className="TopicList" autoHeight autoHeightMax={350}>
                 {this.state.topics.map(this.createElement)}
             </Scrollbars>
             <div className="TopicListFooter">
-                <div className="smallButton" onClick={this.getTopics}>
+                <div className="SmallButton ColorThree" onClick={this.getTopics}>
                     refresh
                 </div>
             </div>

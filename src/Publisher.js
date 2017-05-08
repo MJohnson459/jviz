@@ -1,126 +1,153 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
-import Widget from './Widget.js'
-
-// MessageType
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import YAML from 'yamljs';
-
-function MessageType(props) {
-    return (
-        <div style={{backgroundColor: "#444444", padding: 5, margin: 3}}>
-        </div>
-    )
-}
+import Message from './Message'
 
 class Publisher extends Component {
 
-    constructor(props) {
-        super(props);
-        console.log('Constructing Publisher');
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            topic: "-1",
-            count: 0,
-            topics: {
-                topics: [],
-                types: [],
-            },
-            messageDetails: "",
+    this.state = {
+      messageDetails: null,
+      auto: false,
+      repeat: 0,
+    }
+
+    this.frequency = [
+      {interval: 0, display: "single"},
+      {interval: 10000, display: "0.1 Hz"},
+      {interval: 5000, display: "0.5 Hz"},
+      {interval: 1000, display: "1 Hz"},
+      {interval: 200, display: "5 Hz"},
+      {interval: 100, display: "10 Hz"}]
+
+    this.publisher = new ROSLIB.Topic({
+      ros : this.props.ros,
+      name : this.props.topic,
+      messageType : this.props.type,
+    });
+
+    this.props.ros.getMessageDetails(this.props.type, (details)=>{
+      this.setState({
+        messageDetails: details,
+        message: this.decodeTypeDefsRec(details[0], details),
+        values: details.map((message, i) => message.examples),
+      })
+    }, (message)=>{
+      console.log("msg details FAILED", this.props.type, message)
+    });
+
+    this.publish = this.publish.bind(this);
+    this.decodeTypeDefsRec = this.decodeTypeDefsRec.bind(this);
+    this.toggleRepeat = this.toggleRepeat.bind(this);
+  }
+
+  // calls itself recursively to resolve type definition using hints.
+  decodeTypeDefsRec(theType, hints) {
+    var typeDefDict = {};
+    for (var i = 0; i < theType.fieldnames.length; i++) {
+      const arrayLen = theType.fieldarraylen[i];
+      const fieldName = theType.fieldnames[i];
+      const fieldType = theType.fieldtypes[i];
+      const fieldExample = theType.examples[i];
+      if (fieldType.indexOf('/') === -1) { // check the fieldType includes '/' or not
+      if (arrayLen === -1) {
+        typeDefDict[fieldName] = fieldExample;
+      }
+      else {
+        typeDefDict[fieldName] = [fieldType];
+      }
+    }
+    else {
+      // lookup the name
+      var sub = false;
+      for (var j = 0; j < hints.length; j++) {
+        if (hints[j].type.toString() === fieldType.toString()) {
+          sub = hints[j];
+          break;
         }
-
-        this.getTopics();
-
-        this.publish = this.publish.bind(this);
-        this.getTopics = this.getTopics.bind(this);
-        this.changeTopic = this.changeTopic.bind(this);
-    }
-
-    publish() {
-        console.log('Publishing ' + this.state.count);
-        var message = new ROSLIB.Message({
-            data: this.state.count.toString(),
-        });
-
-        this.publisher.publish(message);
-        this.setState( {
-            count: this.state.count + 1,
-        });
-    }
-
-    getTopics() {
-        this.props.ros.getTopics((topicList) => {
-            this.setState({
-                topics: topicList,
-            });
-            console.log('NodeList updateNodeList');
-        });
-    }
-
-    changeTopic(event) {
-        console.log(event)
-        const topic_index = event.target.value
-
-        this.setState({
-            topic: topic_index,
-        });
-
-        if (topic_index !== -1) {
-            const topicName = this.state.topics.topics[topic_index];
-            const topicType = this.state.topics.types[topic_index];
-            this.publisher = new ROSLIB.Topic({
-                ros : this.props.ros,
-                name : topicName,
-                messageType : topicType,
-            });
-
-            this.props.ros.getMessageDetails(topicType, (details)=>{
-                const decodedMessage = this.props.ros.decodeTypeDefs(details);
-                this.setState({
-                    messageDetails: details,
-                })
-                console.log("decoded details", decodedMessage)
-                console.log("msg details", details)
-            }, (message)=>{
-                console.log(topicType)
-                console.log("msg details FAILED", topicType, message)
-            });
-
-
-
-        } else {
-            this.publisher.unadvertise();
+      }
+      if (sub) {
+        const subResult = this.decodeTypeDefsRec(sub, hints);
+        if (arrayLen === -1) {
+          typeDefDict[fieldName] = subResult;
         }
+        else {
+          typeDefDict[fieldName] = [subResult];
+        }
+      }
+      else {
+        console.log('error', 'Cannot find ' + fieldType + ' in decodeTypeDefs');
+      }
+    }
+  }
+  return typeDefDict;
+}
+
+  componentWillUnmount() {
+    if (this.state.repeat) {
+      clearInterval(this.intervalId);
+    }
+    this.setState({repeat: false})
+  }
+
+  publish() {
+    var messageObj = this.state.message;
+
+    if (this.state.auto) {
+      const time = Date.now();
+      messageObj.header.stamp = {
+          secs: time / 1000,
+          nsecs: time % 1000,
+      }
     }
 
+    const message = new ROSLIB.Message(messageObj);
 
-    render() {
-        console.log('Rendering Publisher');
+    this.publisher.publish(message);
+  }
 
-        return (
-        <Widget {...this.props} name="Publisher">
-            <div className="Publisher">
-                <select onChange={this.changeTopic}>
-                    <option key={null} value={-1}>select topic...</option>
-                {this.state.topics.topics.map((item, i) =>
-                    <option key={item} value={i}>{item}</option>
-                )}
-                </select>
-                { this.state.topic === -1 ||
-                <div>
-                    <p>Topic: {this.state.topics.topics[this.state.topic]}</p>
-                    <p>Type: {this.state.topics.types[this.state.topic]}</p>
-                    <MessageType ros={this.props.ros} message={this.state.messageDetails} />
-                    <button onClick={this.publish}>
-                        publish {this.state.count}
-                    </button>
-                </div>
-                }
-                {this.props.children}
+  toggleRepeat() {
+    const index = (this.state.repeat + 1) % this.frequency.length
+    clearInterval(this.intervalId)
+
+    if (index !== 0) {
+      this.intervalId = setInterval(this.publish, this.frequency[index].interval); // publish at 1Hz
+    }
+
+    this.setState({
+      repeat: index,
+    })
+  }
+
+  render() {
+    return (
+      <div className="Publisher">
+        { this.state.messageDetails === null ||
+          <div style={{display: "flex", flexDirection: "column", flex: 1}}>
+            <div style={{padding: 5, overflowY: "auto", flex: 1}}>
+              <Message name={this.props.type}
+                values={this.state.values}
+                messageDetails={this.state.messageDetails}
+                message={this.state.message}
+                auto={this.state.auto}
+                updateState={(state) => this.setState(state)}
+                />
             </div>
-        </Widget>
-        );
-    }
+            <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row"}}>
+              <div className="SmallButton ColorOne" onClick={this.publish}>
+                publish
+              </div>
+              <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
+                {this.frequency[this.state.repeat].display}
+              </div>
+            </div>
+          </div>
+        }
+        {this.props.children}
+      </div>
+    );
+  }
 }
 
 export default Publisher;

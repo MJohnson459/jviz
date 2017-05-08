@@ -3,6 +3,9 @@
 [![devDependency Status](https://david-dm.org/MJohnson459/jviz/dev-status.svg)](https://david-dm.org/MJohnson459/jviz#info=devDependencies)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/bd5e1055fd7b44ea8d57b7512d85c779)](https://www.codacy.com/app/MJohnson459/jviz?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MJohnson459/jviz&amp;utm_campaign=Badge_Grade)
 
+![JViz](https://raw.githubusercontent.com/MJohnson459/jviz/publisher/doc/jviz.png)
+
+# Content
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
@@ -14,7 +17,6 @@
 	- [Future](#future)
 
 <!-- /TOC -->
-
 
 # Goals
 
@@ -57,11 +59,11 @@ The immediate focus is to match the functionality of the `rostopic` tool.
 - [x] Subscriber
   - [x] Format received messages
   - [x] Steady scroll
-- [ ] Publisher
+- [x] Publisher
   - [x] Choose topic
-  - [ ] Fill message
-  - [ ] Auto fill header
-  - [ ] Send frequency
+  - [x] Fill message
+  - [x] Auto fill header
+  - [x] Send frequency
 - [ ] Node Graph
   - [x] Nodes
   - [x] Edges

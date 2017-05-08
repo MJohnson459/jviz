@@ -9,12 +9,27 @@
   flex: 1;
 }
 
+/* Theme */
 .Colors {
     background-color: #36393e;
     background-color: #2e3136;
     background-color: #1e2124;
     border-bottom: 1px solid #303337;
 }
+
+
+.ColorOne {
+  background-color: rgba(122, 192, 210, 0.86);
+}
+
+.ColorTwo {
+  background-color: rgba(128, 177, 18, 0.67);
+}
+
+.ColorThree {
+  background-color: rgba(177, 147, 18, 0.67);
+}
+
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
@@ -75,18 +90,18 @@
 
 .WidgetHeader {
     height: 40px;
-    width: 100%;
+    display: flex;
     background-color: #32363c;
     border-bottom: 1px solid #36393e;
 }
 
 .HeaderName {
-    height: 100%;
     margin: 0;
     padding: 10px;
     color: hsla(0,0%,100%,.7);
     vertical-align: middle;
-    float: left;
+    user-select: none;
+    flex: 1;
 }
 
 .HeaderClose {
@@ -143,11 +158,20 @@
 
 .Subscriber {
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .Publisher {
-    padding: 10px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.NodeGraph {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .Topic {
@@ -158,6 +182,11 @@
     padding: 5px;
     display: flex;
     align-items: center;
+}
+
+.TopicOptions {
+  display: flex;
+  flex-direction: column;
 }
 
 .TopicSelected {
@@ -181,6 +210,13 @@
     flex-direction: row-reverse;
 }
 
+.SmallButton {
+    cursor: pointer;
+    padding: 4px;
+    margin: 1px;
+    user-select: none;
+}
+
 .Message {
     margin: 0px;
     width: 100%;
@@ -188,11 +224,25 @@
     border-bottom: 1px solid hsla(0,0%,100%,.06);
 }
 
-.smallButton {
-    background-color: rgba(122, 192, 210, 0.86);
-    cursor: pointer;
-    padding: 4px;
-    margin: 1px;
+.MessageLine {
+    display: flex;
+    flex-direction: row;
+    padding: 1px;
+    flex: 1;
+}
+
+.MessageLabel {
+    margin-right: 5px;
+    flex: 0 0 auto;
+}
+
+.MessageTypeInput {
+    background-color: #36393e;
+    border: 0px solid hsla(0,0%,100%,.06);
+    color: hsla(0,0%,100%,.7);
+    padding-left: 5px;
+    flex: 1;
+    min-width: 0px;
 }
 
 

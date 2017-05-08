@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import Widget from './Widget.js';
 import YAML from 'yamljs';
 // import { Scrollbars } from 'react-custom-scrollbars';
 import './styles/dark.css';
@@ -21,7 +20,6 @@ class Subscriber extends Component {
 
     constructor(props) {
         super(props);
-        console.log('Constructing Subscriber');
 
         this.updateDuration = 500; //ms
         this.messageBuffer = [];
@@ -58,7 +56,6 @@ class Subscriber extends Component {
     }
 
     subscribe() {
-        console.log("this.props: ", this.props)
         this.subscriber = new ROSLIB.Topic({
             ros : this.props.ros,
             name : this.props.topic,
@@ -127,8 +124,7 @@ class Subscriber extends Component {
         }
 
         return (
-        <Widget {...this.props} name={this.props.topic}>
-
+        <div className='Subscriber'>
             <div style={{ flex: '1 1 auto' }}>
                 <AutoSizer>
                   {({ height, width }) => (
@@ -147,7 +143,7 @@ class Subscriber extends Component {
             </div>
             <div style={{margin: 5}}>Received: {this.state.messages.length}</div>
             {this.props.children}
-        </Widget>
+        </div>
         );
     }
 }

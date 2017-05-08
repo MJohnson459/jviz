@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import SidebarItem from './SidebarItem.js';
 import { Scrollbars } from 'react-custom-scrollbars';
+import NodeGraph from './NodeGraph'
 
 class NodeList extends Component {
 
     updateNodeList() {
-        console.log('NodeList updateNodeList');
-
-        this.ros.getNodes((list) => {
+        this.props.ros.getNodes((list) => {
           // console.log(list);
             this.setState({
                 nodes: list,
@@ -18,11 +17,14 @@ class NodeList extends Component {
 
     }
 
-    constructor(props) {
-        super();
-        console.log('Constructing NodeList');
+    addNodeGraph() {
+        this.props.addWidget("node_graph", (
+            <NodeGraph key={"node_graph"} ros={this.props.ros} />
+        ))
+    }
 
-        this.ros = props.ros;
+    constructor(props) {
+        super(props);
 
         this.state = {
             nodes: [],
@@ -30,24 +32,26 @@ class NodeList extends Component {
         }
 
         this.updateNodeList = this.updateNodeList.bind(this);
+        this.addNodeGraph = this.addNodeGraph.bind(this);
         this.updateNodeList();
     }
 
     render() {
-        console.log('Rendering NodeList');
-
         return (
         <SidebarItem name="Node List" hidden={this.state.hidden}>
-            <Scrollbars className="NodeList" style={{ height: "inherit", backgroundColor: "#DDDDDD" }}>
+            <Scrollbars className="NodeList" >
                 <ul className="App-intro">
                     {this.state.nodes.map((item) =>
                       <li key={item} style={{textAlign: "left"}}>{item}</li>
                     )}
                 </ul>
             </Scrollbars>
-            <button onClick={this.updateNodeList}>
+            <div className="SmallButton ColorThree" onClick={this.updateNodeList}>
                 Update
-            </button>
+            </div>
+            <div className="SmallButton ColorTwo" onClick={this.addNodeGraph}>
+                Node Graph
+            </div>
         </SidebarItem>
         );
     }

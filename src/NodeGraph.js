@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Widget from './Widget.js';
 import Graph from 'react-graph-vis';
 import _ from 'lodash';
 import {AutoSizer} from 'react-virtualized';
@@ -9,7 +8,6 @@ class NodeGraph extends Component {
 
     constructor(props) {
         super(props);
-        console.log('Constructing NodeGraph');
 
         this.state = {
             graphNodes: [],
@@ -79,8 +77,6 @@ class NodeGraph extends Component {
     }
 
     updateNodeList() {
-        console.log('NodeList updateNodeList');
-
         /// Need to buffer updates to avoid numerous render updates
         var readyForUpdate = {topics: false, nodes: false, edges: false};
 
@@ -212,8 +208,6 @@ class NodeGraph extends Component {
     }
 
     render() {
-        console.log('Rendering NodeGraph');
-
         var nodes = [];
         var edges = [];
 
@@ -233,12 +227,11 @@ class NodeGraph extends Component {
 
 
         return (
-        <Widget {...this.props} name="Node Graph">
+        <div className="NodeGraph">
             <div style={{ flex: '1 1 auto' }}>
                 <AutoSizer>
                   {({ height, width }) => {
                       const options = this.getOptions(width, height);
-                      console.log("options", options)
                       return (
                           <Graph graph={{nodes: nodes, edges: edges}} options={options} style={{height: height, width: width}}/>
                       )}}
@@ -249,11 +242,11 @@ class NodeGraph extends Component {
 
             {this.props.children}
             <div style={{height: 25}}>
-                <span className={"smallButton"} style={{backgroundColor: "rgba(122, 192, 210, 0.86)"}} onClick={this.updateNodeList}>refresh</span>
-                <span className={"smallButton"} style={{backgroundColor: "rgba(128, 177, 18, 0.67)"}} onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
-                <span className={"smallButton"} style={{backgroundColor: "rgba(177, 147, 18, 0.67)"}} onClick={() => {this.setState({debug: !this.state.debug})}}>{this.state.debug ? "debug" : "all"}</span>
+                <span className='SmallButton ColorOne' onClick={this.updateNodeList}>refresh</span>
+                <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
+                <span className='SmallButton ColorThree' onClick={() => {this.setState({debug: !this.state.debug})}}>{this.state.debug ? "debug" : "all"}</span>
             </div>
-        </Widget>
+        </div>
         );
     }
 }
