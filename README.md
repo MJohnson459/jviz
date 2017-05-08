@@ -59,11 +59,11 @@ The immediate focus is to match the functionality of the `rostopic` tool.
 - [x] Subscriber
   - [x] Format received messages
   - [x] Steady scroll
-- [ ] Publisher
+- [x] Publisher
   - [x] Choose topic
   - [x] Fill message
   - [x] Auto fill header
-  - [ ] Send frequency
+  - [x] Send frequency
 - [ ] Node Graph
   - [x] Nodes
   - [x] Edges

@@ -8,10 +8,18 @@ class Publisher extends Component {
     super(props);
 
     this.state = {
-      count: 0,
       messageDetails: null,
       auto: false,
+      repeat: 0,
     }
+
+    this.frequency = [
+      {interval: 0, display: "single"},
+      {interval: 10000, display: "0.1 Hz"},
+      {interval: 5000, display: "0.5 Hz"},
+      {interval: 1000, display: "1 Hz"},
+      {interval: 200, display: "5 Hz"},
+      {interval: 100, display: "10 Hz"}]
 
     this.publisher = new ROSLIB.Topic({
       ros : this.props.ros,
@@ -76,74 +84,70 @@ class Publisher extends Component {
   return typeDefDict;
 }
 
-componentWillUnmount() {
-  if (this.state.repeat) {
-    clearInterval(this.intervalId);
-  }
-  this.setState({repeat: false})
-}
-
-publish() {
-  var messageObj = this.state.message;
-
-  if (this.state.auto) {
-    const time = Date.now();
-    messageObj.header.stamp = {
-        secs: time / 1000,
-        nsecs: time % 1000,
+  componentWillUnmount() {
+    if (this.state.repeat) {
+      clearInterval(this.intervalId);
     }
+    this.setState({repeat: false})
   }
 
-  const message = new ROSLIB.Message(messageObj);
+  publish() {
+    var messageObj = this.state.message;
 
-  this.publisher.publish(message);
-  this.setState({
-    count: this.state.count + 1,
-  });
-}
-
-toggleRepeat() {
-  if (this.state.repeat) {
-    // Toggle off
-    clearInterval(this.intervalId)
-  } else {
-    // Toggle on
-    this.intervalId = setInterval(this.publish, 1000); // publish at 1Hz
-  }
-
-  this.setState({
-    repeat: !this.state.repeat,
-  })
-}
-
-render() {
-  return (
-    <div className="Publisher">
-      { this.state.messageDetails === null ||
-        <div style={{display: "flex", flexDirection: "column", flex: 1}}>
-          <div style={{padding: 5, overflowY: "auto", flex: 1}}>
-            <Message name={this.props.type}
-              values={this.state.values}
-              messageDetails={this.state.messageDetails}
-              message={this.state.message}
-              auto={this.state.auto}
-              updateState={(state) => this.setState(state)}
-              />
-          </div>
-          <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row"}}>
-            <div className="SmallButton ColorOne" onClick={this.publish}>
-              publish {this.state.count}
-            </div>
-            <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
-              {this.state.repeat ? "1 Hz" : "repeat"}
-            </div>
-          </div>
-        </div>
+    if (this.state.auto) {
+      const time = Date.now();
+      messageObj.header.stamp = {
+          secs: time / 1000,
+          nsecs: time % 1000,
       }
-      {this.props.children}
-    </div>
-  );
-}
+    }
+
+    const message = new ROSLIB.Message(messageObj);
+
+    this.publisher.publish(message);
+  }
+
+  toggleRepeat() {
+    const index = (this.state.repeat + 1) % this.frequency.length
+    clearInterval(this.intervalId)
+
+    if (index !== 0) {
+      this.intervalId = setInterval(this.publish, this.frequency[index].interval); // publish at 1Hz
+    }
+
+    this.setState({
+      repeat: index,
+    })
+  }
+
+  render() {
+    return (
+      <div className="Publisher">
+        { this.state.messageDetails === null ||
+          <div style={{display: "flex", flexDirection: "column", flex: 1}}>
+            <div style={{padding: 5, overflowY: "auto", flex: 1}}>
+              <Message name={this.props.type}
+                values={this.state.values}
+                messageDetails={this.state.messageDetails}
+                message={this.state.message}
+                auto={this.state.auto}
+                updateState={(state) => this.setState(state)}
+                />
+            </div>
+            <div style={{display: "flex", flex: "0 0 25px", flexDirection: "row"}}>
+              <div className="SmallButton ColorOne" onClick={this.publish}>
+                publish
+              </div>
+              <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
+                {this.frequency[this.state.repeat].display}
+              </div>
+            </div>
+          </div>
+        }
+        {this.props.children}
+      </div>
+    );
+  }
 }
 
 export default Publisher;
