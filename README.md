@@ -62,7 +62,7 @@ The immediate focus is to match the functionality of the `rostopic` tool.
 - [ ] Publisher
   - [x] Choose topic
   - [x] Fill message
-  - [ ] Auto fill header
+  - [x] Auto fill header
   - [ ] Send frequency
 - [ ] Node Graph
   - [x] Nodes

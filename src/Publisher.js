@@ -10,7 +10,7 @@ class Publisher extends Component {
     this.state = {
       count: 0,
       messageDetails: null,
-      auto: true,
+      auto: false,
     }
 
     this.publisher = new ROSLIB.Topic({
@@ -84,7 +84,17 @@ componentWillUnmount() {
 }
 
 publish() {
-  const message = new ROSLIB.Message(this.state.message);
+  var messageObj = this.state.message;
+
+  if (this.state.auto) {
+    const time = Date.now();
+    messageObj.header.stamp = {
+        secs: time / 1000,
+        nsecs: time % 1000,
+    }
+  }
+
+  const message = new ROSLIB.Message(messageObj);
 
   this.publisher.publish(message);
   this.setState({
