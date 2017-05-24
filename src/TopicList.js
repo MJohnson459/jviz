@@ -12,13 +12,13 @@ function Topic(props) {
 
     return (
         <div className={'Topic'} >
-            <div style={{flex: 1}}>
-                <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
-                <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
-            </div>
             <div className='TopicOptions'>
               <div className={subClassName} onClick={props.createSubscriber}>sub</div>
               <div className={pubClassName} onClick={props.createPublisher}>pub</div>
+            </div>
+            <div style={{flex: 1}}>
+                <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
+                <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
             </div>
         </div>
     )

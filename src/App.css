@@ -125,7 +125,7 @@
   flex-direction: row;
   flex: 0 0 25px;
   padding: 2px;
-  
+
 }
 
 .SidebarItem {
@@ -184,6 +184,7 @@
     padding: 10px;
     display: flex;
     align-items: center;
+    white-space: nowrap;
 }
 
 .Topic {
