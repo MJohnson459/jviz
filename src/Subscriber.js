@@ -21,13 +21,23 @@ class Subscriber extends Component {
     constructor(props) {
         super(props);
 
+        // Time between drawing new messages
         this.updateDuration = 500; //ms
+
+        // Where to store new messages between draws
         this.messageBuffer = [];
+
+        // Max size of the message list
+        this.MAX_HISTORY = 1000;
+
+        // Max buffer size (mainly used when paused)
+        this.MAX_BUFFER = 500;
 
         this.state = {
             messages: [],
-            message: {},
-            scrolled: false,
+            autoscroll: true,
+            index: -1,
+            messageCount: 0,
         }
 
         this.nextUpdate = Date.now() + this.updateDuration; // ms
@@ -63,16 +73,27 @@ class Subscriber extends Component {
         });
 
         this.subscriber.subscribe((message) => {
-            this.messageBuffer = [...this.messageBuffer, message];
-            // console.log("messagebuffer", this.messageBuffer);
+            this.messageBuffer.unshift(message);
+            this.state.messageCount += 1;
 
-            // Check if time to update
-            if (Date.now() >= this.nextUpdate) {
+            // Two ways that will force a flush
+            // Buffer is full:
+            const bufferFull = this.messageBuffer.length >= this.MAX_BUFFER;
+            // Autoscrolling and updateDuration has passed:
+            const timePassed = this.state.autoscroll && Date.now() >= this.nextUpdate;
 
-                this.setState(prevState => ({
-                    messages: [...prevState.messages, ...this.messageBuffer],
-                    message: message,
-                }));
+            if (bufferFull || timePassed) {
+                const totalSize = this.state.messages.length + this.messageBuffer.length;
+                if (totalSize <= this.MAX_HISTORY) {
+                    this.setState(prevState => ({
+                        messages: [...this.messageBuffer, ...prevState.messages],
+                    }));
+                } else {
+                    this.setState(prevState => ({
+                        messages: [...this.messageBuffer, ...prevState.messages.slice(totalSize - this.MAX_HISTORY)],
+                        index: prevState.index > this.messageBuffer.length ? prevState.index - this.messageBuffer.length : 0,
+                    }));
+                }
 
                 // Clear buffer
                 this.messageBuffer = [];
@@ -106,8 +127,8 @@ class Subscriber extends Component {
         startIndex,
         stopIndex
     }) {
-       this.setState({
-            scrolled: stopIndex !== this.state.messages.length - 1,
+        this.setState({
+            index: this.state.autoscroll ? 0 : stopIndex,
         })
     }
 
@@ -118,8 +139,8 @@ class Subscriber extends Component {
         var scroll = {}
         if (!this.state.scrolled) {
             scroll = {
-                scrollToIndex: this.state.messages.length-1,
-                scrollToAlignment: "end",
+                scrollToIndex: this.state.index,
+                scrollToAlignment: "start",
             }
         }
 
@@ -135,13 +156,17 @@ class Subscriber extends Component {
                         rowRenderer={this.rowRenderer}
                         width={width}
                         onRowsRendered={this.onRowsRendered}
+                        messageCount={this.state.messageCount}
                         {...scroll}
 
                     />
                   )}
                 </AutoSizer>
             </div>
-            <div style={{margin: 5}}>Received: {this.state.messages.length}</div>
+            <div style={{margin: 5, display: "flex", marginRight: 20}}>
+                <div style={{flex: 2}}>Received: {this.state.messageCount}</div>
+                <div style={{flex: "0 0 100px", textAlign: "right", color: this.state.autoscroll ? "red" : "green"}} onClick={() => this.setState({autoscroll: !this.state.autoscroll})}>{this.state.index + 1} / {this.state.messages.length}</div>
+            </div>
             {this.props.children}
         </div>
         );
