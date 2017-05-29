@@ -227,8 +227,10 @@
 .Message {
     margin: 0px;
     width: 100%;
-    display: inline-block;
+    height: auto;
+    display: block;
     border-bottom: 1px solid hsla(0,0%,100%,.06);
+    margin: 5px 0px;
 }
 
 .MessageLine {

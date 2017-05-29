@@ -27,6 +27,8 @@ class Subscriber extends Component {
         // Where to store new messages between draws
         this.messageBuffer = [];
 
+        this.messageCount = 0;
+
         // Max size of the message list
         this.MAX_HISTORY = 1000;
 
@@ -53,8 +55,8 @@ class Subscriber extends Component {
         const rowHeight = 15;
         const message = this.state.messages[index];
         const yamlMessage = YAML.stringify(message, 2);
-        const size = yamlMessage.split(/\r\n|\r|\n/).length
-        return  size * rowHeight;
+        const size = yamlMessage.split(/\r\n|\r|\n/).length;
+        return  size * rowHeight ;
     }
 
     componentDidMount() {
@@ -74,7 +76,7 @@ class Subscriber extends Component {
 
         this.subscriber.subscribe((message) => {
             this.messageBuffer.unshift(message);
-            this.state.messageCount += 1;
+            this.messageCount += 1;
 
             // Two ways that will force a flush
             // Buffer is full:
@@ -87,16 +89,19 @@ class Subscriber extends Component {
                 if (totalSize <= this.MAX_HISTORY) {
                     this.setState(prevState => ({
                         messages: [...this.messageBuffer, ...prevState.messages],
+                        messageCount: this.messageCount,
                     }));
                 } else {
                     this.setState(prevState => ({
                         messages: [...this.messageBuffer, ...prevState.messages.slice(totalSize - this.MAX_HISTORY)],
                         index: prevState.index > this.messageBuffer.length ? prevState.index - this.messageBuffer.length : 0,
+                        messageCount: this.messageCount,
                     }));
                 }
 
                 // Clear buffer
                 this.messageBuffer = [];
+                if (this.listComponent) this.listComponent.recomputeRowHeights();
                 this.nextUpdate = Date.now() + this.updateDuration;
             }
         });
@@ -128,21 +133,12 @@ class Subscriber extends Component {
         stopIndex
     }) {
         this.setState({
-            index: this.state.autoscroll ? 0 : stopIndex,
+            index: this.state.autoscroll ? 0 : startIndex,
         })
     }
 
     render() {
         // console.log('Rendering Subscriber', this.state.messages.length);
-
-        // Auto-scroll at the bottom only if the user hasn't scrolled up
-        var scroll = {}
-        if (!this.state.scrolled) {
-            scroll = {
-                scrollToIndex: this.state.index,
-                scrollToAlignment: "start",
-            }
-        }
 
         return (
         <div className='Subscriber'>
@@ -150,6 +146,7 @@ class Subscriber extends Component {
                 <AutoSizer>
                   {({ height, width }) => (
                     <List
+                        ref={(input) => {this.listComponent = input}}
                         height={height}
                         rowHeight={this.calculateRowHeight}
                         rowCount={this.state.messages.length}
@@ -157,8 +154,8 @@ class Subscriber extends Component {
                         width={width}
                         onRowsRendered={this.onRowsRendered}
                         messageCount={this.state.messageCount}
-                        {...scroll}
-
+                        scrollToIndex={this.state.index}
+                        scrollToAlignment="start"
                     />
                   )}
                 </AutoSizer>
