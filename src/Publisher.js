@@ -49,40 +49,45 @@ class Publisher extends Component {
       const arrayLen = theType.fieldarraylen[i];
       const fieldName = theType.fieldnames[i];
       const fieldType = theType.fieldtypes[i];
-      const fieldExample = theType.examples[i];
+      var fieldExample = theType.examples[i];
       if (fieldType.indexOf('/') === -1) { // check the fieldType includes '/' or not
-      if (arrayLen === -1) {
-        typeDefDict[fieldName] = fieldExample;
-      }
-      else {
-        typeDefDict[fieldName] = [fieldType];
-      }
-    }
-    else {
-      // lookup the name
-      var sub = false;
-      for (var j = 0; j < hints.length; j++) {
-        if (hints[j].type.toString() === fieldType.toString()) {
-          sub = hints[j];
-          break;
-        }
-      }
-      if (sub) {
-        const subResult = this.decodeTypeDefsRec(sub, hints);
         if (arrayLen === -1) {
-          typeDefDict[fieldName] = subResult;
+          if (fieldType === "float64") {
+            console.log("fieldExample", fieldExample, parseFloat(fieldExample))
+            fieldExample = parseFloat(fieldExample);
+
+          }
+          typeDefDict[fieldName] = fieldExample;
         }
         else {
-          typeDefDict[fieldName] = [subResult];
+          typeDefDict[fieldName] = [fieldType];
         }
       }
       else {
-        console.log('error', 'Cannot find ' + fieldType + ' in decodeTypeDefs');
+        // lookup the name
+        var sub = false;
+        for (var j = 0; j < hints.length; j++) {
+          if (hints[j].type.toString() === fieldType.toString()) {
+            sub = hints[j];
+            break;
+          }
+        }
+        if (sub) {
+          const subResult = this.decodeTypeDefsRec(sub, hints);
+          if (arrayLen === -1) {
+            typeDefDict[fieldName] = subResult;
+          }
+          else {
+            typeDefDict[fieldName] = [subResult];
+          }
+        }
+        else {
+          console.log('error', 'Cannot find ' + fieldType + ' in decodeTypeDefs');
+        }
       }
     }
+    return typeDefDict;
   }
-  return typeDefDict;
-}
 
   componentWillUnmount() {
     if (this.state.repeat) {

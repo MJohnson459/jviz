@@ -14,7 +14,7 @@ class Message extends Component {
   MessageField(props) {
     return (
       <div className="MessageLine" key={props.messageIndex + '_'+ props.fieldIndex}>
-        <span className="MessageLabel">{props.name}:</span>
+        <span className="MessageLabel">{props.name} ({this.props.messageDetails[props.messageIndex].fieldtypes[props.fieldIndex]}):</span>
         <input className="MessageTypeInput"
           type="text"
           value={this.props.values[props.messageIndex][props.fieldIndex]}
@@ -37,11 +37,65 @@ class Message extends Component {
       )
     }
 
+    MessageFieldFloat(props) {
+      return (
+        <div className="MessageLine" key={props.messageIndex + '_'+ props.fieldIndex}>
+          <span className="MessageLabel">{props.name} ({this.props.messageDetails[props.messageIndex].fieldtypes[props.fieldIndex]}):</span>
+          <input className="MessageTypeInput"
+            type="text"
+            value={this.props.values[props.messageIndex][props.fieldIndex]}
+            onChange={
+              (event) => {
+                // Update message
+                const message = this.props.message;
+                _.set(message, props.path, parseFloat(event.target.value));
+
+                const values = this.props.values;
+                values[props.messageIndex][props.fieldIndex] = parseFloat(event.target.value);
+
+                this.props.updateState({
+                  message: message,
+                  values: values,
+                });
+              }
+            }/>
+        </div>
+      )
+    }
+
+    MessageFieldFloat(props) {
+      return (
+        <div className="MessageLine" key={props.messageIndex + '_'+ props.fieldIndex}>
+          <span className="MessageLabel">{props.name} ({this.props.messageDetails[props.messageIndex].fieldtypes[props.fieldIndex]}):</span>
+          <input className="MessageTypeInput"
+            type="text"
+            value={this.props.values[props.messageIndex][props.fieldIndex]}
+            onChange={
+              (event) => {
+                // Update message
+                const message = this.props.message;
+                _.set(message, props.path, parseInt(event.target.value));
+
+                const values = this.props.values;
+                values[props.messageIndex][props.fieldIndex] = parseInt(event.target.value);
+
+                this.props.updateState({
+                  message: message,
+                  values: values,
+                });
+              }
+            }/>
+        </div>
+      )
+    }
+
     MessageFieldArray(props) {
       const message = this.props.messageDetails[props.index];
-      const primitives = [
-        "byte",
-        "bool",
+      const primitivesFloat = [
+        "float32",
+        "float64",
+      ];
+      const primitivesInteger = [
         "int8",
         "uint8",
         "int16",
@@ -50,8 +104,10 @@ class Message extends Component {
         "uint32",
         "int64",
         "uint64",
-        "float32",
-        "float64",
+      ];
+      const primitives = [
+        "byte",
+        "bool",
         "string",
       ];
 
@@ -60,6 +116,10 @@ class Message extends Component {
         const path = [...props.path, name];
         if (primitives.includes(field)) {
           return this.MessageField({name: name, fieldIndex: i, messageIndex: props.index, path: path});
+        } else if (primitivesFloat.includes(field)) {
+          return this.MessageFieldFloat({name: name, fieldIndex: i, messageIndex: props.index, path: path});
+        } else if (primitivesInteger.includes(field)) {
+          return this.MessageFieldInteger({name: name, fieldIndex: i, messageIndex: props.index, path: path});
         } else if (field === "std_msgs/Header") {
           return this.MessageHeader({name: name, index: props.index + 1, path: path});
         } else {
