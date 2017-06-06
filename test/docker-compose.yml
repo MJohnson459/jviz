@@ -2,9 +2,6 @@ version: "2"
 services:
   master:
     image: ros:kinetic-robot
-    environment:
-      ROS_MASTER_URI: "http://master:11311"
-      ROS_HOSTNAME: "master"
     command: roscore
     ports:
       - "11311:11311"
@@ -12,9 +9,6 @@ services:
   rosbridge-server:
     build: .
     image: ros-jviz-test
-    environment:
-      ROS_MASTER_URI: "http://master:11311"
-      ROS_HOSTNAME: "rosbridge-server"
     command: roslaunch rosbridge_server rosbridge_websocket.launch --wait
     ports:
       - "9090:9090"
@@ -23,36 +17,31 @@ services:
 
   talker-one:
     image: ros-jviz-test
-    environment:
-      ROS_MASTER_URI: "http://master:11311"
-      ROS_HOSTNAME: "talker-one"
     command: rosrun roscpp_tutorials talker __name:=talker_one
     depends_on:
       - master
 
   talker-two:
     image: ros-jviz-test
-    environment:
-      ROS_MASTER_URI: "http://master:11311"
-      ROS_HOSTNAME: "talker-two"
     command: rosrun roscpp_tutorials talker __name:=talker_two
     depends_on:
       - master
 
   listener-one:
     image: ros-jviz-test
-    environment:
-      ROS_MASTER_URI: "http://master:11311"
-      ROS_HOSTNAME: "listener-one"
     command: rosrun roscpp_tutorials listener __name:=listener_one
     depends_on:
       - master
 
   listener-two:
     image: ros-jviz-test
-    environment:
-      ROS_MASTER_URI: "http://master:11311"
-      ROS_HOSTNAME: "listener-two"
     command: rosrun roscpp_tutorials listener __name:=listener_two
     depends_on:
       - master
+
+  turtle-one:
+    image: ros-jviz-test
+    command: rosrun turtlesim turtlesim_node
+    depends_on:
+      - master
+      - rosbridge-server
