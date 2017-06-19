@@ -1,0 +1,13 @@
+parserOptions:
+  ecmaVersion: 6
+  sourceType: module
+  ecmaFeatures:
+    jsx: true
+    modules: true
+plugins:
+  - standard
+  - promise
+  - react
+extends:
+  - eslint:recommended
+  - plugin:react/recommended
