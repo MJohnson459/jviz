@@ -158,6 +158,7 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    flex-direction: column;
 }
 
 .Subscriber {
@@ -179,14 +180,13 @@
 }
 
 .Node {
-    height: 20px;
     border: 0px;
     border-style: solid;
     color: hsla(0,0%,100%,.6);
     padding: 10px;
-    display: flex;
     align-items: center;
     white-space: nowrap;
+    cursor: pointer;
 }
 
 .Topic {

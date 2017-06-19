@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import SidebarItem from './SidebarItem.js';
 import NodeGraph from './NodeGraph'
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import YAML from 'yamljs';
 
 class NodeList extends Component {
 
@@ -17,14 +19,41 @@ class NodeList extends Component {
     }
 
     updateNodeList() {
-        this.props.ros.getNodes((list) => {
+      /// Need to buffer updates to avoid numerous render updates
+      var readyForUpdate = false;
+
+      this.props.ros.getNodes((list) => {
+
+          var updatedNodesCount = 0;
+          var updatedNodes = []
+
           // console.log(list);
-            this.setState({
-                nodes: list,
-            });
-        }, (message) => {
-            console.log('NodeList updateNodeList failed: ' + message);
-        });
+          this.graphEdgesBuffer = [];
+          this.graphNodesBuffer = [];
+
+          list.forEach((node) => {
+              const node_id = "n_" + node;
+
+              this.props.ros.getNodeDetails(node, (details) => {
+
+                  updatedNodes.push({
+                    id: "n_" + node,
+                    name: node,
+                    details: details,
+                    hidden: true,
+                  });
+
+                  if (++updatedNodesCount === list.length) {
+                    this.setState({
+                      nodes: updatedNodes
+                    })
+                  }
+              });
+          });
+
+      }, (message) => {
+          console.log('NodeList updateNodeList failed: ' + message);
+      });
 
     }
 
@@ -38,8 +67,22 @@ class NodeList extends Component {
         return (
         <SidebarItem name="Node List" hidden={this.props.hidden}>
             <div className="ItemList">
-              {this.state.nodes.map((item) =>
-                  (<div className="Node" key={item} style={{textAlign: "left"}}>{item}</div>)
+              {this.state.nodes.map((node, index) =>
+                  (
+                    <div className="Node" key={node.id} style={{textAlign: "left"}} onClick={ () => {
+                        var nodes = this.state.nodes;
+                        nodes[index].hidden = !node.hidden;
+                        this.setState({nodes: nodes});
+                        }}>
+                      <div>{node.name}</div>
+                      {
+                        !node.hidden ?
+                          (<SyntaxHighlighter language="yaml" className="Message" useInlineStyles={false}>
+                              {YAML.stringify(node.details, 2)}
+                          </SyntaxHighlighter>)
+                          : ""
+                      }
+                    </div>)
               )}
             </div>
             <div className="Footer">
