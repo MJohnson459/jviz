@@ -48,10 +48,10 @@ class Message extends Component {
               (event) => {
                 // Update message
                 const message = this.props.message;
-                _.set(message, props.path, parseFloat(event.target.value));
+                _.set(message, props.path, parseFloat(event.target.value, 10));
 
                 const values = this.props.values;
-                values[props.messageIndex][props.fieldIndex] = parseFloat(event.target.value);
+                values[props.messageIndex][props.fieldIndex] = parseFloat(event.target.value, 10);
 
                 this.props.updateState({
                   message: message,
@@ -63,7 +63,7 @@ class Message extends Component {
       )
     }
 
-    MessageFieldFloat(props) {
+    MessageFieldInteger(props) {
       return (
         <div className="MessageLine" key={props.messageIndex + '_'+ props.fieldIndex}>
           <span className="MessageLabel">{props.name} ({this.props.messageDetails[props.messageIndex].fieldtypes[props.fieldIndex]}):</span>
@@ -74,10 +74,10 @@ class Message extends Component {
               (event) => {
                 // Update message
                 const message = this.props.message;
-                _.set(message, props.path, parseInt(event.target.value));
+                _.set(message, props.path, parseInt(event.target.value, 10));
 
                 const values = this.props.values;
-                values[props.messageIndex][props.fieldIndex] = parseInt(event.target.value);
+                values[props.messageIndex][props.fieldIndex] = parseInt(event.target.value, 10);
 
                 this.props.updateState({
                   message: message,
