@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import SidebarItem from './SidebarItem.js';
-import { Scrollbars } from 'react-custom-scrollbars';
 import NodeGraph from './NodeGraph'
 
 class NodeList extends Component {
@@ -38,11 +37,11 @@ class NodeList extends Component {
     render() {
         return (
         <SidebarItem name="Node List" hidden={this.props.hidden}>
-            <Scrollbars className="NodeList" autoHeight autoHeightMax={350}>
-                {this.state.nodes.map((item) =>
-                    (<div className="Node" key={item} style={{textAlign: "left"}}>{item}</div>)
-                )}
-            </Scrollbars>
+            <div className="ItemList">
+              {this.state.nodes.map((item) =>
+                  (<div className="Node" key={item} style={{textAlign: "left"}}>{item}</div>)
+              )}
+            </div>
             <div className="Footer">
               <div className="SmallButton ColorThree" onClick={this.updateNodeList}>
                   Update

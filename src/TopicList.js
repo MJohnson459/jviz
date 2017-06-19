@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars';
 
 import SidebarItem from './SidebarItem.js'
 import Publisher from './Publisher.js'
@@ -79,9 +78,9 @@ class TopicList extends Component {
     render() {
         return (
         <SidebarItem name="Topic List">
-            <Scrollbars className="TopicList" autoHeight autoHeightMax={350}>
-                {this.state.topics.map(this.createElement)}
-            </Scrollbars>
+            <div className="ItemList">
+                <div>{this.state.topics.map(this.createElement)}</div>
+            </div>
             <div className="Footer">
                 <div className="SmallButton ColorThree" onClick={this.getTopics}>
                     refresh
