@@ -3,6 +3,7 @@ import SidebarItem from './SidebarItem.js';
 import NodeGraph from './NodeGraph'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import YAML from 'yamljs';
+import ReactTooltip from 'react-tooltip';
 
 class NodeList extends Component {
 
@@ -19,9 +20,6 @@ class NodeList extends Component {
     }
 
     updateNodeList() {
-      /// Need to buffer updates to avoid numerous render updates
-      var readyForUpdate = false;
-
       this.props.ros.getNodes((list) => {
 
           var updatedNodesCount = 0;
@@ -40,7 +38,7 @@ class NodeList extends Component {
                     id: "n_" + node,
                     name: node,
                     details: details,
-                    hidden: true,
+                    selected: false,
                   });
 
                   if (++updatedNodesCount === list.length) {
@@ -69,14 +67,14 @@ class NodeList extends Component {
             <div className="ItemList">
               {this.state.nodes.map((node, index) =>
                   (
-                    <div className="Node" key={node.id} style={{textAlign: "left"}} onClick={ () => {
+                    <div className="Item" key={node.id} style={{textAlign: "left", position: "relative"}} onClick={ () => {
                         var nodes = this.state.nodes;
-                        nodes[index].hidden = !node.hidden;
+                        nodes[index].selected = !node.selected;
                         this.setState({nodes: nodes});
                         }}>
                       <div>{node.name}</div>
                       {
-                        !node.hidden ?
+                        node.selected ?
                           (<SyntaxHighlighter language="yaml" className="Message" useInlineStyles={false}>
                               {YAML.stringify(node.details, 2)}
                           </SyntaxHighlighter>)
@@ -86,10 +84,11 @@ class NodeList extends Component {
               )}
             </div>
             <div className="Footer">
-              <div className="SmallButton ColorThree" onClick={this.updateNodeList}>
-                  Update
+              <ReactTooltip effect="solid" place="right" type="info"/>
+              <div data-tip="Refresh the list of nodes" className="SmallButton ColorThree" onClick={this.updateNodeList}>
+                  Refresh
               </div>
-              <div className="SmallButton ColorTwo" onClick={this.addNodeGraph}>
+              <div data-tip="Create a Node Graph Widget" className="SmallButton ColorTwo" onClick={this.addNodeGraph}>
                   Node Graph
               </div>
             </div>

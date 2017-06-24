@@ -184,7 +184,7 @@
     flex-direction: column;
 }
 
-.Node {
+.ItemList .Item {
     border: 0px;
     border-style: solid;
     color: hsla(0,0%,100%,.6);
@@ -194,12 +194,16 @@
     cursor: pointer;
 }
 
+.ItemList .Item:hover {
+    background-color: hsla(0,0%,100%,.06);
+}
+
 .Topic {
     height: 60px;
     border: 0px;
     border-style: solid;
     color: hsla(0,0%,100%,.6);
-    padding: 5px;
+    padding: 5px !important;
     display: flex;
     align-items: center;
 }

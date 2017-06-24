@@ -5,6 +5,7 @@ import YAML from 'yamljs';
 // import { Scrollbars } from 'react-custom-scrollbars';
 import './styles/dark.css';
 import {List, AutoSizer} from 'react-virtualized';
+import ReactTooltip from 'react-tooltip';
 
 function Message(props) {
     return (
@@ -162,7 +163,7 @@ class Subscriber extends Component {
             </div>
             <div style={{margin: 5, display: "flex", marginRight: 20}}>
                 <div style={{flex: 2}}>Received: {this.state.messageCount}</div>
-                <div style={{flex: "0 0 100px", textAlign: "right", color: this.state.autoscroll ? "red" : "green"}} onClick={() => this.setState({autoscroll: !this.state.autoscroll})}>{this.state.index + 1} / {this.state.messages.length}</div>
+                <div style={{flex: "0 0 100px", textAlign: "right", cursor: "pointer", color: this.state.autoscroll ? "red" : "green"}} onClick={() => this.setState({autoscroll: !this.state.autoscroll})}>{this.state.index + 1} / {this.state.messages.length}</div>
             </div>
             {this.props.children}
         </div>

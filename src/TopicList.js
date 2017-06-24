@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import SidebarItem from './SidebarItem.js'
 import Publisher from './Publisher.js'
 import Subscriber from './Subscriber.js'
+import ReactTooltip from 'react-tooltip'
 
 function Topic(props) {
 
@@ -10,12 +11,13 @@ function Topic(props) {
     const pubClassName = "SmallButton ColorTwo " + (props.pubActive ? "Active" : "")
 
     return (
-        <div className={'Topic'} >
+        <div className={'Topic Item'} >
             <div className='TopicOptions'>
-              <div className={subClassName} onClick={props.createSubscriber}>sub</div>
-              <div className={pubClassName} onClick={props.createPublisher}>pub</div>
+              <ReactTooltip effect="solid" place="right" type="info"/>
+              <div data-tip="Create a Subscriber Widget" className={subClassName} onClick={props.createSubscriber}>Sub</div>
+              <div data-tip="Create a Sublisher Widget" className={pubClassName} onClick={props.createPublisher}>Pub</div>
             </div>
-            <div style={{flex: 1}}>
+            <div className='TopicName' style={{flex: 1}}>
                 <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
                 <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
             </div>
@@ -82,8 +84,9 @@ class TopicList extends Component {
                 <div>{this.state.topics.map(this.createElement)}</div>
             </div>
             <div className="Footer">
-                <div className="SmallButton ColorThree" onClick={this.getTopics}>
-                    refresh
+                <ReactTooltip effect="solid" place="right" type="info"/>
+                <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
+                    Refresh
                 </div>
             </div>
         </SidebarItem>
