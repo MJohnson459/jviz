@@ -20,7 +20,6 @@ class SidebarItem extends Component {
         <div {...this.props} className={'SidebarItem'} >
             <div className={'WidgetHeader'} onClick={this.onRequestHide}>
                 <div className={'HeaderName'}>{this.state.name}</div>
-                <div className={'HeaderClose'} onClick={this.props.onRequestHide}>X</div>
             </div>
             { this.state.hidden ||
                 <div className={'SidebarItemMain'}>

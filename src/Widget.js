@@ -9,7 +9,7 @@ function Widget(props) {
         <div {...gridProps} className={'Widget'} >
             <div className={'WidgetHeader'}>
                 <div className={'HeaderName'}>{props.name}</div>
-                <div className={'HeaderClose'} onClick={props.onRequestClose}>X</div>
+                <div className={'HeaderClose'} onClick={props.onRequestClose}>x</div>
             </div>
             <div className={'WidgetMain'}>
                 {props.children}

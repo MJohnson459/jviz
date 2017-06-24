@@ -78,7 +78,7 @@
     flex-direction: column;
 }
 
-.WidgetMain {
+.Widget .WidgetMain {
     padding: 0px;
     vertical-align: middle;
     background-color: #2e3136;
@@ -105,19 +105,24 @@
     flex: 1;
 }
 
-.HeaderClose {
+.WidgetHeader .HeaderClose {
+    visibility: hidden;
     width: 20px;
+    height: 25px;
     background-color: #2e3136;
-    line-height: 100%;
-    padding: 0;
-    margin: 0;
+    padding: 1px;
+    margin: 2px;
     text-align: center;
     cursor: pointer;
-    line-height: 30px;
+    line-height: 25px;
     vertical-align: middle;
     font-weight: bold;
     color: hsla(0,0%,100%,.7);
     float: right;
+}
+
+.WidgetHeader:hover .HeaderClose {
+    visibility: visible;
 }
 
 .Footer {
@@ -199,7 +204,7 @@
     align-items: center;
 }
 
-.TopicOptions {
+.Topic .TopicOptions {
   display: flex;
   flex-direction: column;
 }
@@ -212,8 +217,16 @@
     margin-right: 10px;
 }
 
-.Active {
+.Topic .TopicOptions .Active {
     background-color: rgba(66, 199, 240, 0.8);
+}
+
+.Topic .TopicOptions .SmallButton {
+    /*visibility: hidden;*/
+}
+
+.Topic:hover .TopicOptions .SmallButton {
+    /*visibility: visible;*/
 }
 
 .TopicList {
