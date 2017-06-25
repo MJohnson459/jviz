@@ -1,6 +1,10 @@
 FROM ros:kinetic-robot
 
-RUN apt-get update && apt-get install -y ros-kinetic-rosbridge-suite ros-kinetic-ros-tutorials
+RUN apt-get update && apt-get install -y \
+	ros-kinetic-rosbridge-suite \
+	ros-kinetic-ros-tutorials \
+	ros-kinetic-py-trees-ros
+
 
 COPY catkin_ws /catkin_ws
 

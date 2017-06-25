@@ -32,7 +32,7 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "ros": "docker-compose -f test/docker-compose.yml up -d",
+    "ros": "docker-compose -f test/docker-compose.yml up --build -d",
     "lint": "eslint ./"
   },
   "homepage": "http://MJohnson459.github.io/jviz"

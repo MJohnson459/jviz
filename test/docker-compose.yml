@@ -41,7 +41,14 @@ services:
 
   turtle-one:
     image: ros-jviz-test
-    command: rosrun turtlesim turtlesim_node
+    command: rosrun turtlesim turtlesim_node __ns:=turtle_one
+    depends_on:
+      - master
+      - rosbridge-server
+
+  turtle-two:
+    image: ros-jviz-test
+    command: roslaunch py_trees_ros mock_robot.launch __ns:=turtle_two
     depends_on:
       - master
       - rosbridge-server
