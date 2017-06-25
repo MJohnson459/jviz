@@ -9,7 +9,8 @@
     "eslint-plugin-react": "^7.1.0",
     "eslint-plugin-standard": "^3.0.1",
     "gh-pages": "^1.0.0",
-    "react-scripts": "^1.0.7"
+    "react-scripts": "^1.0.7",
+    "@storybook/react": "^3.1.5"
   },
   "dependencies": {
     "react": "^15.4.2",
@@ -21,6 +22,7 @@
     "react-resizable": "^1.6.0",
     "react-syntax-highlighter": "^5.1.2",
     "react-tooltip": "^3.3.0",
+    "react-treebeard": "^1.1.4",
     "react-virtualized": "^9.7.3",
     "roslib": "git+https://github.com/RobotWebTools/roslibjs.git#cb51d2c",
     "yamljs": "^0.2.10"
@@ -33,7 +35,9 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "ros": "docker-compose -f test/docker-compose.yml up --build -d",
-    "lint": "eslint ./"
+    "lint": "eslint ./",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "homepage": "http://MJohnson459.github.io/jviz"
 }
