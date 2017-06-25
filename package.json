@@ -35,7 +35,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "ros": "docker-compose -f test/docker-compose.yml up --build -d",
-    "lint": "eslint ./",
+    "lint": "eslint ./src",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
   },

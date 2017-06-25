@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 import styles from './styles/treebeard-theme';
+import _ from 'lodash';
 
 function insert(data, path) {
   if (path.length === 1) {
