@@ -3,14 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "eslint": "^4.0.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-react": "^7.1.0",
-    "eslint-plugin-standard": "^3.0.1",
+    "@storybook/react": "^3.1.5",
     "gh-pages": "^1.0.0",
-    "react-scripts": "^1.0.7",
-    "@storybook/react": "^3.1.5"
+    "react-scripts": "^1.0.7"
   },
   "dependencies": {
     "react": "^15.4.2",
@@ -25,7 +20,7 @@
     "react-treebeard": "^1.1.4",
     "react-virtualized": "^9.7.3",
     "roslib": "git+https://github.com/RobotWebTools/roslibjs.git#cb51d2c",
-    "yamljs": "^0.2.10"
+    "yamljs": "^0.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

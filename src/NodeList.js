@@ -5,6 +5,10 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import YAML from 'yamljs';
 import ReactTooltip from 'react-tooltip';
 
+import NodeTree from './NodeTree'
+import {Treebeard} from 'react-treebeard';
+import styles from './styles/treebeard-theme';
+
 class NodeList extends Component {
 
     constructor(props) {
@@ -12,10 +16,12 @@ class NodeList extends Component {
 
         this.state = {
             nodes: [],
+            tree: [],
         }
 
         this.updateNodeList = this.updateNodeList.bind(this);
         this.addNodeGraph = this.addNodeGraph.bind(this);
+        this.onToggleTree = this.onToggleTree.bind(this);
         this.updateNodeList();
     }
 
@@ -43,7 +49,8 @@ class NodeList extends Component {
 
                   if (++updatedNodesCount === list.length) {
                     this.setState({
-                      nodes: updatedNodes
+                      nodes: updatedNodes,
+                      tree: NodeTree.getNodeTree(updatedNodes),
                     })
                   }
               });
@@ -61,28 +68,21 @@ class NodeList extends Component {
         ))
     }
 
+    onToggleTree(node, toggled) {
+      if(this.state.cursor){this.state.cursor.active = false;}
+      node.active = true;
+      if(node.children){ node.toggled = toggled; }
+      this.setState({ cursor: node });
+    }
+
     render() {
         return (
         <SidebarItem name="Node List" hidden={this.props.hidden}>
-            <div className="ItemList">
-              {this.state.nodes.map((node, index) =>
-                  (
-                    <div className="Item" key={node.id} style={{textAlign: "left", position: "relative"}} onClick={ () => {
-                        var nodes = this.state.nodes;
-                        nodes[index].selected = !node.selected;
-                        this.setState({nodes: nodes});
-                        }}>
-                      <div>{node.name}</div>
-                      {
-                        node.selected ?
-                          (<SyntaxHighlighter language="yaml" className="Message" useInlineStyles={false}>
-                              {YAML.stringify(node.details, 2)}
-                          </SyntaxHighlighter>)
-                          : ""
-                      }
-                    </div>)
-              )}
-            </div>
+            <Treebeard
+                data={this.state.tree}
+                onToggle={this.onToggleTree}
+                style={styles}
+             />
             <div className="Footer">
               <ReactTooltip effect="solid" place="right" type="info"/>
               <div data-tip="Refresh the list of nodes" className="SmallButton ColorThree" onClick={this.updateNodeList}>

@@ -1,4 +1,5 @@
 import React from 'react';
+import ROSLIB from 'roslib';
 
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
@@ -14,40 +15,22 @@ storiesOf('Button', module)
   .add('with text', () => <Button onClick={action('clicked')}>Hello Button</Button>)
   .add('with some emoji', () => <Button onClick={action('clicked')}>😀 😎 👍 💯</Button>);
 
-function insert(data, path) {
-  if (path.length === 1) {
-    data.push({
-      name: path[0]
-    });
-    return data;
-  }
-  var index = _.findIndex(data, (o) => o.name === path[0])
-  if (index === -1) {
-    /// add new element
-    index = data.push({
-      name: path[0],
-      toggled: false,
-      children: [],
-    }) - 1;
-  }
-  return insert(data[index].children, path.slice(1));
-}
-
-function add_node(data, name) {
-  const path = name.split('/').slice(1)
-  return insert(data, path);
-}
-
 storiesOf('NodeTree', module)
   .add('basic', () => {
 
-    var nodes = [
-      {name: '/t1/t2/t3/t5'},
-      {name: '/t1/t2/t4'},
-      {name: '/s1/s2/s3/s4'},
-      {name: '/s1/s5/s6/s7'},
-      {name: '/s1/s2/s5/s6'}
-    ]
+    const nodes = [
+      {
+        details: {},
+        id: "n_/listener_one",
+        name: "/listener_one/t1/t3",
+        selected: false,
+      },{
+        details: {},
+        id: "n_/listener_two",
+        name: "/listener_two/t5/t1",
+        selected: false,
+      },
+    ];
 
     return (
       <NodeTree nodes={nodes} />
