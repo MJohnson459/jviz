@@ -4,17 +4,15 @@ export default {
     tree: {
         base: {
             listStyle: 'none',
-            backgroundColor: '#21252B',
             margin: 0,
             padding: 0,
-            color: '#9DA5AB',
-            fontFamily: 'lucida grande ,tahoma,verdana,arial,sans-serif',
-            fontSize: '14px',
+            fontSize: '16px',
             overflowY: 'auto',
         },
         node: {
             base: {
-                position: 'relative'
+                position: 'relative',
+                paddingLeft: 20,
             },
             link: {
                 cursor: 'pointer',
@@ -30,7 +28,7 @@ export default {
                     position: 'relative',
                     display: 'inline-block',
                     verticalAlign: 'top',
-                    marginLeft: '-5px',
+                    marginLeft: '-20px',
                     height: '20px',
                     width: '20px'
                 },
@@ -56,7 +54,7 @@ export default {
                 },
                 connector: {
                     width: '2px',
-                    height: '12px',
+                    height: '14px',
                     borderLeft: 'solid 2px black',
                     borderBottom: 'solid 2px black',
                     position: 'absolute',
@@ -64,7 +62,7 @@ export default {
                     left: '-21px'
                 },
                 title: {
-                    lineHeight: '20px',
+                    lineHeight: '22px',
                     verticalAlign: 'middle'
                 }
             },
