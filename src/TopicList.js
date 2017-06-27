@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 
-import SidebarItem from './SidebarItem.js'
-import Publisher from './Publisher.js'
-import Subscriber from './Subscriber.js'
-import ReactTooltip from 'react-tooltip'
+import SidebarItem from './SidebarItem.js';
+import Publisher from './Publisher.js';
+import Subscriber from './Subscriber.js';
+import ReactTooltip from 'react-tooltip';
+
+import NodeTree from './NodeTree';
+import {Treebeard} from 'react-treebeard';
+import styles from './styles/treebeard-theme';
 
 function Topic(props) {
 
@@ -32,21 +36,23 @@ class TopicList extends Component {
 
         this.state = {
             topics: [],
+            tree: [],
         }
 
         this.getTopics();
 
         this.getTopics = this.getTopics.bind(this);
+        this.onToggleTree = this.onToggleTree.bind(this);
         this.createElement = this.createElement.bind(this);
 
     }
 
     getTopics() {
         this.props.ros.getTopics((topics) => {
-            var x = topics.topics.map((item, i) =>
+            const x = topics.topics.map((item, i) =>
                 {
                     return {
-                        topic: item,
+                        name: item,
                         type: topics.types[i],
                         selected: false,
                     }
@@ -55,34 +61,44 @@ class TopicList extends Component {
 
             this.setState({
                 topics: x,
+                tree: NodeTree.getNodeTree(x),
             });
         });
     }
 
     createElement(el) {
-        return (<Topic key={el.topic} topic={el.topic} type={el.type} selected={el.selected}
+        return (<Topic key={el.name} topic={el.name} type={el.type} selected={el.selected}
             createSubscriber={() => {
                 el.selected=true;
-                const id = 'sub_' + el.topic
+                const id = 'sub_' + el.name
                 this.props.addWidget(id, (
-                  <Subscriber key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
+                  <Subscriber key={id} ros={this.props.ros} topic={el.name} type={el.type}/>
                 ))
             }}
             createPublisher={() => {
                 el.selected=true;
-                const id = 'pub_' + el.topic
+                const id = 'pub_' + el.name
                 this.props.addWidget(id, (
-                  <Publisher key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
+                  <Publisher key={id} ros={this.props.ros} topic={el.name} type={el.type}/>
             ))}}
             />);
+    }
+
+    onToggleTree(node, toggled) {
+      if(this.state.cursor){this.state.cursor.active = false;}
+      node.active = true;
+      if(node.children){ node.toggled = toggled; }
+      this.setState({ cursor: node });
     }
 
     render() {
         return (
         <SidebarItem name="Topic List">
-            <div className="ItemList">
-                <div>{this.state.topics.map(this.createElement)}</div>
-            </div>
+            <Treebeard
+                data={this.state.tree}
+                onToggle={this.onToggleTree}
+                style={styles}
+             />
             <div className="Footer">
                 <ReactTooltip effect="solid" place="right" type="info"/>
                 <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
