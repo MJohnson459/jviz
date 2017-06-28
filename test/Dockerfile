@@ -12,4 +12,5 @@ WORKDIR /catkin_ws
 
 RUN bash -c "/ros_entrypoint.sh catkin_make -DCMAKE_INSTALL_PREFIX=/opt/ros/kinetic install"
 
-COPY ros_entrypoint.sh /ros_entrypoint.sh
+ENV ROS_MASTER_URI="http://master:11311"
+
