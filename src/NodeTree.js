@@ -2,11 +2,13 @@ import _ from 'lodash';
 
 class NodeTree {
 
-  static insert(data, path) {
-    const name = '/' + path[0]
-    if (path.length === 1) {
+  static insert(data, path, path_index) {
+    const name = '/' + path[path_index]
+    // Add node and stop recursion if root node
+    if (path_index === path.length - 1) {
       data.push({
-        name: name
+        name: name,
+        fullname: path.join('/')
       });
       return data;
     }
@@ -19,13 +21,15 @@ class NodeTree {
         children: [],
       }) - 1;
     }
-    return NodeTree.insert(data[index].children, path.slice(1));
+    return NodeTree.insert(data[index].children, path, ++path_index);
   }
 
   static addNode(data, name) {
-    const path = name.split("/").slice(1)
+    const path = name.split("/")
     console.log("Adding node: ", data, name, path)
-    return NodeTree.insert(data, path);
+    // Start at 1 to remove empty first item as name begins
+    // with a '/'
+    return NodeTree.insert(data, path, 1);
   }
 
   static getNodeTree(nodes) {

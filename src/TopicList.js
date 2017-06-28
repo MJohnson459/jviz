@@ -92,6 +92,52 @@ class TopicList extends Component {
     }
 
     render() {
+        var footer = {};
+        if (this.state.cursor && this.state.cursor.fullname) {
+            const name = this.state.cursor.fullname;
+            const type = "std_msgs/String"; //this.state.cursor.type;
+            const subscribeTooltip = "Subscribe to " + name;
+            const publishTooltip = "Publish to " + name;
+            footer = (
+                <div className="Footer">
+                    <ReactTooltip effect="solid" place="right" type="info"/>
+                    <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
+                        Refresh
+                    </div>
+                    <ReactTooltip effect="solid" place="right" type="info"/>
+                    <div data-tip={subscribeTooltip} className="SmallButton ColorOne" onClick={() => {
+                        const id = 'sub_' + name
+                        this.props.addWidget(id, (
+                          <Subscriber key={id} ros={this.props.ros} topic={name} type={type}/>
+                        ))
+                    }}>
+                        Subscribe
+                    </div>
+                    <ReactTooltip effect="solid" place="right" type="info"/>
+                    <div data-tip={publishTooltip} className="SmallButton ColorTwo" onClick={() => {
+                        const id = 'pub_' + name
+                        this.props.addWidget(id, (
+                          <Publisher key={id} ros={this.props.ros} topic={name} type={type}/>
+                    ))}}>
+                        Publish
+                    </div>
+                </div>)
+        } else {
+            footer = (
+                <div className="Footer">
+                    <ReactTooltip effect="solid" place="right" type="info"/>
+                    <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
+                        Refresh
+                    </div>
+                    <div className="SmallButton ColorOneDisabled">
+                        Subscribe
+                    </div>
+                    <div className="SmallButton ColorTwoDisabled">
+                        Publish
+                    </div>
+                </div>)
+        }
+
         return (
         <SidebarItem name="Topic List">
             <Treebeard
@@ -99,12 +145,7 @@ class TopicList extends Component {
                 onToggle={this.onToggleTree}
                 style={styles}
              />
-            <div className="Footer">
-                <ReactTooltip effect="solid" place="right" type="info"/>
-                <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
-                    Refresh
-                </div>
-            </div>
+            {footer}
         </SidebarItem>
         );
     }
