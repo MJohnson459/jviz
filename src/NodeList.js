@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import SidebarItem from './SidebarItem.js';
-import NodeGraph from './NodeGraph'
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import YAML from 'yamljs';
 import ReactTooltip from 'react-tooltip';
-
-import NodeTree from './NodeTree'
 import {Treebeard} from 'react-treebeard';
+
+import NodeTree from './NodeTree';
+import SidebarItem from './SidebarItem';
+import NodeGraph from './NodeGraph';
+import ButtonPanel from './ButtonPanel';
+
 import styles from './styles/treebeard-theme';
 
 class NodeList extends Component {
@@ -15,7 +17,6 @@ class NodeList extends Component {
         super(props);
 
         this.state = {
-            nodes: [],
             tree: [],
         }
 
@@ -41,15 +42,15 @@ class NodeList extends Component {
               this.props.ros.getNodeDetails(node, (details) => {
 
                   updatedNodes.push({
-                    id: "n_" + node,
                     name: node,
-                    details: details,
-                    selected: false,
+                    header: {
+                      name: node,
+                      details: details,
+                    },
                   });
 
                   if (++updatedNodesCount === list.length) {
                     this.setState({
-                      nodes: updatedNodes,
                       tree: NodeTree.getNodeTree(updatedNodes),
                     })
                   }
@@ -83,7 +84,7 @@ class NodeList extends Component {
                 onToggle={this.onToggleTree}
                 style={styles}
              />
-            <div className="Footer">
+           <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget}>
               <ReactTooltip effect="solid" place="right" type="info"/>
               <div data-tip="Refresh the list of nodes" className="SmallButton ColorThree" onClick={this.updateNodeList}>
                   Refresh
@@ -91,7 +92,7 @@ class NodeList extends Component {
               <div data-tip="Create a Node Graph Widget" className="SmallButton ColorTwo" onClick={this.addNodeGraph}>
                   Node Graph
               </div>
-            </div>
+            </ButtonPanel>
 
         </SidebarItem>
         );

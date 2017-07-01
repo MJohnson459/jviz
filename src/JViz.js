@@ -24,8 +24,8 @@ class JViz extends Component {
         this.removeWidget = this.removeWidget.bind(this)
     }
 
-    addWidget(id, element) {
-        console.log("Adding widget: ", id, element)
+    addWidget(id, element, name) {
+        console.log("Adding widget: ", id, element, name)
 
         // TODO: calculate layout
         const layout =
@@ -41,13 +41,14 @@ class JViz extends Component {
             widgets: [...prevState.widgets, {
               id: id,
               element: element,
+              name: name,
               layout: layout}],
         }));
     }
 
     createWidget(widget) {
         return (
-            <Widget key={widget.id} data-grid={widget.layout} name={widget.id} onRequestClose={() => this.removeWidget(widget)}>
+            <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
                 {widget.element}
             </Widget>
         );

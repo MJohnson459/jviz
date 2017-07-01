@@ -1,29 +1,16 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ReactTooltip from 'react-tooltip';
+import {Treebeard} from 'react-treebeard';
+import ROSLIB from 'roslib';
 
-import SidebarItem from './SidebarItem.js'
-import Publisher from './Publisher.js'
-import Subscriber from './Subscriber.js'
-import ReactTooltip from 'react-tooltip'
+import SidebarItem from './SidebarItem.js';
+import Publisher from './Publisher.js';
+import Subscriber from './Subscriber.js';
+import NodeTree from './NodeTree';
+import ButtonPanel from './ButtonPanel';
 
-function Topic(props) {
-
-    const subClassName = "SmallButton ColorOne " + (props.subActive ? "Active" : "")
-    const pubClassName = "SmallButton ColorTwo " + (props.pubActive ? "Active" : "")
-
-    return (
-        <div className={'Topic Item'} >
-            <div className='TopicOptions'>
-              <ReactTooltip effect="solid" place="right" type="info"/>
-              <div data-tip="Create a Subscriber Widget" className={subClassName} onClick={props.createSubscriber}>Sub</div>
-              <div data-tip="Create a Sublisher Widget" className={pubClassName} onClick={props.createPublisher}>Pub</div>
-            </div>
-            <div className='TopicName' style={{flex: 1}}>
-                <div style={{margin: 5, padding: 0, height: 20}}>{props.topic}</div>
-                <div style={{margin: 5, padding: 0, height: 20}}>{props.type}</div>
-            </div>
-        </div>
-    )
-}
+import styles from './styles/treebeard-theme';
 
 class TopicList extends Component {
 
@@ -32,65 +19,65 @@ class TopicList extends Component {
 
         this.state = {
             topics: [],
+            tree: [],
         }
 
         this.getTopics();
 
         this.getTopics = this.getTopics.bind(this);
-        this.createElement = this.createElement.bind(this);
-
+        this.onToggleTree = this.onToggleTree.bind(this);
     }
 
     getTopics() {
         this.props.ros.getTopics((topics) => {
-            var x = topics.topics.map((item, i) =>
+            const x = topics.topics.map((item, i) =>
                 {
                     return {
-                        topic: item,
-                        type: topics.types[i],
-                        selected: false,
+                        name: item,
+                        header: {
+                            actionType: "topic",
+                            topic: item,
+                            type: topics.types[i],
+                        }
                     }
                 }
             )
 
             this.setState({
-                topics: x,
+                tree: NodeTree.getNodeTree(x),
             });
         });
     }
 
-    createElement(el) {
-        return (<Topic key={el.topic} topic={el.topic} type={el.type} selected={el.selected}
-            createSubscriber={() => {
-                el.selected=true;
-                const id = 'sub_' + el.topic
-                this.props.addWidget(id, (
-                  <Subscriber key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
-                ))
-            }}
-            createPublisher={() => {
-                el.selected=true;
-                const id = 'pub_' + el.topic
-                this.props.addWidget(id, (
-                  <Publisher key={id} ros={this.props.ros} topic={el.topic} type={el.type}/>
-            ))}}
-            />);
+    onToggleTree(node, toggled) {
+      // eslint-disable-next-line
+      if(this.state.cursor){this.state.cursor.active = false;}
+      node.active = true;
+      if(node.children){ node.toggled = toggled; }
+      this.setState({ cursor: node });
     }
 
     render() {
-        return (
+
+      const header = this.state.cursor ? this.state.cursor.header : undefined;
+
+      return (
         <SidebarItem name="Topic List">
-            <div className="ItemList">
-                <div>{this.state.topics.map(this.createElement)}</div>
+          <Treebeard
+            data={this.state.tree}
+            onToggle={this.onToggleTree}
+            style={styles}
+           />
+         <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} header={header}>
+            <div>
+              <ReactTooltip effect="solid" place="right" type="info"/>
+              <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
+                Refresh
+              </div>
             </div>
-            <div className="Footer">
-                <ReactTooltip effect="solid" place="right" type="info"/>
-                <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
-                    Refresh
-                </div>
-            </div>
+          </ButtonPanel>
         </SidebarItem>
-        );
+      );
     }
 }
 
