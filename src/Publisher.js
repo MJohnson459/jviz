@@ -14,7 +14,7 @@ class Publisher extends Component {
     }
 
     this.frequency = [
-      {interval: 0, display: "single"},
+      {interval: 0, display: "Single"},
       {interval: 10000, display: "0.1 Hz"},
       {interval: 5000, display: "0.5 Hz"},
       {interval: 1000, display: "1 Hz"},
@@ -139,9 +139,9 @@ class Publisher extends Component {
                 updateState={(state) => this.setState(state)}
                 />
             </div>
-            <div className="Footer">
+            <div className="ButtonPanel">
               <div className="SmallButton ColorOne" onClick={this.publish}>
-                publish
+                Publish
               </div>
               <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
                 {this.frequency[this.state.repeat].display}
