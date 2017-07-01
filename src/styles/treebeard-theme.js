@@ -10,7 +10,7 @@ export default {
         node: {
             base: {
                 position: 'relative',
-                paddingLeft: 20,
+                paddingLeft: 15,
             },
             link: {
                 cursor: 'pointer',
@@ -26,9 +26,9 @@ export default {
                     position: 'relative',
                     display: 'inline-block',
                     verticalAlign: 'top',
-                    marginLeft: '-20px',
+                    marginLeft: '-15px',
                     height: '20px',
-                    width: '20px'
+                    width: '15px'
                 },
                 wrapper: {
                     position: 'absolute',
@@ -66,7 +66,7 @@ export default {
             },
             subtree: {
                 listStyle: 'none',
-                paddingLeft: '15px'
+                paddingLeft: '0px'
             },
             loading: {
                 color: '#E2C089'
