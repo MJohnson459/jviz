@@ -30,7 +30,7 @@ class SidebarItem extends Component {
 }
 
 SidebarItem.propTypes = {
-  children: PropTypes.react,
+  children: PropTypes.element.isRequired,
   hidden: PropTypes.bool,
   name: PropTypes.string.isRequired,
 }

@@ -61,11 +61,7 @@ class NodeGraph extends Component {
             },
         };
 
-
-
         this.updateNodeList = this.updateNodeList.bind(this);
-        this.drawNode = this.drawNode.bind(this);
-
         this.updateNodeList();
     }
 
@@ -154,14 +150,10 @@ class NodeGraph extends Component {
     }
 
     graphUpdated() {
-        this.setState(prevState => ({
+        this.setState({
             graphNodes: this.graphNodesBuffer,
             graphEdges: this.graphEdgesBuffer,
-        }));
-    }
-
-    drawNode(node) {
-
+        });
     }
 
     getOptions(width, height) {
@@ -254,7 +246,7 @@ class NodeGraph extends Component {
 
 NodeGraph.propTypes = {
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  children: PropTypes.react,
+  children: PropTypes.element,
 }
 
 export default NodeGraph;

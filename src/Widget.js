@@ -22,7 +22,7 @@ function Widget(props) {
 Widget.propTypes = {
   name: PropTypes.string.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  children: PropTypes.react.isRequired,
+  children: PropTypes.element.isRequired,
 }
 
 export default Widget;

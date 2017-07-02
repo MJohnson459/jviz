@@ -113,7 +113,7 @@ ButtonPanel.propTypes = {
   header: PropTypes.object,
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   addWidget: PropTypes.func.isRequired,
-  children: PropTypes.react,
+  children: PropTypes.element,
 }
 
 export default ButtonPanel;

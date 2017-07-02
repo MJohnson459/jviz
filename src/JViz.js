@@ -15,7 +15,7 @@ const ResponsiveReactGridLayout  = WidthProvider(Responsive);
 
 class JViz extends Component {
     constructor(props) {
-        super();
+        super(props);
 
         this.state = {
             subscribers: [],

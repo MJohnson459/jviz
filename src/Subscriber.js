@@ -116,8 +116,8 @@ class Subscriber extends Component {
     rowRenderer({
       key,         // Unique key within array of rows
       index,       // Index of row within collection
-      isScrolling, // The List is currently being scrolled
-      isVisible,   // This row is visible within the List (eg it is not an overscanned row)
+      // isScrolling, // The List is currently being scrolled
+      // isVisible,   // This row is visible within the List (eg it is not an overscanned row)
       style        // Style object to be applied to row (to position it)
     }) {
         const message = this.state.messages[index];
@@ -132,10 +132,10 @@ class Subscriber extends Component {
     }
 
     onRowsRendered({
-        overscanStartIndex,
-        overscanStopIndex,
+        // overscanStartIndex,
+        // overscanStopIndex,
         startIndex,
-        stopIndex
+        // stopIndex
     }) {
         this.setState({
             index: this.state.autoscroll ? 0 : startIndex,
@@ -177,7 +177,7 @@ class Subscriber extends Component {
 
 Subscriber.propTypes = {
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  children: PropTypes.react,
+  children: PropTypes.element,
   topic: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
 }

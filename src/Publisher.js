@@ -32,7 +32,7 @@ class Publisher extends Component {
       this.setState({
         messageDetails: details,
         message: this.decodeTypeDefsRec(details[0], details),
-        values: details.map((message, i) => message.examples),
+        values: details.map((message) => message.examples),
       })
     }, (message)=>{
       console.log("msg details FAILED", this.props.type, message)
@@ -160,7 +160,7 @@ Publisher.propTypes = {
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   topic: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  children: PropTypes.react,
+  children: PropTypes.element,
 }
 
 export default Publisher;
