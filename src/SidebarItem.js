@@ -30,7 +30,10 @@ class SidebarItem extends Component {
 }
 
 SidebarItem.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]).isRequired,
   hidden: PropTypes.bool,
   name: PropTypes.string.isRequired,
 }
