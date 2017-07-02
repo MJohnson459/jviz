@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 import ROSLIB from 'roslib';
+import _ from 'lodash';
 
 import NodeTree from './NodeTree';
 import SidebarItem from './SidebarItem';
@@ -32,9 +33,6 @@ class NodeList extends Component {
           var updatedNodesCount = 0;
           var updatedNodes = []
 
-          // console.log(list);
-          this.graphEdgesBuffer = [];
-          this.graphNodesBuffer = [];
 
           list.forEach((node) => {
               this.props.ros.getNodeDetails(node, (details) => {
@@ -48,8 +46,10 @@ class NodeList extends Component {
                   });
 
                   if (++updatedNodesCount === list.length) {
+                    const sortedNodes = _.sortBy(updatedNodes, 'name');
                     this.setState({
-                      tree: NodeTree.getNodeTree(updatedNodes),
+                      nodeList: sortedNodes,
+                      tree: NodeTree.getNodeTree(sortedNodes),
                     })
                   }
               });
@@ -63,7 +63,7 @@ class NodeList extends Component {
 
     addNodeGraph() {
         this.props.addWidget("node_graph", (
-            <NodeGraph key={"node_graph"} ros={this.props.ros} />
+            <NodeGraph key={"node_graph"} ros={this.props.ros} nodeList={this.state.nodeList} />
         ))
     }
 

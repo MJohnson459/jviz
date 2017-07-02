@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 import ROSLIB from 'roslib';
+import _ from 'lodash';
 
 import SidebarItem from './SidebarItem.js';
 import NodeTree from './NodeTree';
@@ -28,7 +29,7 @@ class TopicList extends Component {
 
     getTopics() {
         this.props.ros.getTopics((topics) => {
-            const x = topics.topics.map((item, i) =>
+            const topicList = topics.topics.map((item, i) =>
                 {
                     return {
                         name: item,
@@ -39,10 +40,12 @@ class TopicList extends Component {
                         }
                     }
                 }
-            )
+            );
+
+            const sortedTopics = _.sortBy(topicList, 'name');
 
             this.setState({
-                tree: NodeTree.getNodeTree(x),
+                tree: NodeTree.getNodeTree(sortedTopics),
             });
         });
     }

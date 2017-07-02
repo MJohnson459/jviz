@@ -12,7 +12,6 @@ class NodeGraph extends Component {
 
         this.state = {
             graphNodes: [],
-            topics: [],
             graphEdges: [],
             hierarchical: false,
             debug: true,
@@ -61,99 +60,53 @@ class NodeGraph extends Component {
             },
         };
 
-        this.updateNodeList = this.updateNodeList.bind(this);
-        this.updateNodeList();
+        this.createGraph = this.createGraph.bind(this);
     }
 
-    getNamespace(node) {
-        const names = node.split('/')
-        if (names.length > 1) {
-            return names[0];
-        }
-        return '';
+    componentDidMount() {
+      this.createGraph(this.props.nodeList);
     }
 
-    updateNodeList() {
-        /// Need to buffer updates to avoid numerous render updates
-        var readyForUpdate = {topics: false, nodes: false, edges: false};
-
-        this.props.ros.getNodes((list) => {
-
-            var updated_nodes = 0;
-
-            // console.log(list);
-            this.graphEdgesBuffer = [];
-            this.graphNodesBuffer = [];
-
-            const nodes = list.map((node) => {
-                const node_id = "n_" + node;
-
-                this.props.ros.getNodeDetails(node, (details) => {
-
-                    const pub_edges = details.publishing.map((topic) => {
-                        return {from: node_id, to: "t_" + topic}
-                    });
-
-                    const sub_edges = details.subscribing.map((topic) => {
-                        return {from: "t_" + topic, to: node_id}
-                    });
-
-                    this.graphEdgesBuffer = [...this.graphEdgesBuffer, ...pub_edges, ...sub_edges];
-
-                    if (++updated_nodes === list.length) {
-                        readyForUpdate.edges = true;
-
-                        if (readyForUpdate.topics === true &&
-                            readyForUpdate.nodes === true &&
-                            readyForUpdate.edges === true) {
-                                this.graphUpdated();
-                        }
-                    }
-
-
-                });
-
-                return {id: node_id, label: node, shape: "box", group: "node"};
-            });
-
-
-            this.graphNodesBuffer = _.unionBy(this.graphNodesBuffer, nodes, 'id');
-            readyForUpdate.nodes = true;
-
-            if (readyForUpdate.topics === true &&
-                readyForUpdate.nodes === true &&
-                readyForUpdate.edges === true) {
-                    this.graphUpdated();
-            }
-
-        }, (message) => {
-            console.log('NodeList updateNodeList failed: ' + message);
-        });
-
-        /// Get all topics and add the topics to the graph node list
-        this.props.ros.getTopics((topics) => {
-            const topicNodes = topics.topics.map((topic) =>
-                {
-                    return {id: "t_" + topic, label: topic, shape: "ellipse", group: "topic"}
-                }
-            )
-
-            this.graphNodesBuffer = _.unionBy(this.graphNodesBuffer, topicNodes, 'id');
-            readyForUpdate.topics = true;
-            if (readyForUpdate.topics === true &&
-                readyForUpdate.nodes === true &&
-                readyForUpdate.edges === true) {
-                    this.graphUpdated();
-            }
-        });
-
+    componentWillReceiveProps(nextProps) {
+      this.createGraph(nextProps.nodeList);
     }
 
-    graphUpdated() {
-        this.setState({
-            graphNodes: this.graphNodesBuffer,
-            graphEdges: this.graphEdgesBuffer,
-        });
+    createGraph(nodeTree) {
+      // {
+      //   name: '/node/one',
+      //   header: {
+      //     name: '/node/one',
+      //     details: {
+      //       publishing: [],
+      //       subscribing: [],
+      //     }
+      //   }
+      // }
+
+      var edges = [];
+      var topics = [];
+
+      const nodes = nodeTree.map((node) => {
+          const node_id = "n_" + node.name;
+
+          // Need to de-duplicate. This should end up with 2 for each pair.
+          node.header.details.publishing.forEach((topic) => {
+              edges.push({from: node_id, to: "t_" + topic});
+              topics.push({id: "t_" + topic, label: topic, shape: "ellipse", group: "topic"});
+          });
+
+          node.header.details.subscribing.forEach((topic) => {
+              edges.push({from: "t_" + topic, to: node_id});
+              topics.push({id: "t_" + topic, label: topic, shape: "ellipse", group: "topic"});
+          });
+
+          return {id: node_id, label: node.name, shape: "box", group: "node"};
+      });
+
+      this.setState({
+        graphNodes: _.uniqBy([...nodes, ...topics], 'id'),
+        graphEdges: edges,
+      });
     }
 
     getOptions(width, height) {
@@ -217,8 +170,6 @@ class NodeGraph extends Component {
             edges = this.state.graphEdges;
         }
 
-
-
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto' }}>
@@ -230,8 +181,6 @@ class NodeGraph extends Component {
                       )}}
                 </AutoSizer>
             </div>
-
-
 
             {this.props.children}
             <div className="Footer">
