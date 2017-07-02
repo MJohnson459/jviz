@@ -5,6 +5,7 @@ services:
     command: roscore
     ports:
       - "11311:11311"
+    stop_signal: SIGINT
 
   rosbridge-server:
     build: .
@@ -14,30 +15,35 @@ services:
       - "9090:9090"
     depends_on:
       - master
+    stop_signal: SIGINT
 
   talker-one:
     image: ros-jviz-test
     command: rosrun roscpp_tutorials talker __name:=talker_one
     depends_on:
       - master
+    stop_signal: SIGINT
 
   talker-two:
     image: ros-jviz-test
     command: rosrun roscpp_tutorials talker __name:=talker_two
     depends_on:
       - master
+    stop_signal: SIGINT
 
   listener-one:
     image: ros-jviz-test
     command: rosrun roscpp_tutorials listener __name:=listener_one
     depends_on:
       - master
+    stop_signal: SIGINT
 
   listener-two:
     image: ros-jviz-test
     command: rosrun roscpp_tutorials listener __name:=listener_two
     depends_on:
       - master
+    stop_signal: SIGINT
 
   turtle-one:
     image: ros-jviz-test
@@ -45,10 +51,12 @@ services:
     depends_on:
       - master
       - rosbridge-server
+    stop_signal: SIGINT
 
   turtle-two:
     image: ros-jviz-test
-    command: roslaunch py_trees_ros mock_robot.launch __ns:=turtle_two
+    command: roslaunch py_trees_ros tutorial_three.launch __ns:=turtle_two
     depends_on:
       - master
       - rosbridge-server
+    stop_signal: SIGINT
