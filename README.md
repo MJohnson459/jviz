@@ -3,7 +3,7 @@
 [![devDependency Status](https://david-dm.org/MJohnson459/jviz/dev-status.svg)](https://david-dm.org/MJohnson459/jviz#info=devDependencies)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/bd5e1055fd7b44ea8d57b7512d85c779)](https://www.codacy.com/app/MJohnson459/jviz?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MJohnson459/jviz&amp;utm_campaign=Badge_Grade)
 
-![JViz](https://raw.githubusercontent.com/MJohnson459/jviz/publisher/doc/jviz.png)
+![JViz](doc/jviz.png)
 
 # Content
 
