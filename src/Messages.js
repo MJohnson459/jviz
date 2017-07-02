@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ROSLIB from 'roslib';
 
 class Messages extends Component {
@@ -43,6 +44,10 @@ class Messages extends Component {
         </div>
         );
     }
+}
+
+Messages.propTypes = {
+  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
 }
 
 export default Messages;

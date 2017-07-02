@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 class Message extends Component {
@@ -159,6 +160,10 @@ class Message extends Component {
     render() {
       return this.MessageFieldArray({...this.props, index: 0, path: []});
     }
-  }
+}
 
-  export default Message;
+Message.propTypes = {
+  messageDetails: PropTypes.array.isRequired,
+}
+
+export default Message;

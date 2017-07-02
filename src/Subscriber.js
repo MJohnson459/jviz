@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ROSLIB from 'roslib';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import YAML from 'yamljs';
 // import { Scrollbars } from 'react-custom-scrollbars';
 import './styles/dark.css';
 import {List, AutoSizer} from 'react-virtualized';
-import ReactTooltip from 'react-tooltip';
 
 function Message(props) {
     return (
@@ -15,6 +15,10 @@ function Message(props) {
             </SyntaxHighlighter>
         </div>
     )
+}
+
+Message.propTypes = {
+  message: PropTypes.string.isRequired,
 }
 
 class Subscriber extends Component {
@@ -169,6 +173,13 @@ class Subscriber extends Component {
         </div>
         );
     }
+}
+
+Subscriber.propTypes = {
+  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
+  children: PropTypes.react,
+  topic: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
 }
 
 export default Subscriber;

@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class SidebarItem extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-        hidden: props.hidden,
-        name: props.name,
-    }
 
     this.onRequestHide = this.onRequestHide.bind(this);
   }
@@ -19,9 +16,9 @@ class SidebarItem extends Component {
     return (
         <div {...this.props} className={'SidebarItem'} >
             <div className={'WidgetHeader'} onClick={this.onRequestHide}>
-                <div className={'HeaderName'}>{this.state.name}</div>
+                <div className={'HeaderName'}>{this.props.name}</div>
             </div>
-            { this.state.hidden ||
+            { this.props.hidden ||
                 <div className={'SidebarItemMain'}>
                     {this.props.children}
                 </div>
@@ -30,6 +27,12 @@ class SidebarItem extends Component {
     );
   }
 
+}
+
+SidebarItem.propTypes = {
+  children: PropTypes.react,
+  hidden: PropTypes.bool,
+  name: PropTypes.string.isRequired,
 }
 
 export default SidebarItem;

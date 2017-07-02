@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function Widget(props) {
     const gridProps = Object.assign({}, props);
@@ -16,6 +17,12 @@ function Widget(props) {
             </div>
         </div>
     );
+}
+
+Widget.propTypes = {
+  name: PropTypes.string.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
+  children: PropTypes.react.isRequired,
 }
 
 export default Widget;

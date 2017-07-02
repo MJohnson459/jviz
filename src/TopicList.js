@@ -5,8 +5,6 @@ import {Treebeard} from 'react-treebeard';
 import ROSLIB from 'roslib';
 
 import SidebarItem from './SidebarItem.js';
-import Publisher from './Publisher.js';
-import Subscriber from './Subscriber.js';
 import NodeTree from './NodeTree';
 import ButtonPanel from './ButtonPanel';
 
@@ -79,6 +77,11 @@ class TopicList extends Component {
         </SidebarItem>
       );
     }
+}
+
+TopicList.propTypes = {
+  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
+  addWidget: PropTypes.func.isRequired,
 }
 
 export default TopicList;

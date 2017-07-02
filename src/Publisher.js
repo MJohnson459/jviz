@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ROSLIB from 'roslib';
 import Message from './Message'
 
@@ -153,6 +154,13 @@ class Publisher extends Component {
       </div>
     );
   }
+}
+
+Publisher.propTypes = {
+  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
+  topic: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  children: PropTypes.react,
 }
 
 export default Publisher;

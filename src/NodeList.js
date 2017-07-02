@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import YAML from 'yamljs';
+import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
+import ROSLIB from 'roslib';
 
 import NodeTree from './NodeTree';
 import SidebarItem from './SidebarItem';
@@ -37,8 +37,6 @@ class NodeList extends Component {
           this.graphNodesBuffer = [];
 
           list.forEach((node) => {
-              const node_id = "n_" + node;
-
               this.props.ros.getNodeDetails(node, (details) => {
 
                   updatedNodes.push({
@@ -70,6 +68,7 @@ class NodeList extends Component {
     }
 
     onToggleTree(node, toggled) {
+      // eslint-disable-next-line
       if(this.state.cursor){this.state.cursor.active = false;}
       node.active = true;
       if(node.children){ node.toggled = toggled; }
@@ -97,6 +96,12 @@ class NodeList extends Component {
         </SidebarItem>
         );
     }
+}
+
+NodeList.propTypes = {
+  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
+  addWidget: PropTypes.func.isRequired,
+  hidden: PropTypes.bool,
 }
 
 export default NodeList;

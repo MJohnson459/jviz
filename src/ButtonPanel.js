@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import ROSLIB from 'roslib';
@@ -113,6 +113,7 @@ ButtonPanel.propTypes = {
   header: PropTypes.object,
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   addWidget: PropTypes.func.isRequired,
+  children: PropTypes.react,
 }
 
 export default ButtonPanel;
