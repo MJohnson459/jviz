@@ -18,52 +18,23 @@ class NodeList extends Component {
         super(props);
 
         this.state = {
-            tree: [],
+            tree: NodeTree.getNodeTree(_.filter(props.rosGraph, {type: "node"})),
         }
 
-        this.updateNodeList = this.updateNodeList.bind(this);
         this.addNodeGraph = this.addNodeGraph.bind(this);
         this.onToggleTree = this.onToggleTree.bind(this);
-        this.updateNodeList();
+        this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
     }
 
-    updateNodeList() {
-      this.props.ros.getNodes((list) => {
-
-          var updatedNodesCount = 0;
-          var updatedNodes = []
-
-
-          list.forEach((node) => {
-              this.props.ros.getNodeDetails(node, (details) => {
-
-                  updatedNodes.push({
-                    name: node,
-                    header: {
-                      name: node,
-                      details: details,
-                    },
-                  });
-
-                  if (++updatedNodesCount === list.length) {
-                    const sortedNodes = _.sortBy(updatedNodes, 'name');
-                    this.setState({
-                      nodeList: sortedNodes,
-                      tree: NodeTree.getNodeTree(sortedNodes),
-                    })
-                  }
-              });
-          });
-
-      }, (message) => {
-          console.log('NodeList updateNodeList failed: ' + message);
-      });
-
+    componentWillReceiveProps(nextProps) {
+      this.setState({
+        tree: NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "node"})),
+      })
     }
 
     addNodeGraph() {
         this.props.addWidget("node_graph", (
-            <NodeGraph key={"node_graph"} ros={this.props.ros} nodeList={this.state.nodeList} />
+            <NodeGraph key={"node_graph"} ros={this.props.ros} nodeList={this.props.rosGraph} />
         ))
     }
 

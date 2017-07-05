@@ -7,6 +7,9 @@ import ROSLIB from 'roslib';
 import NodeList from './NodeList';
 import TopicList from './TopicList';
 import Widget from './Widget';
+import RosGraph from './RosGraph';
+
+
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
 import './App.css';
@@ -20,11 +23,17 @@ class JViz extends Component {
         this.state = {
             subscribers: [],
             widgets: [],
+            rosGraph: []
         }
 
         this.addWidget = this.addWidget.bind(this)
         this.createWidget = this.createWidget.bind(this)
         this.removeWidget = this.removeWidget.bind(this)
+
+        RosGraph.getRosGraph(props.ros)
+        .then(result => this.setState({
+          rosGraph: result,
+        }))
     }
 
     addWidget(id, element, name) {
@@ -76,7 +85,7 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} />
+            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} />
             <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} />
         </div>
 

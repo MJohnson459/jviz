@@ -72,39 +72,33 @@ class NodeGraph extends Component {
     }
 
     createGraph(nodeTree) {
-      // {
-      //   name: '/node/one',
-      //   header: {
-      //     name: '/node/one',
-      //     details: {
-      //       publishing: [],
-      //       subscribing: [],
-      //     }
-      //   }
-      // }
-
       var edges = [];
-      var topics = [];
 
       const nodes = nodeTree.map((node) => {
-          const node_id = "n_" + node.name;
+          const node_id = node.type + "_" + node.name;
 
-          // Need to de-duplicate. This should end up with 2 for each pair.
-          node.header.details.publishing.forEach((topic) => {
-              edges.push({from: node_id, to: "t_" + topic});
-              topics.push({id: "t_" + topic, label: topic, shape: "ellipse", group: "topic"});
+          // Assuming topics but links may be services or actions etc.
+          node.out && node.out.forEach((topic) => {
+              edges.push({from: node_id, to: "topic_" + topic});
           });
 
-          node.header.details.subscribing.forEach((topic) => {
-              edges.push({from: "t_" + topic, to: node_id});
-              topics.push({id: "t_" + topic, label: topic, shape: "ellipse", group: "topic"});
+          node.in && node.in.forEach((topic) => {
+              edges.push({from: "topic_" + topic, to: node_id});
           });
 
-          return {id: node_id, label: node.name, shape: "box", group: "node"};
+          switch(node.type) {
+            case "node":
+              return {id: node_id, label: node.name, shape: "box", group: "node"};
+            case "topic":
+              return {id: node_id, label: node.name, shape: "ellipse", group: "topic"};
+            default:
+              return {id: node_id, label: node.name, shape: "ellipse", group: "unknown"};
+          }
+
       });
 
       this.setState({
-        graphNodes: _.uniqBy([...nodes, ...topics], 'id'),
+        graphNodes: nodes,
         graphEdges: edges,
       });
     }
@@ -194,7 +188,7 @@ class NodeGraph extends Component {
 }
 
 NodeGraph.propTypes = {
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
+  nodeList: PropTypes.array.isRequired,
   children: PropTypes.element,
 }
 
