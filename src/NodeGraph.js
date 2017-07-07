@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Graph from 'react-graph-vis';
-import _ from 'lodash';
 import {AutoSizer} from 'react-virtualized';
-import ROSLIB from 'roslib';
 
 class NodeGraph extends Component {
 

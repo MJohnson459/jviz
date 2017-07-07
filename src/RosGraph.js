@@ -1,4 +1,3 @@
-import ROSLIB from 'roslib';
 import _ from 'lodash';
 
 function getNodes(ros) {
@@ -12,15 +11,15 @@ function getNodes(ros) {
         ros.getNodeDetails(node, (details) => {
 
           updatedNodes.push({
-            name: node,
+            fullname: node,
             type: "node",
             out: details.publishing,
             in: [...details.subscribing, ...details.services]
           });
 
           if (++updatedNodesCount === list.length) {
-              const sortedNodes = _.sortBy(updatedNodes, 'name');
-              return resolve(sortedNodes);
+            const sortedNodes = _.sortBy(updatedNodes, 'name');
+            return resolve(sortedNodes);
           }
         });
       });
@@ -34,15 +33,13 @@ function getNodes(ros) {
 function getTopics(ros) {
   return new Promise((resolve, reject) => {
     ros.getTopics((topics) => {
-      const topicList = topics.topics.map((item, i) =>
-        {
-          return {
-            name: item,
-            type: "topic",
-            messageType: topics.types[i],
-          }
+      const topicList = topics.topics.map((item, i) => {
+        return {
+          fullname: item,
+          type: "topic",
+          messageType: topics.types[i],
         }
-      );
+      });
 
       const sortedTopics = _.sortBy(topicList, 'name');
       resolve(sortedTopics);
@@ -58,8 +55,9 @@ export default {
     promises.push(getNodes(ros));
     promises.push(getTopics(ros));
 
-    return Promise.all(promises).then((result) => {
-      return _.flatten(result);
-    });
+    return Promise.all(promises)
+      .then((result) => {
+        return _.flatten(result);
+      });
   }
 }

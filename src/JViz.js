@@ -86,7 +86,7 @@ class JViz extends Component {
       <div className="JViz">
         <div className="JViz-side">
             <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} />
-            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} />
+            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} />
         </div>
 
         <ResponsiveReactGridLayout

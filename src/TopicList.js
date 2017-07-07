@@ -17,37 +17,16 @@ class TopicList extends Component {
         super(props);
 
         this.state = {
-            topics: [],
-            tree: [],
+            tree: NodeTree.getNodeTree(_.filter(props.rosGraph, {type: "topic"})),
         }
 
-        this.getTopics();
-
-        this.getTopics = this.getTopics.bind(this);
         this.onToggleTree = this.onToggleTree.bind(this);
     }
 
-    getTopics() {
-        this.props.ros.getTopics((topics) => {
-            const topicList = topics.topics.map((item, i) =>
-                {
-                    return {
-                        name: item,
-                        header: {
-                            actionType: "topic",
-                            topic: item,
-                            type: topics.types[i],
-                        }
-                    }
-                }
-            );
-
-            const sortedTopics = _.sortBy(topicList, 'name');
-
-            this.setState({
-                tree: NodeTree.getNodeTree(sortedTopics),
-            });
-        });
+    componentWillReceiveProps(nextProps) {
+      this.setState({
+        tree: NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "topic"})),
+      })
     }
 
     onToggleTree(node, toggled) {
@@ -60,8 +39,6 @@ class TopicList extends Component {
 
     render() {
 
-      const header = this.state.cursor ? this.state.cursor.header : undefined;
-
       return (
         <SidebarItem name="Topic List">
           <Treebeard
@@ -69,7 +46,7 @@ class TopicList extends Component {
             onToggle={this.onToggleTree}
             style={styles}
            />
-         <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} header={header}>
+         <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} node={this.state.cursor}>
             <div>
               <ReactTooltip effect="solid" place="right" type="info"/>
               <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
@@ -85,6 +62,7 @@ class TopicList extends Component {
 TopicList.propTypes = {
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   addWidget: PropTypes.func.isRequired,
+  rosGraph: PropTypes.array.isRequired,
 }
 
 export default TopicList;

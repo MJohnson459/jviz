@@ -54,7 +54,7 @@ class NodeList extends Component {
                 onToggle={this.onToggleTree}
                 style={styles}
              />
-           <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget}>
+           <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} node={this.state.cursor}>
               <ReactTooltip effect="solid" place="right" type="info"/>
               <div data-tip="Refresh the list of nodes" className="SmallButton ColorThree" onClick={this.updateNodeList}>
                   Refresh
