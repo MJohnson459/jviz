@@ -1,5 +1,10 @@
 import _ from 'lodash';
+import React from 'react';
 
+/**
+ * Create a NodeTree
+ * @public
+ */
 class NodeTree {
 
   static insert(data, path, path_index, node) {
@@ -7,6 +12,19 @@ class NodeTree {
     // Add node and stop recursion if root node
     if (path_index === path.length - 1) {
       node.name = name;
+      if (node.highlight) {
+        node.decorators = {
+          Header: (props) => {
+            return (
+              <div style={props.style}>
+                H! {props.node.name}
+              </div>
+            );
+          },
+        };
+      } else {
+        node.decorators = undefined;
+      }
       data.push(node);
       return data;
     }
@@ -19,6 +37,24 @@ class NodeTree {
         children: [],
       }) - 1;
     }
+
+    // Maintain active states
+    if (node.active) {
+      data[index].toggled = true;
+    }
+
+    if (node.highlight) {
+      data[index].decorators = {
+        Header: (props) => {
+          return (
+            <div style={props.style}>
+              H! {props.node.name}
+            </div>
+          );
+        },
+      };
+    }
+
     return NodeTree.insert(data[index].children, path, ++path_index, node);
   }
 

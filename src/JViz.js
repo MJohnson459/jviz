@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import ROSLIB from 'roslib';
+import _ from 'lodash';
 
 
 import NodeList from './NodeList';
@@ -29,11 +30,37 @@ class JViz extends Component {
         this.addWidget = this.addWidget.bind(this)
         this.createWidget = this.createWidget.bind(this)
         this.removeWidget = this.removeWidget.bind(this)
+        this.setNodeActive = this.setNodeActive.bind(this)
 
         RosGraph.getRosGraph(props.ros)
         .then(result => this.setState({
           rosGraph: result,
         }))
+    }
+
+    setNodeActive(node) {
+      if (node.fullname)
+      {
+
+        let newGraph = this.state.rosGraph;
+        _.find(newGraph, {fullname: node.fullname}).highlight = true;
+
+        node.in.forEach((topic) => {
+          let index = _.findIndex(newGraph, {fullname: topic.fullname});
+          if (index !== -1) newGraph[index].highlight = true;
+        })
+
+        node.out.forEach((topic) => {
+          let index = _.findIndex(newGraph, {fullname: topic.fullname});
+          if (index !== -1) newGraph[index].highlight = true;
+        })
+
+        // console.table(newGraph);
+
+        this.setState({
+          rosGraph: newGraph,
+        })
+      }
     }
 
     addWidget(id, element, name) {
@@ -85,7 +112,7 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} />
+            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} setNodeActive={this.setNodeActive} />
             <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} />
         </div>
 

@@ -73,7 +73,7 @@ class NodeGraph extends Component {
       var edges = [];
 
       const nodes = nodeTree.map((node) => {
-          const node_id = node.type + "_" + node.name;
+          const node_id = node.type + "_" + node.fullname;
 
           // Assuming topics but links may be services or actions etc.
           node.out && node.out.forEach((topic) => {
@@ -86,11 +86,11 @@ class NodeGraph extends Component {
 
           switch(node.type) {
             case "node":
-              return {id: node_id, label: node.name, shape: "box", group: "node"};
+              return {id: node_id, label: node.fullname, shape: "box", group: "node"};
             case "topic":
-              return {id: node_id, label: node.name, shape: "ellipse", group: "topic"};
+              return {id: node_id, label: node.fullname, shape: "ellipse", group: "topic"};
             default:
-              return {id: node_id, label: node.name, shape: "ellipse", group: "unknown"};
+              return {id: node_id, label: node.fullname, shape: "ellipse", group: "unknown"};
           }
 
       });

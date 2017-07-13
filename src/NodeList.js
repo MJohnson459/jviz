@@ -43,6 +43,7 @@ class NodeList extends Component {
       if(this.state.cursor){this.state.cursor.active = false;}
       node.active = true;
       if(node.children){ node.toggled = toggled; }
+      this.props.setNodeActive(node, this.state.cursor);
       this.setState({ cursor: node });
     }
 
