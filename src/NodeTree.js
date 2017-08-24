@@ -6,7 +6,14 @@ import React from 'react';
  * @public
  */
 class NodeTree {
-
+  /**
+   * Insert a new node at a location in the tree (recursive)
+   * @private
+   * @param {object} data - The tree in which to add the node
+   * @param {string} path - The full path
+   * @param {number} path_index - Tracks the recursive level down the path
+   * @param {object} node - The information to add at the node location
+   */
   static insert(data, path, path_index, node) {
     const name = '/' + path[path_index]
     // Add node and stop recursion if root node
@@ -58,6 +65,13 @@ class NodeTree {
     return NodeTree.insert(data[index].children, path, ++path_index, node);
   }
 
+  /**
+   * Add a new node to the tree
+   * @param {object} data - The tree in which to add the node
+   * @param {object} node - Data to add at the node location (the leaf)
+   * @param {string} node.fullname - Data to add at the node location (the leaf)
+   * @return {object} Updated tree
+   */
   static addNode(data, node) {
     const path = node.fullname.split("/")
     // console.log("Adding node: ", data, name, path)
@@ -66,6 +80,11 @@ class NodeTree {
     return NodeTree.insert(data, path, 1, node);
   }
 
+  /**
+   * Create a new tree from a list of nodes
+   * @param {string} nodes - The list of nodes
+   * @return {object} A new full tree
+   */
   static getNodeTree(nodes) {
     var data = [];
     nodes.forEach((node) => NodeTree.addNode(data, node));

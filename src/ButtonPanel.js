@@ -76,7 +76,7 @@ function ButtonPanel(props) {
 
       break;
     default:
-      console.log("No actions for type: " + props.node.type);
+      // console.log("No actions for type: " + props.node.type);
       return false;
   }
 

@@ -5,6 +5,7 @@
   "devDependencies": {
     "@storybook/react": "^3.1.5",
     "gh-pages": "^1.0.0",
+    "jsdoc": "^3.5.4",
     "react-scripts": "^1.0.7"
   },
   "dependencies": {
@@ -33,7 +34,8 @@
     "ros": "docker-compose -f test/docker-compose.yml up --build -d",
     "lint": "eslint ./src",
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "docs": "jsdoc -R README.md src --verbose --pedantic"
   },
   "homepage": "http://MJohnson459.github.io/jviz"
 }
