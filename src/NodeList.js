@@ -12,6 +12,10 @@ import ButtonPanel from './ButtonPanel';
 
 import styles from './styles/treebeard-theme';
 
+/**
+ * Draws a list of nodes and gives options for interaction
+ * @extends react.Component
+ */
 class NodeList extends Component {
 
     constructor(props) {
@@ -26,12 +30,19 @@ class NodeList extends Component {
         this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
     }
 
+    /**
+     * Called before new props are loaded. Used to update the graph tree
+     * @param {object} nextProps - New props to load
+     */
     componentWillReceiveProps(nextProps) {
       this.setState({
         tree: NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "node"})),
       })
     }
 
+    /**
+     * Create and add a new node graph widget
+     */
     addNodeGraph() {
         this.props.addWidget("node_graph", (
             <NodeGraph key={"node_graph"} ros={this.props.ros} nodeList={this.props.rosGraph} />
