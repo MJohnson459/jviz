@@ -23,8 +23,10 @@ class NodeTree {
         node.decorators = {
           Header: (props) => {
             return (
-              <div style={props.style}>
-                H! {props.node.name}
+              <div style={props.style.base}>
+                <div style={props.style.title}>
+                  {props.node.name}
+                </div>
               </div>
             );
           },
@@ -54,8 +56,10 @@ class NodeTree {
       data[index].decorators = {
         Header: (props) => {
           return (
-            <div style={props.style}>
-              H! {props.node.name}
+            <div style={props.style.base}>
+              <div style={props.style.title}>
+                {props.node.name}
+              </div>
             </div>
           );
         },
