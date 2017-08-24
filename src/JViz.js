@@ -24,7 +24,8 @@ class JViz extends Component {
         this.state = {
             subscribers: [],
             widgets: [],
-            rosGraph: []
+            rosGraph: [],
+            autoExpand: true
         }
 
         this.addWidget = this.addWidget.bind(this)
@@ -38,24 +39,33 @@ class JViz extends Component {
         }))
     }
 
-    setNodeActive(node) {
+    setNodeActive(node, oldNode) {
       if (node.fullname)
       {
 
-        let newGraph = this.state.rosGraph;
-        _.find(newGraph, {fullname: node.fullname}).highlight = true;
+        let newGraph = this.state.rosGraph.map((item) => {
+          item.highlight = false
+          if (this.state.autoExpand) item.toggled = false
+          return item
+        });
 
         if (node.in) {
-          node.in.forEach((topic) => {
-            let index = _.findIndex(newGraph, {fullname: topic.fullname});
-            if (index !== -1) newGraph[index].highlight = true;
+          node.in.forEach((fullname) => {
+            let index = _.findIndex(newGraph, {fullname: fullname});
+            if (index !== -1) {
+              newGraph[index].relation = "Input";
+              if (this.state.autoExpand) newGraph[index].toggled = true;
+            }
           })
         }
 
         if (node.out) {
-          node.out.forEach((topic) => {
-            let index = _.findIndex(newGraph, {fullname: topic.fullname});
-            if (index !== -1) newGraph[index].highlight = true;
+          node.out.forEach((fullname) => {
+            let index = _.findIndex(newGraph, {fullname: fullname});
+            if (index !== -1) {
+              newGraph[index].relation = "Output";
+              if (this.state.autoExpand) newGraph[index].toggled = true;
+            }
           })
         }
         // console.table(newGraph);
@@ -63,6 +73,9 @@ class JViz extends Component {
         this.setState({
           rosGraph: newGraph,
         })
+
+        console.table(newGraph)
+
       }
     }
 

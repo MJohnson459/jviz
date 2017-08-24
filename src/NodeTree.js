@@ -19,11 +19,16 @@ class NodeTree {
     // Add node and stop recursion if root node
     if (path_index === path.length - 1) {
       node.name = name;
-      if (node.highlight) {
+      let className = null;
+      if (node.active) className = "NodeActive"
+      else if (node.relation === "Input") className = "NodeInput"
+      else if (node.relation === "Output") className = "NodeOutput"
+
+      if (className) {
         node.decorators = {
           Header: (props) => {
             return (
-              <div style={props.style.base}>
+              <div className={className} style={props.style.base}>
                 <div style={props.style.title}>
                   {props.node.name}
                 </div>
@@ -32,7 +37,7 @@ class NodeTree {
           },
         };
       } else {
-        node.decorators = undefined;
+        node.decorators = undefined
       }
       data.push(node);
       return data;
@@ -42,7 +47,7 @@ class NodeTree {
       /// add new element
       index = data.push({
         name: name,
-        toggled: false,
+        toggled: node.toggled || false,
         children: [],
       }) - 1;
     }
@@ -56,7 +61,7 @@ class NodeTree {
       data[index].decorators = {
         Header: (props) => {
           return (
-            <div style={props.style.base}>
+            <div className="highlight" style={props.style.base}>
               <div style={props.style.title}>
                 {props.node.name}
               </div>

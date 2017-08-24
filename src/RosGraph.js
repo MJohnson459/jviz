@@ -18,7 +18,7 @@ function getNodes(ros) {
           });
 
           if (++updatedNodesCount === list.length) {
-            const sortedNodes = _.sortBy(updatedNodes, 'name');
+            const sortedNodes = _.sortBy(updatedNodes, 'fullname');
             return resolve(sortedNodes);
           }
         });
@@ -41,7 +41,7 @@ function getTopics(ros) {
         }
       });
 
-      const sortedTopics = _.sortBy(topicList, 'name');
+      const sortedTopics = _.sortBy(topicList, 'fullname');
       resolve(sortedTopics);
     });
   })
