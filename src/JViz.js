@@ -45,16 +45,19 @@ class JViz extends Component {
         let newGraph = this.state.rosGraph;
         _.find(newGraph, {fullname: node.fullname}).highlight = true;
 
-        node.in.forEach((topic) => {
-          let index = _.findIndex(newGraph, {fullname: topic.fullname});
-          if (index !== -1) newGraph[index].highlight = true;
-        })
+        if (node.in) {
+          node.in.forEach((topic) => {
+            let index = _.findIndex(newGraph, {fullname: topic.fullname});
+            if (index !== -1) newGraph[index].highlight = true;
+          })
+        }
 
-        node.out.forEach((topic) => {
-          let index = _.findIndex(newGraph, {fullname: topic.fullname});
-          if (index !== -1) newGraph[index].highlight = true;
-        })
-
+        if (node.out) {
+          node.out.forEach((topic) => {
+            let index = _.findIndex(newGraph, {fullname: topic.fullname});
+            if (index !== -1) newGraph[index].highlight = true;
+          })
+        }
         // console.table(newGraph);
 
         this.setState({
@@ -113,7 +116,7 @@ class JViz extends Component {
       <div className="JViz">
         <div className="JViz-side">
             <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} setNodeActive={this.setNodeActive} />
-            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} />
+            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} setNodeActive={this.setNodeActive} />
         </div>
 
         <ResponsiveReactGridLayout

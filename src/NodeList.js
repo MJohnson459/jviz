@@ -27,7 +27,6 @@ class NodeList extends Component {
 
         this.addNodeGraph = this.addNodeGraph.bind(this);
         this.onToggleTree = this.onToggleTree.bind(this);
-        this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
     }
 
     /**

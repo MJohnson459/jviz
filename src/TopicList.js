@@ -23,6 +23,10 @@ class TopicList extends Component {
         this.onToggleTree = this.onToggleTree.bind(this);
     }
 
+    /**
+     * Called before new props are loaded. Used to update the graph tree
+     * @param {object} nextProps - New props to load
+     */
     componentWillReceiveProps(nextProps) {
       this.setState({
         tree: NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "topic"})),
@@ -34,11 +38,11 @@ class TopicList extends Component {
       if(this.state.cursor){this.state.cursor.active = false;}
       node.active = true;
       if(node.children){ node.toggled = toggled; }
+      this.props.setNodeActive(node, this.state.cursor);
       this.setState({ cursor: node });
     }
 
     render() {
-
       return (
         <SidebarItem name="Topic List">
           <Treebeard
