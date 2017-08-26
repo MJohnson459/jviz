@@ -12,12 +12,7 @@ class NodeGraph extends Component {
             graphNodes: [],
             graphEdges: [],
             hierarchical: false,
-            debug: true,
         }
-
-        this.quietNames = [
-            '/diag_agg', '/runtime_logger', '/pr2_dashboard', '/rviz', '/rosout', '/cpu_monitor', '/monitor', '/hd_monitor', '/rxloggerlevel', '/clock', '/rqt', '/statistics', '/rosapi','/rosout_agg',
-        ];
 
         this.options = {
             layout: {
@@ -146,22 +141,6 @@ class NodeGraph extends Component {
     }
 
     render() {
-        var nodes = [];
-        var edges = [];
-
-        if (this.state.debug) {
-            nodes = this.state.graphNodes.filter((node)=> {
-                return !this.quietNames.includes(node.label);
-            })
-            edges = this.state.graphEdges.filter((edge)=> {
-                return !this.quietNames.includes(edge.from) &&
-                    !this.quietNames.includes(edge.to);
-            })
-        } else {
-            nodes = this.state.graphNodes;
-            edges = this.state.graphEdges;
-        }
-
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto' }}>
@@ -169,7 +148,7 @@ class NodeGraph extends Component {
                   {({ height, width }) => {
                       const options = this.getOptions(width, height);
                       return (
-                          <Graph graph={{nodes: nodes, edges: edges}} options={options} style={{height: height, width: width}}/>
+                          <Graph graph={{nodes: this.state.graphNodes, edges: this.state.graphEdges}} options={options} style={{height: height, width: width}}/>
                       )}}
                 </AutoSizer>
             </div>
@@ -178,7 +157,6 @@ class NodeGraph extends Component {
             <div className="Footer">
                 <span className='SmallButton ColorOne' onClick={this.updateNodeList}>refresh</span>
                 <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
-                <span className='SmallButton ColorThree' onClick={() => {this.setState({debug: !this.state.debug})}}>{this.state.debug ? "debug" : "all"}</span>
             </div>
         </div>
         );

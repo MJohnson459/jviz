@@ -93,12 +93,13 @@
 
 .JViz-main {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column wrap;
   width: 100%;
+  flex: 1;
 }
 
 .Widget {
-    border: 1px solid #303337;
+    border: 1px solid hsla(0,0%,100%,.03);
     padding: 0px;
     display: flex;
     flex-direction: column;

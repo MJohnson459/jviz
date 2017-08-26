@@ -25,18 +25,50 @@ class JViz extends Component {
             subscribers: [],
             widgets: [],
             rosGraph: [],
-            autoExpand: true
+            filteredGraph: [],
+            autoExpand: true,
+            hideDebug: true,
         }
 
         this.addWidget = this.addWidget.bind(this)
         this.createWidget = this.createWidget.bind(this)
         this.removeWidget = this.removeWidget.bind(this)
         this.setNodeActive = this.setNodeActive.bind(this)
+        this.filterNodeGraph = this.filterNodeGraph.bind(this)
 
         RosGraph.getRosGraph(props.ros)
-        .then(result => this.setState({
-          rosGraph: result,
-        }))
+          .then(result => this.setState({
+            rosGraph: result,
+            filteredGraph: this.filterNodeGraph(result),
+          }))
+    }
+
+    filterNodeGraph(nodes) {
+      const debugNames = [
+          '/clock',
+          '/cpu_monitor',
+          '/diag_agg',
+          '/hd_monitor',
+          '/monitor',
+          '/pr2_dashboard',
+          '/rosapi',
+          '/rosout_agg',
+          '/rosout',
+          '/rqt',
+          '/runtime_logger',
+          '/rviz',
+          '/rxloggerlevel',
+          '/statistics',
+      ];
+
+      if (this.state.hideDebug) {
+        return nodes.filter((node) => {
+            return !debugNames.includes(node.fullname);
+        })
+      } else {
+        return nodes
+      }
+
     }
 
     setNodeActive(node, oldNode) {
@@ -44,7 +76,7 @@ class JViz extends Component {
       {
 
         let newGraph = this.state.rosGraph.map((item) => {
-          item.highlight = false
+          item.relation = "None"
           if (this.state.autoExpand) item.toggled = false
           return item
         });
@@ -68,13 +100,10 @@ class JViz extends Component {
             }
           })
         }
-        // console.table(newGraph);
 
         this.setState({
           rosGraph: newGraph,
         })
-
-        console.table(newGraph)
 
       }
     }
@@ -128,24 +157,34 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} setNodeActive={this.setNodeActive} />
-            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.rosGraph} setNodeActive={this.setNodeActive} />
+            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.filteredGraph} setNodeActive={this.setNodeActive} />
+            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.filteredGraph} setNodeActive={this.setNodeActive} />
         </div>
-
-        <ResponsiveReactGridLayout
-            className="JViz-main"
-            breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
-            cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}
-            rowHeight={30}
-            draggableHandle=".HeaderName"
-            onLayoutChange={(layout, layouts) => {
+        <div className="JViz-main">
+          <ResponsiveReactGridLayout
+              breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+              className="JViz-main"
+              cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}
+              draggableHandle=".HeaderName"
+              margin={[5, 5]}
+              onLayoutChange={(layout, layouts) => {
                 this.setState({
-                    layouts: layouts,
+                  layouts: layouts,
                 })
-            }}>
-            {this.state.widgets.map(this.createWidget)}
-        </ResponsiveReactGridLayout>
-
+              }}
+              rowHeight={30}
+              >
+              {this.state.widgets.map(this.createWidget)}
+          </ResponsiveReactGridLayout>
+          <div className="ButtonPanel">
+            <div className="SmallButton ColorThree" onClick={() => this.setState({
+                  hideDebug: !this.state.hideDebug,
+                  filteredGraph: this.filterNodeGraph(this.state.rosGraph),
+                })}>
+              Toggle Debug
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
