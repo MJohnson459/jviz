@@ -18,6 +18,7 @@ class NodeGraph extends Component {
             layout: {
                 hierarchical: {
                     direction: 'LR',
+                    enabled: this.state.hierarchical,
                     sortMethod: 'directed',
                 },
             },
@@ -51,6 +52,7 @@ class NodeGraph extends Component {
                     },
                 },
             },
+            autoResize: true
         };
 
         this.createGraph = this.createGraph.bind(this);
@@ -96,66 +98,15 @@ class NodeGraph extends Component {
       });
     }
 
-    getOptions(width, height) {
-        return {
-            layout: {
-                hierarchical: {
-                    direction: 'LR',
-                    enabled: this.state.hierarchical,
-                    sortMethod: 'directed',
-                },
-            },
-            edges: {
-                color: "#d4d3d3",
-                smooth: true,
-            },
-            nodes: {
-                color: {
-                    highlight: 'rgba(177, 147, 18, 0.9)',
-                    hover: 'rgb(150, 185, 210)',
-                },
-                font: {
-                    color: 'rgb(223, 223, 223)',
-                }
-            },
-            interaction: {
-                hover: true,
-            },
-            groups: {
-                node: {
-                    color: {
-                        border: 'rgba(122, 192, 210, 0.99)',
-                        background: 'rgba(122, 192, 210, 0.9)',
-                    },
-                },
-                topic: {
-                    color: {
-                        border: 'rgba(128, 177, 18, 0.99)',
-                        background: 'rgba(128, 177, 18, 0.9)',
-                    },
-                },
-            },
-            width: width + 'px',
-            height: height + 'px',
-        };
-    }
-
     render() {
         return (
         <div className="NodeGraph">
-            <div style={{ flex: '1 1 auto' }}>
-                <AutoSizer>
-                  {({ height, width }) => {
-                      const options = this.getOptions(width, height);
-                      return (
-                          <Graph graph={{nodes: this.state.graphNodes, edges: this.state.graphEdges}} options={options} style={{height: height, width: width}}/>
-                      )}}
-                </AutoSizer>
+            <div style={{ flex: '1 1 auto', display: 'flex'}}>
+                <Graph graph={{nodes: this.state.graphNodes, edges: this.state.graphEdges}} options={this.options} style={{flex: 1}}/>
             </div>
 
             {this.props.children}
-            <div className="Footer">
-                <span className='SmallButton ColorOne' onClick={this.updateNodeList}>refresh</span>
+            <div className="ButtonPanel">
                 <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
             </div>
         </div>
