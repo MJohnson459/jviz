@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Graph from 'react-graph-vis';
-import {AutoSizer} from 'react-virtualized';
 
 class NodeGraph extends Component {
 
@@ -9,8 +8,7 @@ class NodeGraph extends Component {
         super(props);
 
         this.state = {
-            graphNodes: [],
-            graphEdges: [],
+            graph: {},
             hierarchical: false,
         }
 
@@ -28,7 +26,7 @@ class NodeGraph extends Component {
             },
             nodes: {
                 color: {
-                    highlight: 'rgba(177, 147, 18, 0.9)',
+                    highlight: 'rgba(122, 192, 210, 0.99)',
                     hover: 'rgb(150, 185, 210)',
                 },
                 font: {
@@ -39,16 +37,28 @@ class NodeGraph extends Component {
                 hover: true,
             },
             groups: {
-                node: {
+                default: {
                     color: {
-                        border: 'rgba(122, 192, 210, 0.99)',
-                        background: 'rgba(122, 192, 210, 0.9)',
+                        border: 'rgba(98, 98, 98, 0.97)',
+                        background: 'rgba(98, 118, 131, 0.9)',
                     },
                 },
-                topic: {
+                active: {
                     color: {
-                        border: 'rgba(128, 177, 18, 0.99)',
-                        background: 'rgba(128, 177, 18, 0.9)',
+                        border: 'rgb(122, 192, 210)',
+                        background: 'rgb(122, 192, 210)',
+                    },
+                },
+                input: {
+                    color: {
+                        border: 'rgb(177, 147, 18)',
+                        background: 'rgb(177, 147, 18)',
+                    },
+                },
+                output: {
+                    color: {
+                        border: 'rgb(128, 177, 18)',
+                        background: 'rgb(128, 177, 18)',
                     },
                 },
             },
@@ -56,6 +66,7 @@ class NodeGraph extends Component {
         };
 
         this.createGraph = this.createGraph.bind(this);
+        this.rosGraphUpdated = this.rosGraphUpdated.bind(this);
     }
 
     componentDidMount() {
@@ -63,7 +74,13 @@ class NodeGraph extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+      console.log("receiving new props")
       this.createGraph(nextProps.nodeList);
+    }
+
+    rosGraphUpdated(nextGraph) {
+      console.log("receiving new graph")
+      this.createGraph(nextGraph);
     }
 
     createGraph(nodeTree) {
@@ -81,20 +98,43 @@ class NodeGraph extends Component {
               edges.push({from: "topic_" + topic, to: node_id});
           });
 
+          let graphNode = {id: node_id, label: node.fullname, shape: "ellipse", group: "default"}
+
           switch(node.type) {
             case "node":
-              return {id: node_id, label: node.fullname, shape: "box", group: "node"};
+                graphNode.shape = "box"
+                break
             case "topic":
-              return {id: node_id, label: node.fullname, shape: "ellipse", group: "topic"};
-            default:
-              return {id: node_id, label: node.fullname, shape: "ellipse", group: "unknown"};
+              graphNode.shape = "ellipse"
+              break
           }
+
+          switch(node.relation) {
+            case "Active":
+              graphNode.group = "active"
+              break
+            case "Input":
+              graphNode.group = "input"
+              break
+            case "Output":
+              graphNode.group = "output"
+              break
+          }
+
+          if (node.active) {
+            graphNode.group = "active"
+            graphNode.chosen = true
+          }
+
+          return graphNode;
 
       });
 
       this.setState({
-        graphNodes: nodes,
-        graphEdges: edges,
+        graph: {
+          nodes: nodes,
+          edges: edges,
+        }
       });
     }
 
@@ -102,12 +142,13 @@ class NodeGraph extends Component {
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto', display: 'flex'}}>
-                <Graph graph={{nodes: this.state.graphNodes, edges: this.state.graphEdges}} options={this.options} style={{flex: 1}}/>
+                <Graph graph={this.state.graph} options={this.options} style={{flex: 1}}/>
             </div>
 
             {this.props.children}
             <div className="ButtonPanel">
-                <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
+              <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
+              <span className='SmallButton ColorThree' onClick={() => {this.createGraph(this.props.nodeList)}}>recreate </span>
             </div>
         </div>
         );

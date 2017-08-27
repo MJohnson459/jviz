@@ -35,6 +35,7 @@ class JViz extends Component {
         this.removeWidget = this.removeWidget.bind(this)
         this.setNodeActive = this.setNodeActive.bind(this)
         this.filterNodeGraph = this.filterNodeGraph.bind(this)
+        this.rosGraphUpdated = this.rosGraphUpdated.bind(this)
 
         RosGraph.getRosGraph(props.ros)
           .then(result => this.setState({
@@ -101,11 +102,34 @@ class JViz extends Component {
           })
         }
 
-        this.setState({
-          rosGraph: newGraph,
-        })
-
+        this.rosGraphUpdated(newGraph)
       }
+    }
+
+    rosGraphUpdated(nextGraph) {
+      const filteredGraph = this.filterNodeGraph(nextGraph)
+      this.setState({
+        rosGraph: nextGraph,
+        filteredGraph: filteredGraph,
+      })
+
+      let activeGraph = []
+
+      if (this.state.hideDebug) {
+        activeGraph = filteredGraph
+      } else {
+        activeGraph = nextGraph
+      }
+
+      // TODO: horrible and hacky. Find out how to call a method on react components
+      this.state.widgets.forEach((widget) => {
+        if (widget.element.props.nodeList !== undefined) {
+          widget.element = React.cloneElement(
+            widget.element,
+            {nodeList: activeGraph},
+          )
+        }
+      })
     }
 
     addWidget(id, element, name) {
