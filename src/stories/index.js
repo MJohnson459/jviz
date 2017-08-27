@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ROSLIB from 'roslib';
 import {Treebeard} from 'react-treebeard';
+import _ from 'lodash';
 
 import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
@@ -79,7 +80,7 @@ storiesOf('NodeGraph', module)
 
     return(
       <Widget key={"Node_Graph"} name={"Node Graph"} onRequestClose={() => console.log("Remove Node Graph")}>
-        <NodeGraph nodeList={promise.state === "fulfilled" ? value : []} />
+        <NodeGraph nodeList={promise.state === "fulfilled" ? promise.value : []} />
       </Widget>
     )
   });

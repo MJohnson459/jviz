@@ -71,7 +71,7 @@ class JViz extends Component {
 
     }
 
-    setNodeActive(node, oldNode) {
+    setNodeActive(node) {
       if (node.fullname)
       {
 

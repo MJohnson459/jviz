@@ -82,8 +82,10 @@ class NodeList extends Component {
 
 NodeList.propTypes = {
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
+  rosGraph: PropTypes.array.isRequired,
   addWidget: PropTypes.func.isRequired,
   hidden: PropTypes.bool,
+  setNodeActive: PropTypes.func.isRequired
 }
 
 export default NodeList;

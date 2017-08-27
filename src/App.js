@@ -28,7 +28,6 @@ class App extends Component {
       });
 
     this.ros.on('connection', () => {
-      console.log('Connected to websocket server.');
       this.setState({
           connected: true,
       });

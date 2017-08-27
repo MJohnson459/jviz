@@ -67,6 +67,7 @@ TopicList.propTypes = {
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   addWidget: PropTypes.func.isRequired,
   rosGraph: PropTypes.array.isRequired,
+  setNodeActive: PropTypes.func.isRequired,
 }
 
 export default TopicList;
