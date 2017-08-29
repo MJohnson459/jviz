@@ -39,19 +39,17 @@ class JViz extends Component {
         this.state = {
             subscribers: [],
             widgets: [],
-            rosGraph: {
-              nodes: [],
-              topics: [],
-              services: [],
-              actions: []
-            },
+            rosGraph: new RosGraph.RosGraph(),
             filteredGraph: [],
             autoExpand: true,
             hideDebug: true,
             metadata: {
-              toggled: []
+              toggled: [],
+              hidden: this.debugNames,
             }
         }
+
+        console.log(this.state)
 
         this.addWidget = this.addWidget.bind(this)
         this.createWidget = this.createWidget.bind(this)
@@ -60,59 +58,60 @@ class JViz extends Component {
         this.rosGraphUpdated = this.rosGraphUpdated.bind(this)
 
         RosGraph.getRosGraph(props.ros)
-          .then(result => {
-            if (this.state.hideDebug) result.setHidden(this.debugNames)
-            console.log("rosGraph", result)
-            this.setState({
-              rosGraph: result,
-            })
-          }
-        )
+          .then(result => this.setState({
+            rosGraph: result,
+          }))
     }
 
-    setNodeActive(node, toggled) {
-      let newGraph = this.state.rosGraph.map((item) => {
-        item.relation = "None"
-        item.active = false
-        if (this.state.autoExpand) item.toggled = false
-        return item
-      });
+    setNodeActive(treeNode, toggled) {
 
-      let metadata = {
-        toggled: []
+      // cleanup
+      let metadata = this.state.metadata
+      metadata.relations = {
+        in: [],
+        out: []
       }
 
-      if (node.fullname) {
-        // Set selected node to active
-        let index = _.findIndex(newGraph, {fullname: node.fullname});
-        newGraph[index].active = true;
-        metadata.toggled.push(node.fullname)
-
-        // Loop through input connections and set the relation string
-        if (node.in) {
-          node.in.forEach((fullname) => {
-            let index = _.findIndex(newGraph, {fullname: fullname});
-            if (index !== -1) {
-              newGraph[index].relation = "Input";
-              if (this.state.autoExpand) metadata.toggled.push(node.fullname);
-            }
-          })
-        }
-
-        // Loop through output connections and set the relation string
-        if (node.out) {
-          node.out.forEach((fullname) => {
-            let index = _.findIndex(newGraph, {fullname: fullname});
-            if (index !== -1) {
-              newGraph[index].relation = "Output";
-              if (this.state.autoExpand) metadata.toggled.push(node.fullname);
-            }
-          })
-        }
-      } else if (node.name){
-        metadata.toggled.push(node.name)
+      const toggledIndex = metadata.toggled.indexOf(treeNode.fullname)
+      if (toggledIndex > -1) {
+        // If we aren't meant to be toggled, remove element using splice
+        if (!toggled) metadata.toggled.splice(toggledIndex, 1)
+      } else {
+        // Not in toggled list but meant to be
+        if (toggled) metadata.toggled.push(treeNode.fullname)
       }
-      this.rosGraphUpdated(newGraph)
+
+      // set node active
+      metadata.active = treeNode.fullname
+
+      const rosNode = this.state.rosGraph.nodes.find(treeNode.fullname)
+      if (rosNode) {
+        metadata.relations.in = rosNode.subscribers
+        metadata.relations.out = rosNode.publishers
+      }
+
+      // // Loop through input connections and set the relation string
+      // if (node.in) {
+      //   node.in.forEach((fullname) => {
+      //     let index = _.findIndex(newGraph, {fullname: fullname});
+      //     if (index !== -1) {
+      //       newGraph[index].relation = "Input";
+      //       if (this.state.autoExpand) metadata.toggled.push(node.fullname);
+      //     }
+      //   })
+      // }
+
+      // // Loop through output connections and set the relation string
+      // if (node.out) {
+      //   node.out.forEach((fullname) => {
+      //     let index = _.findIndex(newGraph, {fullname: fullname});
+      //     if (index !== -1) {
+      //       newGraph[index].relation = "Output";
+      //       if (this.state.autoExpand) metadata.toggled.push(node.fullname);
+      //     }
+      //   })
+      // }
+
       this.setState({
         metadata: metadata
       })
@@ -192,8 +191,8 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} nodes={this.state.rosGraph.nodes} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
-            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} topics={this.state.rosGraph.topics} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <NodeList ros={this.props.ros} addWidget={this.addWidget} nodes={this.state.rosGraph.nodes} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <TopicList ros={this.props.ros} addWidget={this.addWidget} topics={this.state.rosGraph.topics} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout

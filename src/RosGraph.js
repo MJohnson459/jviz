@@ -48,6 +48,12 @@ class Nodes {
     }
   }
 
+  find(name) {
+    return _.find(this.nodes, {
+      name: name
+    })
+  }
+
   sort() {
     this.nodes = _.sortBy(this.nodes, 'name');
     return this
@@ -105,7 +111,7 @@ class RosGraph {
   //   }]
   // }
 
-  constructor(nodes, topics, services, actions) {
+  constructor(nodes = new Nodes(), topics = [], services = [], actions = []) {
     this.nodes = nodes
     this.topics = topics
     this.services = services
@@ -118,33 +124,6 @@ class RosGraph {
       actions: []
     }
   }
-
-  setHidden(names) {
-    // Reset
-    this.hidden = {
-      nodes: [],
-      topics: [],
-      services: [],
-      actions: []
-    }
-
-    // Loop through all arrays and add entry to hidden
-    names.forEach((name) => {
-      if (_.find(this.nodes, {
-          'name': name
-        })) this.hidden.nodes.push(name)
-      if (_.find(this.topics, {
-          'name': name
-        })) this.hidden.topics.push(name)
-      if (_.find(this.services, {
-          'name': name
-        })) this.hidden.services.push(name)
-      if (_.find(this.actions, {
-          'name': name
-        })) this.hidden.actions.push(name)
-    })
-  }
-
 }
 
 function getNodes(ros) {
@@ -202,6 +181,7 @@ function getTopics(ros, nodes) {
 }
 
 export default {
+  RosGraph,
   getRosGraph(ros) {
     return new Promise((resolve, reject) => {
       return getNodes(ros)
@@ -209,12 +189,7 @@ export default {
         .then(({
           topics,
           nodes
-        }) => {
-          console.log("nodes2", nodes)
-          console.log("topics", topics)
-          console.log("rosgraph", new RosGraph(nodes, topics))
-          resolve(new RosGraph(nodes, topics))
-        })
+        }) => resolve(new RosGraph(nodes, topics)))
     })
   }
 }

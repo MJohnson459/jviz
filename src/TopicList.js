@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 import ROSLIB from 'roslib';
-import _ from 'lodash';
 
 import SidebarItem from './SidebarItem.js';
 import NodeTree from './NodeTree';
@@ -55,7 +54,7 @@ class TopicList extends Component {
 TopicList.propTypes = {
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   addWidget: PropTypes.func.isRequired,
-  rosGraph: PropTypes.array.isRequired,
+  topics: PropTypes.array.isRequired,
   setNodeActive: PropTypes.func.isRequired,
 }
 

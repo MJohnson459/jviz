@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 import ROSLIB from 'roslib';
-import _ from 'lodash';
 
 import NodeTree from './NodeTree';
 import SidebarItem from './SidebarItem';
@@ -33,13 +32,8 @@ class NodeList extends Component {
      * @param {object} nextProps - New props to load
      */
     componentWillReceiveProps(nextProps) {
-      let tree = NodeTree.getNodeTree(nextProps.nodes.nodes, nextProps.metadata)
-
-      console.table(tree)
-      console.table(nextProps.metadata)
-
       this.setState({
-        tree: tree,
+        tree: NodeTree.getNodeTree(nextProps.nodes.nodes, nextProps.metadata),
       })
     }
 
@@ -77,7 +71,7 @@ class NodeList extends Component {
 
 NodeList.propTypes = {
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  rosGraph: PropTypes.array.isRequired,
+  nodes: PropTypes.object.isRequired,
   addWidget: PropTypes.func.isRequired,
   hidden: PropTypes.bool,
   setNodeActive: PropTypes.func.isRequired
