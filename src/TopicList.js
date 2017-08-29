@@ -17,10 +17,8 @@ class TopicList extends Component {
         super(props);
 
         this.state = {
-            tree: NodeTree.getNodeTree(_.filter(props.rosGraph, {type: "topic"})),
+            tree: NodeTree.getNodeTree(_.filter(props.rosGraph, {type: "topic"}), props.metadata),
         }
-
-        this.onToggleTree = this.onToggleTree.bind(this);
     }
 
     /**
@@ -29,17 +27,8 @@ class TopicList extends Component {
      */
     componentWillReceiveProps(nextProps) {
       this.setState({
-        tree: NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "topic"})),
+        tree: NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "topic"}), nextProps.metadata),
       })
-    }
-
-    onToggleTree(node, toggled) {
-      // eslint-disable-next-line
-      if(this.state.cursor){this.state.cursor.active = false;}
-      node.active = true;
-      if(node.children){ node.toggled = toggled; }
-      this.props.setNodeActive(node, this.state.cursor);
-      this.setState({ cursor: node });
     }
 
     render() {
@@ -47,7 +36,7 @@ class TopicList extends Component {
         <SidebarItem name="Topic List">
           <Treebeard
             data={this.state.tree}
-            onToggle={this.onToggleTree}
+            onToggle={this.props.setNodeActive}
             style={styles}
            />
          <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} node={this.state.cursor}>

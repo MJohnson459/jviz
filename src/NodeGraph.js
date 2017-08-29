@@ -107,6 +107,7 @@ class NodeGraph extends Component {
             case "topic":
               graphNode.shape = "ellipse"
               break
+            default:
           }
 
           switch(node.relation) {
@@ -119,6 +120,7 @@ class NodeGraph extends Component {
             case "Output":
               graphNode.group = "output"
               break
+            default:
           }
 
           if (node.active) {

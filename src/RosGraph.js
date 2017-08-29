@@ -1,5 +1,24 @@
 import _ from 'lodash';
 
+class RosGraph {
+  __init__() {
+    this.graph = []
+  }
+
+  addNode(fullname, type, input, output) {
+    this.graph.push({
+      fullname: fullname,
+      type: type,
+      in: input,
+      out: output,
+    })
+  }
+
+  sort(field) {
+    this.graph = _.sortBy(this.graph, field);
+  }
+}
+
 function getNodes(ros) {
   return new Promise((resolve, reject) => {
     ros.getNodes((list) => {

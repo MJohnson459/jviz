@@ -22,11 +22,10 @@ class NodeList extends Component {
         super(props);
 
         this.state = {
-            tree: NodeTree.getNodeTree(_.filter(props.rosGraph, {type: "node"})),
+            tree: NodeTree.getNodeTree(_.filter(props.rosGraph, {type: "node"}), props.metadata),
         }
 
         this.addNodeGraph = this.addNodeGraph.bind(this);
-        this.onToggleTree = this.onToggleTree.bind(this);
     }
 
     /**
@@ -34,8 +33,13 @@ class NodeList extends Component {
      * @param {object} nextProps - New props to load
      */
     componentWillReceiveProps(nextProps) {
+      let tree = NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "node"}), nextProps.metadata)
+
+      console.table(tree)
+      console.table(nextProps.metadata)
+
       this.setState({
-        tree: NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "node"})),
+        tree: tree,
       })
     }
 
@@ -48,21 +52,12 @@ class NodeList extends Component {
         ))
     }
 
-    onToggleTree(node, toggled) {
-      // eslint-disable-next-line
-      if(this.state.cursor){this.state.cursor.active = false;}
-      node.active = true;
-      if(node.children){ node.toggled = toggled; }
-      this.props.setNodeActive(node, this.state.cursor);
-      this.setState({ cursor: node });
-    }
-
     render() {
         return (
         <SidebarItem name="Node List" hidden={this.props.hidden}>
             <Treebeard
                 data={this.state.tree}
-                onToggle={this.onToggleTree}
+                onToggle={this.props.setNodeActive}
                 style={styles}
              />
            <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} node={this.state.cursor}>

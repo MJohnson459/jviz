@@ -4,12 +4,10 @@ import {Responsive, WidthProvider} from 'react-grid-layout';
 import ROSLIB from 'roslib';
 import _ from 'lodash';
 
-
 import NodeList from './NodeList';
 import TopicList from './TopicList';
 import Widget from './Widget';
 import RosGraph from './RosGraph';
-
 
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
@@ -28,6 +26,9 @@ class JViz extends Component {
             filteredGraph: [],
             autoExpand: true,
             hideDebug: true,
+            metadata: {
+              toggled: []
+            }
         }
 
         this.addWidget = this.addWidget.bind(this)
@@ -72,38 +73,52 @@ class JViz extends Component {
 
     }
 
-    setNodeActive(node) {
-      if (node.fullname)
-      {
+    setNodeActive(node, toggled) {
+      let newGraph = this.state.rosGraph.map((item) => {
+        item.relation = "None"
+        item.active = false
+        if (this.state.autoExpand) item.toggled = false
+        return item
+      });
 
-        let newGraph = this.state.rosGraph.map((item) => {
-          item.relation = "None"
-          if (this.state.autoExpand) item.toggled = false
-          return item
-        });
+      let metadata = {
+        toggled: []
+      }
 
+      if (node.fullname) {
+        // Set selected node to active
+        let index = _.findIndex(newGraph, {fullname: node.fullname});
+        newGraph[index].active = true;
+        metadata.toggled.push(node.fullname)
+
+        // Loop through input connections and set the relation string
         if (node.in) {
           node.in.forEach((fullname) => {
             let index = _.findIndex(newGraph, {fullname: fullname});
             if (index !== -1) {
               newGraph[index].relation = "Input";
-              if (this.state.autoExpand) newGraph[index].toggled = true;
+              if (this.state.autoExpand) metadata.toggled.push(node.fullname);
             }
           })
         }
 
+        // Loop through output connections and set the relation string
         if (node.out) {
           node.out.forEach((fullname) => {
             let index = _.findIndex(newGraph, {fullname: fullname});
             if (index !== -1) {
               newGraph[index].relation = "Output";
-              if (this.state.autoExpand) newGraph[index].toggled = true;
+              if (this.state.autoExpand) metadata.toggled.push(node.fullname);
             }
           })
         }
-
-        this.rosGraphUpdated(newGraph)
+      } else if (node.name){
+        metadata.toggled.push(node.name)
       }
+      this.rosGraphUpdated(newGraph)
+      this.setState({
+        metadata: metadata
+      })
     }
 
     rosGraphUpdated(nextGraph) {
@@ -177,12 +192,11 @@ class JViz extends Component {
 
 
   render() {
-
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.filteredGraph} setNodeActive={this.setNodeActive} />
-            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.filteredGraph} setNodeActive={this.setNodeActive} />
+            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.filteredGraph} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.filteredGraph} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout

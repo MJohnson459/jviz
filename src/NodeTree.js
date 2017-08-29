@@ -14,7 +14,7 @@ class NodeTree {
    * @param {number} path_index - Tracks the recursive level down the path
    * @param {object} node - The information to add at the node location
    */
-  static insert(data, path, path_index, node) {
+  static insert(data, path, path_index, node, metadata) {
     const name = '/' + path[path_index]
     // Add node and stop recursion if root node
     if (path_index === path.length - 1) {
@@ -44,10 +44,13 @@ class NodeTree {
     }
     var index = _.findIndex(data, (o) => o.name === name)
     if (index === -1) {
+      let toggled = false
+      if (metadata.toggled.includes(name)
+        || node.active) toggled = true
       /// add new element
       index = data.push({
         name: name,
-        toggled: node.toggled || false,
+        toggled: toggled,
         children: [],
       }) - 1;
     }
@@ -71,7 +74,7 @@ class NodeTree {
       };
     }
 
-    return NodeTree.insert(data[index].children, path, ++path_index, node);
+    return NodeTree.insert(data[index].children, path, ++path_index, node, metadata);
   }
 
   /**
@@ -81,22 +84,28 @@ class NodeTree {
    * @param {string} node.fullname - Data to add at the node location (the leaf)
    * @return {object} Updated tree
    */
-  static addNode(data, node) {
+  static addNode(data, node, metadata) {
     const path = node.fullname.split("/")
     // console.log("Adding node: ", data, name, path)
     // Start at 1 to remove empty first item as name begins
     // with a '/'
-    return NodeTree.insert(data, path, 1, node);
+    return NodeTree.insert(data, path, 1, node, metadata);
   }
 
   /**
    * Create a new tree from a list of nodes
    * @param {string} nodes - The list of nodes
+   * @param {array} metadata.toggled - The list of nodes that are toggled (expanded)
    * @return {object} A new full tree
    */
-  static getNodeTree(nodes) {
+  static getNodeTree(nodes, metadata) {
+    if (metadata === undefined) {
+      metadata = {
+        toggled: []
+      }
+    }
     var data = [];
-    nodes.forEach((node) => NodeTree.addNode(data, node));
+    nodes.forEach((node) => NodeTree.addNode(data, node, metadata));
     return data;
   }
 
