@@ -81,11 +81,11 @@ class NodeTree {
    * Add a new node to the tree
    * @param {object} data - The tree in which to add the node
    * @param {object} node - Data to add at the node location (the leaf)
-   * @param {string} node.fullname - Data to add at the node location (the leaf)
+   * @param {string} node.name - Data to add at the node location (the leaf)
    * @return {object} Updated tree
    */
   static addNode(data, node, metadata) {
-    const path = node.fullname.split("/")
+    const path = node.name.split("/")
     // console.log("Adding node: ", data, name, path)
     // Start at 1 to remove empty first item as name begins
     // with a '/'
@@ -99,6 +99,7 @@ class NodeTree {
    * @return {object} A new full tree
    */
   static getNodeTree(nodes, metadata) {
+    if (nodes === undefined) return {}
     if (metadata === undefined) {
       metadata = {
         toggled: []

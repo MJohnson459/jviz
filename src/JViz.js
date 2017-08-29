@@ -19,10 +19,32 @@ class JViz extends Component {
     constructor(props) {
         super(props);
 
+        this.debugNames = [
+            '/clock',
+            '/cpu_monitor',
+            '/diag_agg',
+            '/hd_monitor',
+            '/monitor',
+            '/pr2_dashboard',
+            '/rosapi',
+            '/rosout_agg',
+            '/rosout',
+            '/rqt',
+            '/runtime_logger',
+            '/rviz',
+            '/rxloggerlevel',
+            '/statistics',
+        ];
+
         this.state = {
             subscribers: [],
             widgets: [],
-            rosGraph: [],
+            rosGraph: {
+              nodes: [],
+              topics: [],
+              services: [],
+              actions: []
+            },
             filteredGraph: [],
             autoExpand: true,
             hideDebug: true,
@@ -35,42 +57,17 @@ class JViz extends Component {
         this.createWidget = this.createWidget.bind(this)
         this.removeWidget = this.removeWidget.bind(this)
         this.setNodeActive = this.setNodeActive.bind(this)
-        this.filterNodeGraph = this.filterNodeGraph.bind(this)
         this.rosGraphUpdated = this.rosGraphUpdated.bind(this)
 
         RosGraph.getRosGraph(props.ros)
-          .then(result => this.setState({
-            rosGraph: result,
-            filteredGraph: this.filterNodeGraph(result),
-          }))
-    }
-
-    filterNodeGraph(nodes) {
-      const debugNames = [
-          '/clock',
-          '/cpu_monitor',
-          '/diag_agg',
-          '/hd_monitor',
-          '/monitor',
-          '/pr2_dashboard',
-          '/rosapi',
-          '/rosout_agg',
-          '/rosout',
-          '/rqt',
-          '/runtime_logger',
-          '/rviz',
-          '/rxloggerlevel',
-          '/statistics',
-      ];
-
-      if (this.state.hideDebug) {
-        return nodes.filter((node) => {
-            return !debugNames.includes(node.fullname);
-        })
-      } else {
-        return nodes
-      }
-
+          .then(result => {
+            if (this.state.hideDebug) result.setHidden(this.debugNames)
+            console.log("rosGraph", result)
+            this.setState({
+              rosGraph: result,
+            })
+          }
+        )
     }
 
     setNodeActive(node, toggled) {
@@ -195,8 +192,8 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.filteredGraph} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
-            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} rosGraph={this.state.filteredGraph} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} nodes={this.state.rosGraph.nodes} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} topics={this.state.rosGraph.topics} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout

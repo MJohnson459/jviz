@@ -17,7 +17,7 @@ class TopicList extends Component {
         super(props);
 
         this.state = {
-            tree: NodeTree.getNodeTree(_.filter(props.rosGraph, {type: "topic"}), props.metadata),
+            tree: NodeTree.getNodeTree(props.topics, props.metadata),
         }
     }
 
@@ -27,7 +27,7 @@ class TopicList extends Component {
      */
     componentWillReceiveProps(nextProps) {
       this.setState({
-        tree: NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "topic"}), nextProps.metadata),
+        tree: NodeTree.getNodeTree(nextProps.topics, nextProps.metadata),
       })
     }
 

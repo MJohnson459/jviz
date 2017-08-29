@@ -22,7 +22,7 @@ class NodeList extends Component {
         super(props);
 
         this.state = {
-            tree: NodeTree.getNodeTree(_.filter(props.rosGraph, {type: "node"}), props.metadata),
+            tree: NodeTree.getNodeTree(props.nodes.nodes, props.metadata),
         }
 
         this.addNodeGraph = this.addNodeGraph.bind(this);
@@ -33,7 +33,7 @@ class NodeList extends Component {
      * @param {object} nextProps - New props to load
      */
     componentWillReceiveProps(nextProps) {
-      let tree = NodeTree.getNodeTree(_.filter(nextProps.rosGraph, {type: "node"}), nextProps.metadata)
+      let tree = NodeTree.getNodeTree(nextProps.nodes.nodes, nextProps.metadata)
 
       console.table(tree)
       console.table(nextProps.metadata)
