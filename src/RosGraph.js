@@ -1,22 +1,150 @@
 import _ from 'lodash';
 
-class RosGraph {
-  __init__() {
-    this.graph = []
+class Nodes {
+  //   nodes: [{
+  //     name: "",
+  //     topics: {
+  //       publishers: [""], // topics.name
+  //       subscribers: [""] // topics.name
+  //     },
+  //     services: {
+  //       servers: [""], // services.name
+  //       clients: [""]  // services.name
+  //     },
+  //     actions: {
+  //       servers: [""], // actions.name
+  //       clients: [""]  // actions.name
+  //     }
+  //   }],
+
+  constructor() {
+    this.nodes = []
   }
 
-  addNode(fullname, type, input, output) {
-    this.graph.push({
-      fullname: fullname,
-      type: type,
-      in: input,
-      out: output,
+  push({
+    name,
+    topics,
+    services,
+    actions
+  }) {
+    this.nodes.push({
+      name: name,
+      topics: topics,
+      services: services,
+      actions: actions,
     })
   }
 
-  sort(field) {
-    this.graph = _.sortBy(this.graph, field);
+  getTopicRelation(topicName) {
+    let publishers = []
+    let subscribers = []
+    this.nodes.forEach((node) => {
+      if (node.topics.publishers.includes(topicName)) publishers.push(node.name)
+      if (node.topics.subscribers.includes(topicName)) subscribers.push(node.name)
+    })
+    return {
+      publishers: publishers,
+      subscribers: subscribers
+    }
   }
+
+  sort() {
+    this.nodes = _.sortBy(this.nodes, 'name');
+    return this
+  }
+}
+
+class Topics {
+  //   topics: [{
+  //     name: "",
+  //     type: "",
+  //     publishers: [""], // nodes.name
+  //     subscribers: [""] // nodes.name
+  //   }],
+
+  constructor() {
+    this.topics = []
+  }
+
+  push({
+    name,
+    type,
+    publishers,
+    subscribers
+  }) {
+    this.topics.push({
+      name: name,
+      type: type,
+      publishers: publishers,
+      subscribers: subscribers,
+    })
+  }
+
+  sort() {
+    this.topics = _.sortBy(this.topics, 'name');
+    return this
+  }
+}
+
+class RosGraph {
+
+  // {
+  //   Nodes,
+  //   Topics,
+  //   services: [{
+  //     name: "",
+  //     type: "",
+  //     server: "",   // nodes.name
+  //     clients: [""] // nodes.name
+  //   }],
+  //   actions: [{
+  //     name: "",
+  //     type: "",
+  //     server: "",   // nodes.name
+  //     clients: [""] // nodes.name
+  //   }]
+  // }
+
+  constructor(nodes, topics, services, actions) {
+    this.nodes = nodes
+    this.topics = topics
+    this.services = services
+    this.actions = actions
+
+    this.hidden = {
+      nodes: [],
+      topics: [],
+      services: [],
+      actions: []
+    }
+  }
+
+  setHidden(names) {
+    // Reset
+    this.hidden = {
+      nodes: [],
+      topics: [],
+      services: [],
+      actions: []
+    }
+
+    // Loop through all arrays and add entry to hidden
+    names.forEach((name) => {
+      if (_.find(this.nodes, {
+          'name': name
+        })) this.hidden.nodes.push(name)
+      if (_.find(this.topics, {
+          'name': name
+        })) this.hidden.topics.push(name)
+      if (_.find(this.services, {
+          'name': name
+        })) this.hidden.services.push(name)
+      if (_.find(this.actions, {
+          'name': name
+        })) this.hidden.actions.push(name)
+    })
+  }
+
 }
 
 function getNodes(ros) {
@@ -24,21 +152,24 @@ function getNodes(ros) {
     ros.getNodes((list) => {
 
       var updatedNodesCount = 0;
-      var updatedNodes = []
+      var newNodes = new Nodes()
 
       list.forEach((node) => {
         ros.getNodeDetails(node, (details) => {
 
-          updatedNodes.push({
-            fullname: node,
-            type: "node",
-            out: details.publishing,
-            in: [...details.subscribing, ...details.services]
+          newNodes.push({
+            name: node,
+            topics: {
+              publishers: details.publishing,
+              subscribers: details.subscribing,
+            },
+            services: {
+              clients: details.services
+            }
           });
 
           if (++updatedNodesCount === list.length) {
-            const sortedNodes = _.sortBy(updatedNodes, 'fullname');
-            return resolve(sortedNodes);
+            return resolve(newNodes.sort());
           }
         });
       });
@@ -49,34 +180,41 @@ function getNodes(ros) {
   })
 }
 
-function getTopics(ros) {
+function getTopics(ros, nodes) {
   return new Promise((resolve, reject) => {
     ros.getTopics((topics) => {
-      const topicList = topics.topics.map((item, i) => {
+      const topicList = topics.topics.map((topicName, i) => {
+        const node = nodes.getTopicRelation(topicName)
         return {
-          fullname: item,
-          type: "topic",
-          messageType: topics.types[i],
+          name: topicName,
+          type: topics.types[i],
+          publishers: node.publishers,
+          subscribers: node.subscribers,
         }
       });
-
-      const sortedTopics = _.sortBy(topicList, 'fullname');
-      resolve(sortedTopics);
+      const sortedTopics = _.sortBy(topicList, 'name');
+      resolve({
+        topics: sortedTopics,
+        nodes: nodes
+      });
     });
   })
 }
 
-
 export default {
   getRosGraph(ros) {
-    var promises = [];
-
-    promises.push(getNodes(ros));
-    promises.push(getTopics(ros));
-
-    return Promise.all(promises)
-      .then((result) => {
-        return _.flatten(result);
-      });
+    return new Promise((resolve, reject) => {
+      return getNodes(ros)
+        .then((nodes) => getTopics(ros, nodes))
+        .then(({
+          topics,
+          nodes
+        }) => {
+          console.log("nodes2", nodes)
+          console.log("topics", topics)
+          console.log("rosgraph", new RosGraph(nodes, topics))
+          resolve(new RosGraph(nodes, topics))
+        })
+    })
   }
 }
