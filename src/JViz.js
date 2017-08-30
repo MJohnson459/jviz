@@ -46,10 +46,12 @@ class JViz extends Component {
             metadata: {
               toggled: [],
               hidden: this.debugNames,
+              relations: {
+                in: [],
+                out: [],
+              }
             }
         }
-
-        console.log(this.state)
 
         this.addWidget = this.addWidget.bind(this)
         this.createWidget = this.createWidget.bind(this)
@@ -72,45 +74,22 @@ class JViz extends Component {
         out: []
       }
 
-      const toggledIndex = metadata.toggled.indexOf(treeNode.fullname)
+      if (!metadata.toggled[treeNode.type]) metadata.toggled[treeNode.type] = []
+
+      const toggledIndex = metadata.toggled[treeNode.type].indexOf(treeNode.id)
       if (toggledIndex > -1) {
         // If we aren't meant to be toggled, remove element using splice
-        if (!toggled) metadata.toggled.splice(toggledIndex, 1)
+        if (!toggled) metadata.toggled[treeNode.type].splice(toggledIndex, 1)
       } else {
         // Not in toggled list but meant to be
-        if (toggled) metadata.toggled.push(treeNode.fullname)
+        if (toggled) metadata.toggled[treeNode.type].push(treeNode.id)
       }
 
       // set node active
-      metadata.active = treeNode.fullname
+      metadata.active = treeNode
+      metadata.type = treeNode.type
 
-      const rosNode = this.state.rosGraph.nodes.find(treeNode.fullname)
-      if (rosNode) {
-        metadata.relations.in = rosNode.subscribers
-        metadata.relations.out = rosNode.publishers
-      }
-
-      // // Loop through input connections and set the relation string
-      // if (node.in) {
-      //   node.in.forEach((fullname) => {
-      //     let index = _.findIndex(newGraph, {fullname: fullname});
-      //     if (index !== -1) {
-      //       newGraph[index].relation = "Input";
-      //       if (this.state.autoExpand) metadata.toggled.push(node.fullname);
-      //     }
-      //   })
-      // }
-
-      // // Loop through output connections and set the relation string
-      // if (node.out) {
-      //   node.out.forEach((fullname) => {
-      //     let index = _.findIndex(newGraph, {fullname: fullname});
-      //     if (index !== -1) {
-      //       newGraph[index].relation = "Output";
-      //       if (this.state.autoExpand) metadata.toggled.push(node.fullname);
-      //     }
-      //   })
-      // }
+      metadata.relations = this.state.rosGraph.getRelations(treeNode.id, treeNode.type)
 
       this.setState({
         metadata: metadata

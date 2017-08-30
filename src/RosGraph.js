@@ -48,12 +48,6 @@ class Nodes {
     }
   }
 
-  find(name) {
-    return _.find(this.nodes, {
-      name: name
-    })
-  }
-
   sort() {
     this.nodes = _.sortBy(this.nodes, 'name');
     return this
@@ -123,6 +117,34 @@ class RosGraph {
       services: [],
       actions: []
     }
+  }
+
+  getRelations(name, type) {
+    switch (type) {
+      case "node":
+        {
+          const result = _.find(this.nodes.nodes, {
+            name: name
+          })
+          if (result) return { in: result.topics.subscribers,
+            out: result.topics.publishers,
+          }
+        }
+      case "topic":
+        {
+          const result = _.find(this.topics, {
+            name: name
+          })
+          if (result) return { in: result.publishers,
+            out: result.subscribers,
+          }
+        }
+      default:
+        return { in: [],
+          out: []
+        }
+    }
+
   }
 }
 

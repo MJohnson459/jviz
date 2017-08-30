@@ -7,12 +7,11 @@ import React from 'react';
  */
 class NodeTree {
 
-  static addDecorator(node) {
+  static addDecorator(node, relations) {
     let className = null;
-    if(node.highlight) className = "highlight"
-    else if (node.active) className = "NodeActive"
-    else if (node.relation === "Input") className = "NodeInput"
-    else if (node.relation === "Output") className = "NodeOutput"
+
+    if (relations.in.includes(node.id)) className = "NodeInput"
+    else if (relations.out.includes(node.id)) className = "NodeOutput"
 
     if (className) {
       node.decorators = {
@@ -38,17 +37,21 @@ class NodeTree {
    * @param {number} path_index - Tracks the recursive level down the path
    * @param {array} toggled - A list of all toggled tree nodes
    */
-  static insert(data, path, path_index, toggled) {
+  static insert(data, path, path_index, metadata, type) {
     const name = '/' + path[path_index]
-    const fullname = '/' + path.slice(1, path_index + 1).join('/')
+    const id = path.slice(0, path_index + 1).join('/')
+
+    const active = metadata.type === type && metadata.active.id === id
 
     // Add node and stop recursion if root node
     if (path_index === path.length - 1) {
       let treeNode = {
+        active: active,
+        id: id,
         name: name,
-        fullname: fullname
+        type: type,
       }
-      NodeTree.addDecorator(treeNode)
+      NodeTree.addDecorator(treeNode, metadata.relations)
       data.push(treeNode);
       return data;
     }
@@ -57,38 +60,16 @@ class NodeTree {
     if (index === -1) {
       /// add new element
       index = data.push({
-        name: name,
-        fullname: fullname,
-        toggled: toggled.includes(fullname),
+        active: active,
         children: [],
+        id: id,
+        name: name,
+        toggled: metadata.toggled[type] && metadata.toggled[type].includes(id),
+        type: type,
       }) - 1;
     }
 
-    // // Maintain active states
-    // if (metadata.active === name) {
-    //   data[index].toggled = true;
-    // }
-    //
-    // if (node.highlight) {
-    //   NodeTree.addDecorator(data[index])
-    // }
-
-    return NodeTree.insert(data[index].children, path, ++path_index, toggled);
-  }
-
-  /**
-   * Add a new node to the tree
-   * @param {object} data - The tree in which to add the node
-   * @param {object} node - Data to add at the node location (the leaf)
-   * @param {string} node.name - Data to add at the node location (the leaf)
-   * @return {object} Updated tree
-   */
-  static addNode(data, node, toggled) {
-    const path = node.name.split("/")
-    // console.log("Adding node: ", data, name, path)
-    // Start at 1 to remove empty first item as name begins
-    // with a '/'
-    return NodeTree.insert(data, path, 1, toggled);
+    return NodeTree.insert(data[index].children, path, ++path_index, metadata, type);
   }
 
   /**
@@ -97,17 +78,24 @@ class NodeTree {
    * @param {array} metadata.toggled - The list of nodes that are toggled (expanded)
    * @return {object} A new full tree
    */
-  static getNodeTree(nodes = [], metadata) {
+  static getNodeTree(nodes = [], metadata, type = "") {
     if (metadata === undefined) {
       metadata = {
         toggled: [],
         hidden: [],
+        relations: {
+          in: [],
+          out: [],
+        }
       }
     }
 
     var data = [];
     nodes.forEach((node) => {
-      if (!metadata.hidden.includes(node.name)) NodeTree.addNode(data, node, metadata.toggled)
+      if (!metadata.hidden.includes(node.name)) {
+        const path = node.name.split("/")
+        NodeTree.insert(data, path, 1, metadata, type);
+      }
     });
     return data;
   }

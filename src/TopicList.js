@@ -15,8 +15,10 @@ class TopicList extends Component {
     constructor(props) {
         super(props);
 
+        this.type = "topic"
+
         this.state = {
-            tree: NodeTree.getNodeTree(props.topics, props.metadata),
+            tree: NodeTree.getNodeTree(props.topics, props.metadata, this.type),
         }
     }
 
@@ -26,7 +28,7 @@ class TopicList extends Component {
      */
     componentWillReceiveProps(nextProps) {
       this.setState({
-        tree: NodeTree.getNodeTree(nextProps.topics, nextProps.metadata),
+        tree: NodeTree.getNodeTree(nextProps.topics, nextProps.metadata, this.type),
       })
     }
 

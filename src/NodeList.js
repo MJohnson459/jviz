@@ -20,8 +20,10 @@ class NodeList extends Component {
     constructor(props) {
         super(props);
 
+        this.type = "node"
+
         this.state = {
-            tree: NodeTree.getNodeTree(props.nodes.nodes, props.metadata),
+            tree: NodeTree.getNodeTree(props.nodes.nodes, props.metadata, this.type),
         }
 
         this.addNodeGraph = this.addNodeGraph.bind(this);
@@ -33,7 +35,7 @@ class NodeList extends Component {
      */
     componentWillReceiveProps(nextProps) {
       this.setState({
-        tree: NodeTree.getNodeTree(nextProps.nodes.nodes, nextProps.metadata),
+        tree: NodeTree.getNodeTree(nextProps.nodes.nodes, nextProps.metadata, this.type),
       })
     }
 
