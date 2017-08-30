@@ -6,7 +6,6 @@ import ROSLIB from 'roslib';
 
 import NodeTree from './NodeTree';
 import SidebarItem from './SidebarItem';
-import NodeGraph from './NodeGraph';
 import ButtonPanel from './ButtonPanel';
 
 import styles from './styles/treebeard-theme';
@@ -25,8 +24,6 @@ class NodeList extends Component {
         this.state = {
             tree: NodeTree.getNodeTree(props.nodes.nodes, props.metadata, this.type),
         }
-
-        this.addNodeGraph = this.addNodeGraph.bind(this);
     }
 
     /**
@@ -37,15 +34,6 @@ class NodeList extends Component {
       this.setState({
         tree: NodeTree.getNodeTree(nextProps.nodes.nodes, nextProps.metadata, this.type),
       })
-    }
-
-    /**
-     * Create and add a new node graph widget
-     */
-    addNodeGraph() {
-        this.props.addWidget("node_graph", (
-            <NodeGraph key={"node_graph"} ros={this.props.ros} nodeList={this.props.rosGraph} />
-        ))
     }
 
     render() {
@@ -60,9 +48,6 @@ class NodeList extends Component {
               <ReactTooltip effect="solid" place="right" type="info"/>
               <div data-tip="Refresh the list of nodes" className="SmallButton ColorThree" onClick={this.updateNodeList}>
                   Refresh
-              </div>
-              <div data-tip="Create a Node Graph Widget" className="SmallButton ColorTwo" onClick={this.addNodeGraph}>
-                  Node Graph
               </div>
             </ButtonPanel>
 

@@ -2,13 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Graph from 'react-graph-vis';
 
+import RosGraph from './RosGraph';
+
 class NodeGraph extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            graph: {},
+            graph: {
+              nodes: [],
+              edges: [],
+            },
             hierarchical: false,
         }
 
@@ -26,8 +31,8 @@ class NodeGraph extends Component {
             },
             nodes: {
                 color: {
-                    highlight: 'rgba(122, 192, 210, 0.99)',
-                    hover: 'rgb(150, 185, 210)',
+                    border: 'rgba(98, 98, 98, 0.97)',
+                    background: 'rgba(98, 118, 131, 0.9)',
                 },
                 font: {
                     color: 'rgb(223, 223, 223)',
@@ -37,12 +42,6 @@ class NodeGraph extends Component {
                 hover: true,
             },
             groups: {
-                default: {
-                    color: {
-                        border: 'rgba(98, 98, 98, 0.97)',
-                        background: 'rgba(98, 118, 131, 0.9)',
-                    },
-                },
                 active: {
                     color: {
                         border: 'rgb(122, 192, 210)',
@@ -66,78 +65,80 @@ class NodeGraph extends Component {
         };
 
         this.createGraph = this.createGraph.bind(this);
-        this.rosGraphUpdated = this.rosGraphUpdated.bind(this);
     }
 
     componentDidMount() {
-      this.createGraph(this.props.nodeList);
+      this.createGraph(this.props.rosGraph, this.props.metadata);
     }
 
     componentWillReceiveProps(nextProps) {
       console.log("receiving new props")
-      this.createGraph(nextProps.nodeList);
+      this.createGraph(nextProps.rosGraph, nextProps.metadata);
     }
 
-    rosGraphUpdated(nextGraph) {
-      console.log("receiving new graph")
-      this.createGraph(nextGraph);
-    }
-
-    createGraph(nodeTree) {
+    createGraph(rosGraph, metadata) {
       var edges = [];
 
-      const nodes = nodeTree.map((node) => {
-          const node_id = node.type + "_" + node.fullname;
+      // Deal with nodes
+      const nodeNodes = rosGraph.nodes.nodes.map((node) => {
+          const graphId = "node_" + node.name
+          let group = null
 
+          if (metadata.type === "node" && metadata.active.id === node.name) group = "active"
+          else if (metadata.relations.in.includes(node.name)) group = "input"
+          else if (metadata.relations.out.includes(node.name)) group = "output"
+          console.log(metadata, node, group)
+
+          // ***** Add edges ******
           // Assuming topics but links may be services or actions etc.
-          node.out && node.out.forEach((topic) => {
-              edges.push({from: node_id, to: "topic_" + topic});
+          node.topics.publishers.forEach((topic) => {
+              edges.push({from: graphId, to: "topic_" + topic});
           });
 
-          node.in && node.in.forEach((topic) => {
-              edges.push({from: "topic_" + topic, to: node_id});
+          node.topics.subscribers.forEach((topic) => {
+              edges.push({from: "topic_" + topic, to: graphId});
           });
 
-          let graphNode = {id: node_id, label: node.fullname, shape: "ellipse", group: "default"}
+          return {id: graphId, label: node.name, shape: "box", group: group};
+      });
 
-          switch(node.type) {
-            case "node":
-                graphNode.shape = "box"
-                break
-            case "topic":
-              graphNode.shape = "ellipse"
-              break
-            default:
-          }
+      const topicNodes = rosGraph.topics.map((node) => {
+          const graphId = "topic_" + node.name
+          let group = null
 
-          switch(node.relation) {
-            case "Active":
-              graphNode.group = "active"
-              break
-            case "Input":
-              graphNode.group = "input"
-              break
-            case "Output":
-              graphNode.group = "output"
-              break
-            default:
-          }
+          if (metadata.type === "topic" && metadata.active.id === node.name) group = "active"
+          else if (metadata.relations.in.includes(node.name)) group = "input"
+          else if (metadata.relations.out.includes(node.name)) group = "output"
 
-          if (node.active) {
-            graphNode.group = "active"
-            graphNode.chosen = true
-          }
-
-          return graphNode;
-
+          return {id: graphId, label: node.name, shape: "ellipse", group: group};
       });
 
       this.setState({
         graph: {
-          nodes: nodes,
+          nodes: [...nodeNodes, ...topicNodes],
           edges: edges,
-        }
+        },
       });
+
+
+          // switch(node.relation) {
+          //   case "Active":
+          //     graphNode.group = "active"
+          //     break
+          //   case "Input":
+          //     graphNode.group = "input"
+          //     break
+          //   case "Output":
+          //     graphNode.group = "output"
+          //     break
+          //   default:
+          // }
+          //
+          // if (node.active) {
+          //   graphNode.group = "active"
+          //   graphNode.chosen = true
+          // }
+
     }
 
     render() {
@@ -150,7 +151,7 @@ class NodeGraph extends Component {
             {this.props.children}
             <div className="ButtonPanel">
               <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
-              <span className='SmallButton ColorThree' onClick={() => {this.createGraph(this.props.nodeList)}}>recreate </span>
+              <span className='SmallButton ColorThree' onClick={() => {this.createGraph(this.props.rosGraph, this.props.metadata)}}>recreate </span>
             </div>
         </div>
         );
@@ -158,7 +159,7 @@ class NodeGraph extends Component {
 }
 
 NodeGraph.propTypes = {
-  nodeList: PropTypes.array.isRequired,
+  rosGraph: PropTypes.instanceOf(RosGraph.RosGraph).isRequired,
   children: PropTypes.element,
 }
 

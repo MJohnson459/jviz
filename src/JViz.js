@@ -8,6 +8,7 @@ import NodeList from './NodeList';
 import TopicList from './TopicList';
 import Widget from './Widget';
 import RosGraph from './RosGraph';
+import NodeGraph from './NodeGraph';
 
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
@@ -195,6 +196,13 @@ class JViz extends Component {
                   filteredGraph: this.filterNodeGraph(this.state.rosGraph),
                 })}>
               Toggle Debug
+            </div>
+            <div data-tip="Create a Node Graph Widget" className="SmallButton ColorTwo" onClick={() => {
+                this.addWidget("node_graph", (
+                    <NodeGraph key={"node_graph"} ros={this.props.ros} rosGraph={this.state.rosGraph} metadata={this.state.metadata} />
+                ))
+              }}>
+              Node Graph
             </div>
           </div>
         </div>

@@ -130,6 +130,7 @@ class RosGraph {
             out: result.topics.publishers,
           }
         }
+        break
       case "topic":
         {
           const result = _.find(this.topics, {
@@ -139,10 +140,12 @@ class RosGraph {
             out: result.subscribers,
           }
         }
+        break
       default:
-        return { in: [],
-          out: []
-        }
+    }
+
+    return { in: [],
+      out: []
     }
 
   }
