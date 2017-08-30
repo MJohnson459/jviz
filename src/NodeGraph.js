@@ -9,60 +9,60 @@ class NodeGraph extends Component {
     constructor(props) {
         super(props);
 
+        const options = {
+              layout: {
+                  hierarchical: {
+                      direction: 'LR',
+                      enabled: false,
+                      sortMethod: 'directed',
+                  },
+              },
+              edges: {
+                  color: "#d4d3d3",
+                  smooth: true,
+              },
+              nodes: {
+                  color: {
+                      border: 'rgba(98, 98, 98, 0.97)',
+                      background: 'rgba(98, 118, 131, 0.9)',
+                  },
+                  font: {
+                      color: 'rgb(223, 223, 223)',
+                  }
+              },
+              interaction: {
+                  hover: true,
+              },
+              groups: {
+                  active: {
+                      color: {
+                          border: 'rgb(122, 192, 210)',
+                          background: 'rgb(122, 192, 210)',
+                      },
+                  },
+                  input: {
+                      color: {
+                          border: 'rgb(177, 147, 18)',
+                          background: 'rgb(177, 147, 18)',
+                      },
+                  },
+                  output: {
+                      color: {
+                          border: 'rgb(128, 177, 18)',
+                          background: 'rgb(128, 177, 18)',
+                      },
+                  },
+              },
+              autoResize: true
+          };
+
         this.state = {
             graph: {
               nodes: [],
               edges: [],
             },
-            hierarchical: false,
+            options: options,
         }
-
-        this.options = {
-            layout: {
-                hierarchical: {
-                    direction: 'LR',
-                    enabled: this.state.hierarchical,
-                    sortMethod: 'directed',
-                },
-            },
-            edges: {
-                color: "#d4d3d3",
-                smooth: true,
-            },
-            nodes: {
-                color: {
-                    border: 'rgba(98, 98, 98, 0.97)',
-                    background: 'rgba(98, 118, 131, 0.9)',
-                },
-                font: {
-                    color: 'rgb(223, 223, 223)',
-                }
-            },
-            interaction: {
-                hover: true,
-            },
-            groups: {
-                active: {
-                    color: {
-                        border: 'rgb(122, 192, 210)',
-                        background: 'rgb(122, 192, 210)',
-                    },
-                },
-                input: {
-                    color: {
-                        border: 'rgb(177, 147, 18)',
-                        background: 'rgb(177, 147, 18)',
-                    },
-                },
-                output: {
-                    color: {
-                        border: 'rgb(128, 177, 18)',
-                        background: 'rgb(128, 177, 18)',
-                    },
-                },
-            },
-            autoResize: true
-        };
 
         this.createGraph = this.createGraph.bind(this);
     }
@@ -87,7 +87,6 @@ class NodeGraph extends Component {
           if (metadata.type === "node" && metadata.active.id === node.name) group = "active"
           else if (metadata.relations.in.includes(node.name)) group = "input"
           else if (metadata.relations.out.includes(node.name)) group = "output"
-          console.log(metadata, node, group)
 
           // ***** Add edges ******
           // Assuming topics but links may be services or actions etc.
@@ -145,12 +144,17 @@ class NodeGraph extends Component {
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto', display: 'flex'}}>
-                <Graph graph={this.state.graph} options={this.options} style={{flex: 1}}/>
+                <Graph graph={this.state.graph} options={this.state.options} style={{flex: 1}}/>
             </div>
 
             {this.props.children}
             <div className="ButtonPanel">
-              <span className='SmallButton ColorTwo' onClick={() => {this.setState({hierarchical: !this.state.hierarchical})}}>{this.state.hierarchical ? "directed" : "free"}</span>
+              <span className='SmallButton ColorTwo' onClick={() => {
+                  const hierarchical = this.state.options.layout.hierarchical.enabled
+                  let options = this.state.options
+                  options.layout.hierarchical.enabled = !hierarchical
+                  this.setState({options: options})
+                }}>{this.state.options.layout.hierarchical.enabled ? "directed" : "free"}</span>
               <span className='SmallButton ColorThree' onClick={() => {this.createGraph(this.props.rosGraph, this.props.metadata)}}>recreate </span>
             </div>
         </div>
