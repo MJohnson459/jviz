@@ -9,84 +9,94 @@ class NodeGraph extends Component {
     constructor(props) {
         super(props);
 
-        const options = {
-              layout: {
-                  hierarchical: {
-                      direction: 'LR',
-                      enabled: false,
-                      sortMethod: 'directed',
-                  },
-              },
-              edges: {
-                  color: "#d4d3d3",
-                  smooth: true,
-              },
-              nodes: {
-                  color: {
-                      border: 'rgba(98, 98, 98, 0.97)',
-                      background: 'rgba(98, 118, 131, 0.9)',
-                  },
-                  font: {
-                      color: 'rgb(223, 223, 223)',
-                  }
-              },
-              interaction: {
-                  hover: true,
-              },
-              groups: {
-                  active: {
-                      color: {
-                          border: 'rgb(122, 192, 210)',
-                          background: 'rgb(122, 192, 210)',
-                      },
-                  },
-                  input: {
-                      color: {
-                          border: 'rgb(177, 147, 18)',
-                          background: 'rgb(177, 147, 18)',
-                      },
-                  },
-                  output: {
-                      color: {
-                          border: 'rgb(128, 177, 18)',
-                          background: 'rgb(128, 177, 18)',
-                      },
-                  },
-              },
-              autoResize: true
-          };
-
         this.state = {
             graph: {
               nodes: [],
               edges: [],
             },
-            options: options,
+            options: NodeGraph.getDefaultOptions(),
         }
-
-        this.createGraph = this.createGraph.bind(this);
     }
 
     componentDidMount() {
-      this.createGraph(this.props.rosGraph, this.props.metadata);
+      this.setState({
+        graph: NodeGraph.createGraph(this.props.rosGraph, this.props.metadata)
+      })
     }
 
     componentWillReceiveProps(nextProps) {
       console.log("receiving new props")
-      this.createGraph(nextProps.rosGraph, nextProps.metadata);
+      this.setState({
+        graph: NodeGraph.createGraph(nextProps.rosGraph, nextProps.metadata)
+      })
     }
 
-    createGraph(rosGraph, metadata) {
+    static getDefaultOptions() {
+      return {
+            layout: {
+                hierarchical: {
+                    direction: 'LR',
+                    enabled: false,
+                    sortMethod: 'directed',
+                },
+            },
+            edges: {
+                color: "#d4d3d3",
+                smooth: true,
+            },
+            nodes: {
+                color: {
+                    border: 'rgba(98, 98, 98, 0.97)',
+                    background: 'rgba(98, 118, 131, 0.9)',
+                },
+                font: {
+                    color: 'rgb(223, 223, 223)',
+                }
+            },
+            interaction: {
+                hover: true,
+            },
+            groups: {
+                active: {
+                    color: {
+                        border: 'rgb(122, 192, 210)',
+                        background: 'rgb(122, 192, 210)',
+                    },
+                },
+                input: {
+                    color: {
+                        border: 'rgb(177, 147, 18)',
+                        background: 'rgb(177, 147, 18)',
+                    },
+                },
+                output: {
+                    color: {
+                        border: 'rgb(128, 177, 18)',
+                        background: 'rgb(128, 177, 18)',
+                    },
+                },
+            },
+            autoResize: true
+        };
+    }
+
+    static getGroupTag(metadata, type, name) {
+      let group = null
+      if (metadata !== undefined) {
+        if (metadata.type === type && metadata.active.id === name) group = "active"
+        else if (metadata.relations.in.includes(name)) group = "input"
+        else if (metadata.relations.out.includes(name)) group = "output"
+      }
+      return group
+    }
+
+    static createGraph(rosGraph, metadata) {
       var edges = [];
 
       // Deal with nodes
       const nodeNodes = rosGraph.nodes.nodes.map((node) => {
           const graphId = "node_" + node.name
-          let group = null
-
-          if (metadata.type === "node" && metadata.active.id === node.name) group = "active"
-          else if (metadata.relations.in.includes(node.name)) group = "input"
-          else if (metadata.relations.out.includes(node.name)) group = "output"
+          const group = NodeGraph.getGroupTag(metadata, "node", node.name)
 
           // ***** Add edges ******
           // Assuming topics but links may be services or actions etc.
@@ -103,40 +113,16 @@ class NodeGraph extends Component {
 
       const topicNodes = rosGraph.topics.map((node) => {
           const graphId = "topic_" + node.name
-          let group = null
-
-          if (metadata.type === "topic" && metadata.active.id === node.name) group = "active"
-          else if (metadata.relations.in.includes(node.name)) group = "input"
-          else if (metadata.relations.out.includes(node.name)) group = "output"
-
+          const group = this.getGroupTag(metadata, "topic", node.name)
           return {id: graphId, label: node.name, shape: "ellipse", group: group};
       });
 
-      this.setState({
-        graph: {
+      const graph = {
           nodes: [...nodeNodes, ...topicNodes],
           edges: edges,
-        },
-      });
+        };
 
-
-          // switch(node.relation) {
-          //   case "Active":
-          //     graphNode.group = "active"
-          //     break
-          //   case "Input":
-          //     graphNode.group = "input"
-          //     break
-          //   case "Output":
-          //     graphNode.group = "output"
-          //     break
-          //   default:
-          // }
-          //
-          // if (node.active) {
-          //   graphNode.group = "active"
-          //   graphNode.chosen = true
-          // }
+        return graph
 
     }
 
@@ -144,7 +130,7 @@ class NodeGraph extends Component {
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto', display: 'flex'}}>
-                <Graph graph={this.state.graph} options={this.state.options} style={{flex: 1}}/>
+                <Graph graph={this.state.graph} options={this.state.options} style={{flex: 1, height: "100%"}}/>
             </div>
 
             {this.props.children}

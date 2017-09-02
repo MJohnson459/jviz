@@ -20,6 +20,7 @@ class TopicList extends Component {
         this.state = {
             tree: NodeTree.getNodeTree(props.topics, props.metadata, this.type),
         }
+        
     }
 
     /**

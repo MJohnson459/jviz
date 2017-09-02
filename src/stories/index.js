@@ -18,6 +18,14 @@ import '../App.css';
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 
+function connectRos(ros) {
+  return new Promise((resolve) => {
+    ros.on('connection', () => {
+      return resolve()
+    })
+  })
+}
+
 class MockTopicList extends Component {
 
   constructor(props) {
@@ -38,7 +46,7 @@ class MockTopicList extends Component {
       RosGraph.getRosGraph(ros).then((graph) => {
         console.table(graph)
         this.setState({
-          tree: NodeTree.getNodeTree(_.filter(graph, {type: "node"})),
+          tree: NodeTree.getNodeTree(graph),
         });
       });
     });
@@ -55,32 +63,3 @@ class MockTopicList extends Component {
 
 storiesOf('RosGraph', module)
   .add('basic', () => <MockTopicList />);
-
-function connectRos(ros) {
-  return new Promise((resolve) => {
-    ros.on('connection', () => {
-      return resolve()
-    })
-  })
-}
-
-storiesOf('NodeGraph', module)
-  .add('basic', () => {
-    const ros = new ROSLIB.Ros({
-      url : "ws://localhost:9090",
-    });
-
-    const promise = connectRos(ros)
-      .then(RosGraph.getRosGraph(ros))
-      .then((graph) => {
-        return NodeTree.getNodeTree(_.filter(graph, {type: "node"}));
-      });
-
-    console.table(promise);
-
-    return(
-      <Widget key={"Node_Graph"} name={"Node Graph"} onRequestClose={() => console.log("Remove Node Graph")}>
-        <NodeGraph nodeList={promise.state === "fulfilled" ? promise.value : []} />
-      </Widget>
-    )
-  });
