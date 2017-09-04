@@ -128,6 +128,7 @@ class RosGraph {
           })
           if (result) return { in: result.topics.subscribers,
             out: result.topics.publishers,
+            type: "topic"
           }
         }
         break
@@ -138,15 +139,17 @@ class RosGraph {
           })
           if (result) return { in: result.publishers,
             out: result.subscribers,
+            type: "node"
           }
         }
         break
       default:
     }
 
-    return { in: [],
-      out: []
-    }
+    return {
+        in: [],
+        out: []
+      }
 
   }
 }

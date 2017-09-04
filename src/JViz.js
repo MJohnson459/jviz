@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import ROSLIB from 'roslib';
-import _ from 'lodash';
 
 import NodeList from './NodeList';
 import TopicList from './TopicList';
@@ -66,6 +65,27 @@ class JViz extends Component {
           }))
     }
 
+    updateToggled(toggledList, id, toggled) {
+      if (!toggledList) toggledList = []
+
+      // Not in toggled list but meant to be
+      if (toggled) {
+        id.split("/").reduce((path, value) => {
+          const subId = [path, value].join('/')
+          const toggledIndex = toggledList.indexOf(subId)
+          if (toggledIndex === -1) toggledList.push(subId)
+          return subId
+        })
+      } else {
+        // If we aren't meant to be toggled, remove element using splice
+        // TODO: toggle all subtrees
+        const toggledIndex = toggledList.indexOf(id)
+        if (toggledIndex > -1) toggledList.splice(toggledIndex, 1)
+      }
+
+      return toggledList
+    }
+
     setNodeActive(treeNode, toggled) {
 
       // cleanup
@@ -75,22 +95,17 @@ class JViz extends Component {
         out: []
       }
 
-      if (!metadata.toggled[treeNode.type]) metadata.toggled[treeNode.type] = []
-
-      const toggledIndex = metadata.toggled[treeNode.type].indexOf(treeNode.id)
-      if (toggledIndex > -1) {
-        // If we aren't meant to be toggled, remove element using splice
-        if (!toggled) metadata.toggled[treeNode.type].splice(toggledIndex, 1)
-      } else {
-        // Not in toggled list but meant to be
-        if (toggled) metadata.toggled[treeNode.type].push(treeNode.id)
-      }
-
       // set node active
       metadata.active = treeNode
       metadata.type = treeNode.type
-
       metadata.relations = this.state.rosGraph.getRelations(treeNode.id, treeNode.type)
+
+      // Toggled
+      let newToggled = {}
+      newToggled[treeNode.type] = this.updateToggled(this.state.metadata.toggled[treeNode.type], treeNode.id, toggled)
+      newToggled[metadata.relations.type] = [...metadata.relations.in, ...metadata.relations.out].reduce((toggledList, relation) => this.updateToggled(toggledList, relation, true), [])
+
+      metadata.toggled = newToggled
 
       this.setState({
         metadata: metadata

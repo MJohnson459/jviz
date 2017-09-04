@@ -76,6 +76,8 @@ class NodeTree {
    * Create a new tree from a list of nodes
    * @param {string} nodes - The list of nodes
    * @param {array} metadata.toggled - The list of nodes that are toggled (expanded)
+   * @param {array} metadata.relations.in - The list of nodes that are inputs (expanded)
+   * @param {array} metadata.relations.out - The list of nodes that are outputs (expanded)
    * @return {object} A new full tree
    */
   static getNodeTree(nodes = [], metadata, type = "") {
