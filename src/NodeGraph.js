@@ -97,34 +97,37 @@ class NodeGraph extends Component {
     }
 
     static createGraph(rosGraph, metadata) {
-      var edges = [];
+      let edges = []
+      let nodes = []
 
       // Deal with nodes
-      const nodeNodes = rosGraph.nodes.nodes.map((node) => {
+      rosGraph.nodes.nodes.forEach((node) => {
+          if (metadata.hidden.includes(node.name)) return
           const graphId = "node_" + node.name
           const group = NodeGraph.getGroupTag(metadata, "node", node.name)
 
           // ***** Add edges ******
           // Assuming topics but links may be services or actions etc.
           node.topics.publishers.forEach((topic) => {
-              edges.push({from: graphId, to: "topic_" + topic});
-          });
+              edges.push({from: graphId, to: "topic_" + topic})
+          })
 
           node.topics.subscribers.forEach((topic) => {
-              edges.push({from: "topic_" + topic, to: graphId});
-          });
+              edges.push({from: "topic_" + topic, to: graphId})
+          })
 
-          return {id: graphId, label: node.name, shape: "box", group: group};
-      });
+          nodes.push({id: graphId, label: node.name, shape: "box", group: group})
+      })
 
-      const topicNodes = rosGraph.topics.map((node) => {
+      rosGraph.topics.forEach((node) => {
+          if (metadata.hidden.includes(node.name)) return
           const graphId = "topic_" + node.name
           const group = this.getGroupTag(metadata, "topic", node.name)
-          return {id: graphId, label: node.name, shape: "ellipse", group: group};
+          nodes.push({id: graphId, label: node.name, shape: "ellipse", group: group})
       });
 
       const graph = {
-          nodes: [...nodeNodes, ...topicNodes],
+          nodes: nodes,
           edges: edges,
         };
 

@@ -206,13 +206,13 @@ class JViz extends Component {
               {this.state.widgets.map(this.createWidget)}
           </ResponsiveReactGridLayout>
           <div className="ButtonPanel">
-            <div className="SmallButton ColorThree" onClick={() => this.setState({
+            <div className="SmallButton ColorTwo" onClick={() => this.setState({
                   hideDebug: !this.state.hideDebug,
                   filteredGraph: this.filterNodeGraph(this.state.rosGraph),
                 })}>
               Toggle Debug
             </div>
-            <div data-tip="Create a Node Graph Widget" className="SmallButton ColorTwo" onClick={() => {
+            <div data-tip="Create a Node Graph Widget" className="SmallButton ColorThree" onClick={() => {
                 this.addWidget("node_graph", (
                     <NodeGraph key={"node_graph"} ros={this.props.ros} rosGraph={this.state.rosGraph} metadata={this.state.metadata} />
                 ))
