@@ -57,6 +57,12 @@ class NodeGraph extends Component {
                 hover: true,
             },
             groups: {
+                default: {
+                    color: {
+                        border: 'rgba(98, 98, 98, 0.97)',
+                        background: 'rgba(98, 118, 131, 0.9)',
+                    },
+                },
                 active: {
                     color: {
                         border: 'rgb(122, 192, 210)',
@@ -81,7 +87,7 @@ class NodeGraph extends Component {
     }
 
     static getGroupTag(metadata, type, name) {
-      let group = null
+      let group = "default"
       if (metadata !== undefined) {
         if (metadata.type === type && metadata.active.id === name) group = "active"
         else if (metadata.relations.in.includes(name)) group = "input"
@@ -130,7 +136,7 @@ class NodeGraph extends Component {
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto', display: 'flex'}}>
-                <Graph graph={this.state.graph} options={this.state.options} style={{flex: 1, height: "100%"}}/>
+                <Graph graph={this.state.graph} options={this.state.options} style={{flex: 1}}/>
             </div>
 
             {this.props.children}
@@ -141,7 +147,10 @@ class NodeGraph extends Component {
                   options.layout.hierarchical.enabled = !hierarchical
                   this.setState({options: options})
                 }}>{this.state.options.layout.hierarchical.enabled ? "directed" : "free"}</span>
-              <span className='SmallButton ColorThree' onClick={() => {this.createGraph(this.props.rosGraph, this.props.metadata)}}>recreate </span>
+              <span className='SmallButton ColorThree' onClick={() => {
+                this.setState({
+                  graph: NodeGraph.createGraph(this.props.rosGraph, this.props.metadata)
+                })}}>redraw </span>
             </div>
         </div>
         );
