@@ -32,6 +32,7 @@ class NodeGraph extends Component {
     }
 
     static getDefaultOptions() {
+
       return {
             layout: {
                 hierarchical: {
@@ -48,21 +49,24 @@ class NodeGraph extends Component {
                 color: {
                     border: 'rgba(98, 98, 98, 0.97)',
                     background: 'rgba(98, 118, 131, 0.9)',
+                    hover: {
+                        border: 'rgb(122, 192, 210)',
+                        background: 'rgb(92, 162, 180)',
+                    },
+                    highlight: {
+                        border: 'rgb(122, 192, 210)',
+                        background: 'rgb(122, 192, 210)',
+                    },
                 },
                 font: {
                     color: 'rgb(223, 223, 223)',
-                }
+                },
             },
             interaction: {
                 hover: true,
             },
             groups: {
-                default: {
-                    color: {
-                        border: 'rgba(98, 98, 98, 0.97)',
-                        background: 'rgba(98, 118, 131, 0.9)',
-                    },
-                },
+                default: {},
                 active: {
                     color: {
                         border: 'rgb(122, 192, 210)',
