@@ -81,18 +81,29 @@ class NodeGraph extends Component {
                         background: 'rgb(128, 177, 18)',
                     },
                 },
+                lonely: {
+                    color: {
+                        border: 'rgb(161, 55, 55)',
+                        background: 'rgb(159, 83, 83)',
+                    },
+                },
             },
             autoResize: true
         };
     }
 
-    static getGroupTag(metadata, type, name) {
+    static getGroupTag(metadata, type, node) {
       let group = "default"
+
+      // Lonely node
+      if (type === "topic" && node.publishers.length + node.subscribers.length === 1 ) group = "lonely"
+
       if (metadata !== undefined) {
-        if (metadata.type === type && metadata.active.id === name) group = "active"
-        else if (metadata.relations.in.includes(name)) group = "input"
-        else if (metadata.relations.out.includes(name)) group = "output"
+        if (metadata.type === type && metadata.active.id === node.name) group = "active"
+        else if (metadata.relations.in.includes(node.name)) group = "input"
+        else if (metadata.relations.out.includes(node.name)) group = "output"
       }
+
       return group
     }
 
@@ -104,7 +115,7 @@ class NodeGraph extends Component {
       rosGraph.nodes.nodes.forEach((node) => {
           if (metadata.hidden.includes(node.name)) return
           const graphId = "node_" + node.name
-          const group = NodeGraph.getGroupTag(metadata, "node", node.name)
+          const group = NodeGraph.getGroupTag(metadata, "node", node)
 
           // ***** Add edges ******
           // Assuming topics but links may be services or actions etc.
@@ -122,7 +133,7 @@ class NodeGraph extends Component {
       rosGraph.topics.forEach((node) => {
           if (metadata.hidden.includes(node.name)) return
           const graphId = "topic_" + node.name
-          const group = this.getGroupTag(metadata, "topic", node.name)
+          const group = this.getGroupTag(metadata, "topic", node)
           nodes.push({id: graphId, label: node.name, shape: "ellipse", group: group})
       });
 

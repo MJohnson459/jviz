@@ -163,7 +163,6 @@ function getNodes(ros) {
 
       list.forEach((node) => {
         ros.getNodeDetails(node, (details) => {
-
           newNodes.push({
             name: node,
             topics: {

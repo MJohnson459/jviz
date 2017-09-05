@@ -34,6 +34,7 @@ class JViz extends Component {
             '/rviz',
             '/rxloggerlevel',
             '/statistics',
+            '/record',
         ];
 
         this.state = {
