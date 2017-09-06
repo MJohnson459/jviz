@@ -224,7 +224,7 @@ class JViz extends Component {
             </div>
             <div data-tip="Create a Node Graph Widget" className="SmallButton ColorThree" onClick={() => {
                 this.addWidget("node_graph", (
-                    <NodeGraph key={"node_graph"} ros={this.props.ros} rosGraph={this.state.rosGraph} metadata={this.state.metadata} />
+                    <NodeGraph key={"node_graph"} ros={this.props.ros} rosGraph={this.state.rosGraph} metadata={this.state.metadata} setNodeActive={this.setNodeActive}/>
                 ))
               }}>
               Node Graph

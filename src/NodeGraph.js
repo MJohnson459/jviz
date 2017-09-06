@@ -136,10 +136,33 @@ class NodeGraph extends Component {
     render() {
         const graph = NodeGraph.createGraph(this.props.rosGraph, this.props.metadata)
         const options = NodeGraph.getOptions(this.state.hierarchical)
+        const events = {
+          click: (event) =>  {
+            console.log("event", event)
+
+            if (event.nodes.length > 0) {
+              const index = event.nodes[0].indexOf('/')
+              let name = event.nodes[0]
+              let type = "node"
+              if (index > 0) {
+                name = event.nodes[0].slice(index)
+                type = event.nodes[0].slice(0, index - 1)
+              }
+
+              const node = {
+                id: name,
+                name: name,
+                type: type,
+              }
+              console.log("node", node)
+              this.props.setNodeActive(node, true)
+            }
+          }
+        }
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto', display: 'flex'}}>
-                <Graph graph={graph} options={options} style={{flex: 1}}/>
+                <Graph graph={graph} options={options} style={{flex: 1}} events={events} />
             </div>
 
             {this.props.children}
