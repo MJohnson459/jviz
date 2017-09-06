@@ -59,11 +59,17 @@ class JViz extends Component {
         this.removeWidget = this.removeWidget.bind(this)
         this.setNodeActive = this.setNodeActive.bind(this)
         this.rosGraphUpdated = this.rosGraphUpdated.bind(this)
+        this.updateRosGraph = this.updateRosGraph.bind(this)
 
-        RosGraph.getRosGraph(props.ros)
+        this.updateRosGraph()
+    }
+
+    updateRosGraph() {
+        RosGraph.getRosGraph(this.props.ros)
           .then(result => this.setState({
             rosGraph: result,
           }))
+
     }
 
     updateToggled(toggledList, id, toggled) {
@@ -207,6 +213,9 @@ class JViz extends Component {
               {this.state.widgets.map(this.createWidget)}
           </ResponsiveReactGridLayout>
           <div className="ButtonPanel">
+            <div data-tip="Refresh the entire ros graph" className="SmallButton ColorOne" onClick={this.updateRosGraph}>
+                Refresh
+            </div>
             <div className="SmallButton ColorTwo" onClick={() => this.setState({
                   hideDebug: !this.state.hideDebug,
                   filteredGraph: this.filterNodeGraph(this.state.rosGraph),

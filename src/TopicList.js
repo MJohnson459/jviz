@@ -41,14 +41,7 @@ class TopicList extends Component {
             onToggle={this.props.setNodeActive}
             style={styles}
            />
-         <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} node={this.state.cursor}>
-            <div>
-              <ReactTooltip effect="solid" place="right" type="info"/>
-              <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
-                Refresh
-              </div>
-            </div>
-          </ButtonPanel>
+         <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} node={this.state.cursor} />
         </SidebarItem>
       );
     }
