@@ -10,34 +10,17 @@ class NodeGraph extends Component {
         super(props);
 
         this.state = {
-            graph: {
-              nodes: [],
-              edges: [],
-            },
-            options: NodeGraph.getDefaultOptions(),
+            hierarchical: false,
         }
     }
 
-    componentDidMount() {
-      this.setState({
-        graph: NodeGraph.createGraph(this.props.rosGraph, this.props.metadata)
-      })
-    }
-
-    componentWillReceiveProps(nextProps) {
-      console.log("receiving new props")
-      this.setState({
-        graph: NodeGraph.createGraph(nextProps.rosGraph, nextProps.metadata)
-      })
-    }
-
-    static getDefaultOptions() {
+    static getOptions(hierarchical = false) {
 
       return {
             layout: {
                 hierarchical: {
                     direction: 'LR',
-                    enabled: false,
+                    enabled: hierarchical,
                     sortMethod: 'directed',
                 },
             },
@@ -151,20 +134,19 @@ class NodeGraph extends Component {
     }
 
     render() {
+        const graph = NodeGraph.createGraph(this.props.rosGraph, this.props.metadata)
+        const options = NodeGraph.getOptions(this.state.hierarchical)
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto', display: 'flex'}}>
-                <Graph graph={this.state.graph} options={this.state.options} style={{flex: 1}}/>
+                <Graph graph={graph} options={options} style={{flex: 1}}/>
             </div>
 
             {this.props.children}
             <div className="ButtonPanel">
               <span className='SmallButton ColorTwo' onClick={() => {
-                  const hierarchical = this.state.options.layout.hierarchical.enabled
-                  let options = this.state.options
-                  options.layout.hierarchical.enabled = !hierarchical
-                  this.setState({options: options})
-                }}>{this.state.options.layout.hierarchical.enabled ? "directed" : "free"}</span>
+                  //this.setState({hierarchical: !this.state.hierarchical})
+                }}>{this.state.hierarchical ? "directed" : "free"}</span>
               <span className='SmallButton ColorThree' onClick={() => {
                 this.setState({
                   graph: NodeGraph.createGraph(this.props.rosGraph, this.props.metadata)
