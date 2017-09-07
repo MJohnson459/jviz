@@ -26,7 +26,11 @@ function connectRos() {
 }
 
 class TestNodeGraph extends Component{
-  constructor() {super(); this.state = {rosGraph: null}}
+  constructor() {
+    super(); this.state = {
+      rosGraph: null,
+    }
+  }
 
   componentDidMount() {
     connectRos()
@@ -97,6 +101,35 @@ storiesOf('NodeGraph', module)
   })
   .add('basic', () => {
     return(<TestNodeGraph/>)
+  })
+  .add('colors', () => {
+    const c1 = {backgroundColor: 'rgb(122, 192, 210)', border: '1px solid rgb(122, 192, 210)'}
+    const c2 = {backgroundColor: 'rgb(177, 147, 18)', border: '1px solid rgb(177, 147, 18)'}
+    const c3 = {backgroundColor: 'rgb(128, 177, 18)', border: '1px solid rgb(128, 177, 18)'}
+    const c4 = {backgroundColor: 'rgb(163, 105, 105)', border: '1px solid rgb(163, 105, 105)'}
+    const c5 = {backgroundColor: 'rgba(98, 118, 131, 1)', border: '1px solid rgb(98, 118, 131)'}
+    const c51 = {backgroundColor: 'rgba(98, 118, 131, 0.9)', border: '1px solid rgb(98, 118, 131)'}
+
+    return(
+      <div style={{color: "hsla(0,0%,100%,.7)", fontFamily: "sans-serif"}}>
+        <div className="ButtonPanel" style={{backgroundColor: "#2e3136", padding: 10}}>
+          <div className="SmallButton" style={c1}>Selected</div>
+          <div className="SmallButton" style={c2}>Input</div>
+          <div className="SmallButton" style={c3}>Output</div>
+          <div className="SmallButton" style={c4}>Lonely</div>
+          <div className="SmallButton" style={c5}>Default</div>
+          <div className="SmallButton" style={c51}>Default</div>
+        </div>
+        <div className="ButtonPanel" style={{padding: 10}}>
+          <div className="SmallButton" style={c1}>Selected</div>
+          <div className="SmallButton" style={c2}>Input</div>
+          <div className="SmallButton" style={c3}>Output</div>
+          <div className="SmallButton" style={c4}>Lonely</div>
+          <div className="SmallButton" style={c5}>Default</div>
+          <div className="SmallButton" style={c51}>Default</div>
+        </div>
+      </div>
+    )
   })
   .add('graph', () => {
     return(<TestSimpleNodeGraph/>)

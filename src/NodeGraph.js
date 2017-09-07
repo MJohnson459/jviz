@@ -10,17 +10,24 @@ class NodeGraph extends Component {
         super(props);
 
         this.state = {
-            hierarchical: false,
+            options: NodeGraph.getOptions(),
+            lonely: {
+              highlight: false,
+              hide: false,
+            }
         }
+
+        this.getGroupTag = this.getGroupTag.bind(this)
+        this.createGraph = this.createGraph.bind(this)
     }
 
-    static getOptions(hierarchical = false) {
+    static getOptions() {
 
       return {
             layout: {
                 hierarchical: {
                     direction: 'LR',
-                    enabled: hierarchical,
+                    enabled: false,
                     sortMethod: 'directed',
                 },
             },
@@ -30,15 +37,15 @@ class NodeGraph extends Component {
             },
             nodes: {
                 color: {
-                    border: 'rgba(98, 98, 98, 0.97)',
-                    background: 'rgba(98, 118, 131, 0.9)',
+                    background: 'rgb(98, 118, 131)',
+                    border: 'rgb(98, 118, 131)',
                     hover: {
-                        border: 'rgb(122, 192, 210)',
                         background: 'rgb(92, 162, 180)',
+                        border: 'rgb(122, 192, 210)',
                     },
                     highlight: {
-                        border: 'rgb(122, 192, 210)',
                         background: 'rgb(122, 192, 210)',
+                        border: 'rgb(122, 192, 210)',
                     },
                 },
                 font: {
@@ -49,29 +56,34 @@ class NodeGraph extends Component {
                 hover: true,
             },
             groups: {
-                default: {},
+                default: {
+                    color: {
+                        background: 'rgb(98, 118, 131)',
+                        border: 'rgb(98, 118, 131)',
+                    },
+                },
                 active: {
                     color: {
-                        border: 'rgb(122, 192, 210)',
                         background: 'rgb(122, 192, 210)',
+                        border: 'rgb(122, 192, 210)',
                     },
                 },
                 input: {
                     color: {
-                        border: 'rgb(177, 147, 18)',
                         background: 'rgb(177, 147, 18)',
+                        border: 'rgb(177, 147, 18)',
                     },
                 },
                 output: {
                     color: {
-                        border: 'rgb(128, 177, 18)',
                         background: 'rgb(128, 177, 18)',
+                        border: 'rgb(128, 177, 18)',
                     },
                 },
                 lonely: {
                     color: {
-                        border: 'rgb(161, 55, 55)',
-                        background: 'rgb(159, 83, 83)',
+                        background: 'rgb(163, 105, 105)',
+                        border: 'rgb(163, 105, 105)',
                     },
                 },
             },
@@ -79,30 +91,41 @@ class NodeGraph extends Component {
         };
     }
 
-    static getGroupTag(metadata, type, node) {
+    getGroupTag(metadata, type, node) {
       let group = "default"
 
       // Lonely node
-      if (type === "topic" && node.publishers.length + node.subscribers.length === 1 ) group = "lonely"
+      if (this.state.lonely.highlight &&
+        type === "topic" &&
+        node.publishers.length + node.subscribers.length === 1 ) group = "lonely"
 
       if (metadata !== undefined) {
-        if (metadata.type === type && metadata.active.id === node.name) group = "active"
-        else if (metadata.relations.in.includes(node.name)) group = "input"
-        else if (metadata.relations.out.includes(node.name)) group = "output"
+        if (metadata.type === type && metadata.active && metadata.active.id === node.name) group = "active"
+        else if (metadata.relations && metadata.relations.in.includes(node.name)) group = "input"
+        else if (metadata.relations && metadata.relations.out.includes(node.name)) group = "output"
       }
 
       return group
     }
 
-    static createGraph(rosGraph, metadata) {
+    createGraph(rosGraph, metadata) {
       let edges = []
       let nodes = []
 
+      if (!metadata) metadata = {
+          toggled: [],
+          hidden: [],
+          relations: {
+            in: [],
+            out: [],
+          }
+        }
+
       // Deal with nodes
       rosGraph.nodes.nodes.forEach((node) => {
-          if (metadata.hidden.includes(node.name)) return
+          if (metadata.hidden && metadata.hidden.includes(node.name)) return
           const graphId = "node_" + node.name
-          const group = NodeGraph.getGroupTag(metadata, "node", node)
+          const group = this.getGroupTag(metadata, "node", node)
 
           // ***** Add edges ******
           // Assuming topics but links may be services or actions etc.
@@ -134,8 +157,7 @@ class NodeGraph extends Component {
     }
 
     render() {
-        const graph = NodeGraph.createGraph(this.props.rosGraph, this.props.metadata)
-        const options = NodeGraph.getOptions(this.state.hierarchical)
+        const graph = this.createGraph(this.props.rosGraph, this.props.metadata)
         const events = {
           click: (event) =>  {
             console.log("event", event)
@@ -162,18 +184,18 @@ class NodeGraph extends Component {
         return (
         <div className="NodeGraph">
             <div style={{ flex: '1 1 auto', display: 'flex'}}>
-                <Graph graph={graph} options={options} style={{flex: 1}} events={events} />
+                <Graph graph={graph} options={this.state.options} style={{flex: 1}} events={events} />
             </div>
 
             {this.props.children}
             <div className="ButtonPanel">
               <span className='SmallButton ColorTwo' onClick={() => {
-                  //this.setState({hierarchical: !this.state.hierarchical})
-                }}>{this.state.hierarchical ? "directed" : "free"}</span>
+                  let lonely = this.state.lonely
+                  lonely.highlight = !this.state.lonely.highlight
+                  this.setState({lonely: lonely})
+                }}>{this.state.lonely.highlight ? "hide lonely" : "lonely"}</span>
               <span className='SmallButton ColorThree' onClick={() => {
-                this.setState({
-                  graph: NodeGraph.createGraph(this.props.rosGraph, this.props.metadata)
-                })}}>redraw </span>
+                this.forceUpdate()}}>redraw</span>
             </div>
         </div>
         );
