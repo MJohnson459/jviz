@@ -54,38 +54,6 @@ class Nodes {
   }
 }
 
-class Topics {
-  //   topics: [{
-  //     name: "",
-  //     type: "",
-  //     publishers: [""], // nodes.name
-  //     subscribers: [""] // nodes.name
-  //   }],
-
-  constructor() {
-    this.topics = []
-  }
-
-  push({
-    name,
-    type,
-    publishers,
-    subscribers
-  }) {
-    this.topics.push({
-      name: name,
-      type: type,
-      publishers: publishers,
-      subscribers: subscribers,
-    })
-  }
-
-  sort() {
-    this.topics = _.sortBy(this.topics, 'name');
-    return this
-  }
-}
-
 class RosGraph {
 
   // {

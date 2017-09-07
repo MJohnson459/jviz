@@ -200,6 +200,7 @@ class NodeGraph extends Component {
 
 NodeGraph.propTypes = {
   rosGraph: PropTypes.instanceOf(RosGraph.RosGraph).isRequired,
+  metadata: PropTypes.object.isRequired,
   children: PropTypes.element,
 }
 

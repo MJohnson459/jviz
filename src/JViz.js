@@ -58,7 +58,6 @@ class JViz extends Component {
         this.createWidget = this.createWidget.bind(this)
         this.removeWidget = this.removeWidget.bind(this)
         this.setNodeActive = this.setNodeActive.bind(this)
-        this.rosGraphUpdated = this.rosGraphUpdated.bind(this)
         this.updateRosGraph = this.updateRosGraph.bind(this)
 
         this.updateRosGraph()
@@ -72,7 +71,12 @@ class JViz extends Component {
 
     }
 
-    updateToggled(toggledList, id, toggled) {
+    /**
+     * @param toggledList {array} A list of all toggled nodes to update
+     * @param id {string} The id of the node to toggle
+     * @param toggled {boolean} True if the node should be expanded
+     */
+    updateToggled(toggledList, id, toggled = true) {
       if (!toggledList) toggledList = []
 
       // Not in toggled list but meant to be
@@ -93,7 +97,13 @@ class JViz extends Component {
       return toggledList
     }
 
-    setNodeActive(treeNode, toggled) {
+    /**
+     * @param treeNode.name {string} Node's label
+     * @param treeNode.id {string} Node's unique identifier
+     * @param treeNode.type {string} "node" or "topic" (TODO: move to enum)
+     * @param toggled {boolean} True if the node should be expanded
+     */
+    setNodeActive(treeNode, toggled = true) {
 
       // cleanup
       let metadata = this.state.metadata
@@ -110,7 +120,7 @@ class JViz extends Component {
       // Toggled
       let newToggled = {}
       newToggled[treeNode.type] = this.updateToggled(this.state.metadata.toggled[treeNode.type], treeNode.id, toggled)
-      newToggled[metadata.relations.type] = [...metadata.relations.in, ...metadata.relations.out].reduce((toggledList, relation) => this.updateToggled(toggledList, relation, true), [])
+      newToggled[metadata.relations.type] = [...metadata.relations.in, ...metadata.relations.out].reduce((toggledList, relation) => this.updateToggled(toggledList, relation), [])
 
       metadata.toggled = newToggled
 
@@ -119,32 +129,11 @@ class JViz extends Component {
       })
     }
 
-    rosGraphUpdated(nextGraph) {
-      const filteredGraph = this.filterNodeGraph(nextGraph)
-      this.setState({
-        rosGraph: nextGraph,
-        filteredGraph: filteredGraph,
-      })
-
-      let activeGraph = []
-
-      if (this.state.hideDebug) {
-        activeGraph = filteredGraph
-      } else {
-        activeGraph = nextGraph
-      }
-
-      // TODO: horrible and hacky. Find out how to call a method on react components
-      this.state.widgets.forEach((widget) => {
-        if (widget.element.props.nodeList !== undefined) {
-          widget.element = React.cloneElement(
-            widget.element,
-            {nodeList: activeGraph},
-          )
-        }
-      })
-    }
-
+    /**
+     * @param id {string} Unique identifier of the new widget
+     * @param element {React.Component} The react component to add to the window
+     * @param name {string} The label to give the widget
+     */
     addWidget(id, element, name) {
         console.log("Adding widget: ", id, element, name)
 
@@ -167,6 +156,13 @@ class JViz extends Component {
         }));
     }
 
+    /**
+     * @param widget {Widget} The widget to render
+     * @param widget.id {string} Unique identifier
+     * @param widget.layout {Layout} Grid layout
+     * @param widget.name {string} Label of the widget
+     * @param widget.element {React.Component} React component of the widget
+     */
     createWidget(widget) {
         return (
             <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
@@ -223,7 +219,7 @@ class JViz extends Component {
               Toggle Debug
             </div>
             <div data-tip="Create a Node Graph Widget" className="SmallButton ColorThree" onClick={() => {
-                this.addWidget("node_graph", (
+                this.addWidget("Node Graph", (
                     <NodeGraph key={"node_graph"} rosGraph={this.state.rosGraph} metadata={this.state.metadata} setNodeActive={this.setNodeActive}/>
                 ))
               }}>
