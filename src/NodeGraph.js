@@ -160,8 +160,6 @@ class NodeGraph extends Component {
         const graph = this.createGraph(this.props.rosGraph, this.props.metadata)
         const events = {
           click: (event) =>  {
-            console.log("event", event)
-
             if (event.nodes.length > 0) {
               const index = event.nodes[0].indexOf('/')
               let name = event.nodes[0]
@@ -170,13 +168,11 @@ class NodeGraph extends Component {
                 name = event.nodes[0].slice(index)
                 type = event.nodes[0].slice(0, index - 1)
               }
-
               const node = {
                 id: name,
                 name: name,
                 type: type,
               }
-              console.log("node", node)
               this.props.setNodeActive(node, true)
             }
           }
