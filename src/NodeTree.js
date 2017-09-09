@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 
+import RosGraphView from './RosGraphView';
+
 /**
  * Create a NodeTree
  * @public
@@ -15,15 +17,11 @@ class NodeTree {
 
     if (className) {
       node.decorators = {
-        Header: (props) => {
-          return (
-            <div className={className} style={props.style.base}>
-              <div style={props.style.title}>
-                {props.node.name}
-              </div>
-            </div>
-          );
-        },
+        Header: props => (
+          <div className={className} style={props.style.base}>
+            <div style={props.style.title}>{props.node.name}</div>
+          </div>
+        )
       };
     }
   }
@@ -37,36 +35,32 @@ class NodeTree {
    * @param {number} path_index - Tracks the recursive level down the path
    * @param {array} toggled - A list of all toggled tree nodes
    */
-  static insert(data, path, path_index, view, type) {
+  static insert(data = [], path, path_index, view, type) {
     const name = '/' + path[path_index]
     const id = path.slice(0, path_index + 1).join('/')
 
     const active = view.type === type && view.active.name === id
 
+    let treeNode = {
+      active: active,
+      id: id,
+      name: name,
+      type: type,
+    }
+
     // Add node and stop recursion if root node
     if (path_index === path.length - 1) {
-      let treeNode = {
-        active: active,
-        id: id,
-        name: name,
-        type: type,
-      }
       NodeTree.addDecorator(treeNode, view.relations)
       data.push(treeNode);
       return data;
     }
 
+    // Not a root node so need to check it should be toggled
     var index = _.findIndex(data, (o) => o.name === name)
     if (index === -1) {
-      /// add new element
-      index = data.push({
-        active: active,
-        children: [],
-        id: id,
-        name: name,
-        toggled: view.toggled[type] && view.toggled[type].includes(id),
-        type: type,
-      }) - 1;
+      treeNode.toggled = view.toggled[type] && view.toggled[type].includes(id)
+      treeNode.children = []
+      index = data.push(treeNode) - 1
     }
 
     return NodeTree.insert(data[index].children, path, ++path_index, view, type);
@@ -82,14 +76,7 @@ class NodeTree {
    */
   static getNodeTree(nodes = [], view, type = "") {
     if (view === undefined) {
-      view = {
-        toggled: [],
-        hidden: [],
-        relations: {
-          in: [],
-          out: [],
-        }
-      }
+      view = new RosGraphView()
     }
 
     var data = [];
