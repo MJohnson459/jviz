@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import JViz from './JViz'
-import './App.css';
+import './styles/App.css';
 
 import ROSLIB from 'roslib';
 
