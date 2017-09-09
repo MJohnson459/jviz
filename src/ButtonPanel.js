@@ -11,7 +11,7 @@ function CreateSubscriberAction(props) {
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
-      <div data-tip={"Subscribe to " + props.node.name} className="SmallButton ColorOne" onClick={() => {
+      <div data-tip={"Subscribe to " + props.node.name} className="SmallButton ColorTwo" onClick={() => {
         props.addWidget(id, (
           <Subscriber key={id} ros={props.ros} topic={props.node.name} type={props.node.messageType}/>
         ), props.node.name + " subscriber")
@@ -30,10 +30,11 @@ CreateSubscriberAction.propTypes = {
 
 function CreatePublisherAction(props) {
   const id = "publisher_" + props.node.name;
+  console.log("pub node", props.node)
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
-      <div data-tip={"Publish to " + props.node.name} className="SmallButton ColorTwo" onClick={() => {
+      <div data-tip={"Publish to " + props.node.name} className="SmallButton ColorThree" onClick={() => {
         props.addWidget(id, (
           <Publisher key={id} ros={props.ros} topic={props.node.name} type={props.node.messageType}/>
         ), props.node.name + " publisher")
@@ -62,7 +63,7 @@ function ButtonPanel(props) {
 
   // TODO: This will be replaced by widget registration somehow
   var widgets = [];
-  switch (props.node.type) {
+  switch (props.type) {
     case "topic":
         widgets = ["publish", "subscribe"];
       break;

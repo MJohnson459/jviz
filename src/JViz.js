@@ -8,6 +8,7 @@ import TopicList from './TopicList';
 import Widget from './Widget';
 import RosGraph from './RosGraph';
 import NodeGraph from './NodeGraph';
+import ButtonPanel from './ButtonPanel';
 
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
@@ -55,7 +56,7 @@ class JViz extends Component {
         }
 
         this.addWidget = this.addWidget.bind(this)
-        this.createWidget = this.createWidget.bind(this)
+        this.renderWidget = this.renderWidget.bind(this)
         this.removeWidget = this.removeWidget.bind(this)
         this.setNodeActive = this.setNodeActive.bind(this)
         this.updateRosGraph = this.updateRosGraph.bind(this)
@@ -113,7 +114,8 @@ class JViz extends Component {
       }
 
       // set node active
-      metadata.active = treeNode
+      console.log("find", treeNode, this.state.rosGraph.findNode(treeNode.id, treeNode.type))
+      metadata.active = this.state.rosGraph.findNode(treeNode.id, treeNode.type) || treeNode
       metadata.type = treeNode.type
       metadata.relations = this.state.rosGraph.getRelations(treeNode.id, treeNode.type)
 
@@ -163,7 +165,7 @@ class JViz extends Component {
      * @param widget.name {string} Label of the widget
      * @param widget.element {React.Component} React component of the widget
      */
-    createWidget(widget) {
+    renderWidget(widget) {
         return (
             <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
                 {React.cloneElement(widget.element, {rosGraph: this.state.rosGraph, metadata: this.state.metadata})}
@@ -189,8 +191,9 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} addWidget={this.addWidget} nodes={this.state.rosGraph.nodes} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
-            <TopicList ros={this.props.ros} addWidget={this.addWidget} topics={this.state.rosGraph.topics} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <NodeList nodes={this.state.rosGraph.nodes} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <TopicList topics={this.state.rosGraph.topics} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.metadata.active} type={this.state.metadata.type}/>
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout
@@ -206,7 +209,7 @@ class JViz extends Component {
               }}
               rowHeight={30}
               >
-              {this.state.widgets.map(this.createWidget)}
+              {this.state.widgets.map(this.renderWidget)}
           </ResponsiveReactGridLayout>
           <div className="ButtonPanel">
             <div data-tip="Refresh the entire ros graph" className="SmallButton ColorOne" onClick={this.updateRosGraph}>

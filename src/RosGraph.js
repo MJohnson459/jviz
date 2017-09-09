@@ -120,6 +120,22 @@ class RosGraph {
       }
 
   }
+
+  findNode(name, type) {
+    switch (type) {
+      case "node":
+          return _.find(this.nodes.nodes, {
+            name: name
+          })
+      case "topic":
+          return _.find(this.topics, {
+            name: name
+          })
+      default:
+    }
+
+    return null
+  }
 }
 
 function getNodes(ros) {
@@ -161,7 +177,7 @@ function getTopics(ros, nodes) {
         const node = nodes.getTopicRelation(topicName)
         return {
           name: topicName,
-          type: topics.types[i],
+          messageType: topics.types[i],
           publishers: node.publishers,
           subscribers: node.subscribers,
         }

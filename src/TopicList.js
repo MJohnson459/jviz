@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
-import ROSLIB from 'roslib';
 
 import SidebarItem from './SidebarItem.js';
 import NodeTree from './NodeTree';
-import ButtonPanel from './ButtonPanel';
 
 import styles from './styles/treebeard-theme';
 
@@ -16,11 +13,9 @@ class TopicList extends Component {
         super(props);
 
         this.type = "topic"
-
         this.state = {
             tree: NodeTree.getNodeTree(props.topics, props.metadata, this.type),
         }
-        
     }
 
     /**
@@ -41,17 +36,15 @@ class TopicList extends Component {
             onToggle={this.props.setNodeActive}
             style={styles}
            />
-         <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} node={this.state.cursor} />
         </SidebarItem>
       );
     }
 }
 
 TopicList.propTypes = {
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  addWidget: PropTypes.func.isRequired,
-  topics: PropTypes.array.isRequired,
+  metadata: PropTypes.object.isRequired,
   setNodeActive: PropTypes.func.isRequired,
+  topics: PropTypes.array.isRequired,
 }
 
 export default TopicList;

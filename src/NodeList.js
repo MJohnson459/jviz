@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
-import ROSLIB from 'roslib';
 
 import NodeTree from './NodeTree';
 import SidebarItem from './SidebarItem';
-import ButtonPanel from './ButtonPanel';
 
 import styles from './styles/treebeard-theme';
 
@@ -44,18 +42,15 @@ class NodeList extends Component {
                 onToggle={this.props.setNodeActive}
                 style={styles}
              />
-           <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} node={this.state.cursor} />
         </SidebarItem>
         );
     }
 }
 
 NodeList.propTypes = {
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
+  metadata: PropTypes.object.isRequired,
   nodes: PropTypes.object.isRequired,
-  addWidget: PropTypes.func.isRequired,
-  hidden: PropTypes.bool,
-  setNodeActive: PropTypes.func.isRequired
+  setNodeActive: PropTypes.func.isRequired,
 }
 
 export default NodeList;
