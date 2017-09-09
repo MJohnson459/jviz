@@ -40,7 +40,7 @@ class TestNodeGraph extends Component{
 
   render() {
     if (!this.state.rosGraph) return false
-    return (<NodeGraph rosGraph={this.state.rosGraph} metadata={this.state.metadata} />)
+    return (<NodeGraph rosGraph={this.state.rosGraph} view={this.state.view} />)
   }
 }
 

@@ -26,7 +26,7 @@ class JViz extends Component {
             widgets: [],
             rosGraph: new RosGraph.RosGraph(),
             autoExpand: true,
-            metadata: new RosGraphView(),
+            view: new RosGraphView(),
         }
 
         this.addWidget = this.addWidget.bind(this)
@@ -53,7 +53,7 @@ class JViz extends Component {
      */
     setNodeActive(treeNode, toggled = true) {
       this.setState({
-        metadata: this.state.metadata.setNodeActive(treeNode, toggled, this.state.rosGraph)
+        view: this.state.view.setNodeActive(treeNode, toggled, this.state.rosGraph)
       })
     }
 
@@ -94,7 +94,7 @@ class JViz extends Component {
     renderWidget(widget) {
         return (
             <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
-                {React.cloneElement(widget.element, {rosGraph: this.state.rosGraph, metadata: this.state.metadata})}
+                {React.cloneElement(widget.element, {rosGraph: this.state.rosGraph, view: this.state.view})}
             </Widget>
         );
     }
@@ -117,9 +117,9 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList nodes={this.state.rosGraph.nodes} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
-            <TopicList topics={this.state.rosGraph.topics} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
-            <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.metadata.active} type={this.state.metadata.type}/>
+            <NodeList nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} />
+            <TopicList topics={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} />
+            <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.view.active} type={this.state.view.type}/>
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout
@@ -143,14 +143,14 @@ class JViz extends Component {
             </div>
             <div className="SmallButton ColorTwo" onClick={() => {
                 this.setState({
-                    metadata: this.state.metadata.toggleDebug(),
+                    view: this.state.view.toggleDebug(),
                   })
               }}>
-              {this.state.metadata.hideDebug ? "Show Debug" : "Hide Debug"}
+              {this.state.view.hideDebug ? "Show Debug" : "Hide Debug"}
             </div>
             <div data-tip="Create a Node Graph Widget" className="SmallButton ColorThree" onClick={() => {
                 this.addWidget("Node Graph", (
-                    <NodeGraph key={"node_graph"} rosGraph={this.state.rosGraph} metadata={this.state.metadata} setNodeActive={this.setNodeActive}/>
+                    <NodeGraph key={"node_graph"} rosGraph={this.state.rosGraph} view={this.state.view} setNodeActive={this.setNodeActive}/>
                 ))
               }}>
               Node Graph

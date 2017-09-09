@@ -15,7 +15,7 @@ class TopicList extends Component {
 
         this.type = "topic"
         this.state = {
-            tree: NodeTree.getNodeTree(props.topics, props.metadata, this.type),
+            tree: NodeTree.getNodeTree(props.topics, props.view, this.type),
         }
     }
 
@@ -25,7 +25,7 @@ class TopicList extends Component {
      */
     componentWillReceiveProps(nextProps) {
       this.setState({
-        tree: NodeTree.getNodeTree(nextProps.topics, nextProps.metadata, this.type),
+        tree: NodeTree.getNodeTree(nextProps.topics, nextProps.view, this.type),
       })
     }
 
@@ -43,7 +43,7 @@ class TopicList extends Component {
 }
 
 TopicList.propTypes = {
-  metadata: PropTypes.instanceOf(RosGraphView).isRequired,
+  view: PropTypes.instanceOf(RosGraphView).isRequired,
   setNodeActive: PropTypes.func.isRequired,
   topics: PropTypes.array.isRequired,
 }

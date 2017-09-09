@@ -37,11 +37,11 @@ class NodeTree {
    * @param {number} path_index - Tracks the recursive level down the path
    * @param {array} toggled - A list of all toggled tree nodes
    */
-  static insert(data, path, path_index, metadata, type) {
+  static insert(data, path, path_index, view, type) {
     const name = '/' + path[path_index]
     const id = path.slice(0, path_index + 1).join('/')
 
-    const active = metadata.type === type && metadata.active.name === id
+    const active = view.type === type && view.active.name === id
 
     // Add node and stop recursion if root node
     if (path_index === path.length - 1) {
@@ -51,7 +51,7 @@ class NodeTree {
         name: name,
         type: type,
       }
-      NodeTree.addDecorator(treeNode, metadata.relations)
+      NodeTree.addDecorator(treeNode, view.relations)
       data.push(treeNode);
       return data;
     }
@@ -64,25 +64,25 @@ class NodeTree {
         children: [],
         id: id,
         name: name,
-        toggled: metadata.toggled[type] && metadata.toggled[type].includes(id),
+        toggled: view.toggled[type] && view.toggled[type].includes(id),
         type: type,
       }) - 1;
     }
 
-    return NodeTree.insert(data[index].children, path, ++path_index, metadata, type);
+    return NodeTree.insert(data[index].children, path, ++path_index, view, type);
   }
 
   /**
    * Create a new tree from a list of nodes
    * @param {string} nodes - The list of nodes
-   * @param {array} metadata.toggled - The list of nodes that are toggled (expanded)
-   * @param {array} metadata.relations.in - The list of nodes that are inputs (expanded)
-   * @param {array} metadata.relations.out - The list of nodes that are outputs (expanded)
+   * @param {array} view.toggled - The list of nodes that are toggled (expanded)
+   * @param {array} view.relations.in - The list of nodes that are inputs (expanded)
+   * @param {array} view.relations.out - The list of nodes that are outputs (expanded)
    * @return {object} A new full tree
    */
-  static getNodeTree(nodes = [], metadata, type = "") {
-    if (metadata === undefined) {
-      metadata = {
+  static getNodeTree(nodes = [], view, type = "") {
+    if (view === undefined) {
+      view = {
         toggled: [],
         hidden: [],
         relations: {
@@ -94,9 +94,9 @@ class NodeTree {
 
     var data = [];
     nodes.forEach((node) => {
-      if (!metadata.hidden.includes(node.name)) {
+      if (!view.hidden.includes(node.name)) {
         const path = node.name.split("/")
-        NodeTree.insert(data, path, 1, metadata, type);
+        NodeTree.insert(data, path, 1, view, type);
       }
     });
     return data;

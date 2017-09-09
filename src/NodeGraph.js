@@ -92,7 +92,7 @@ class NodeGraph extends Component {
         };
     }
 
-    getGroupTag(metadata, type, node) {
+    getGroupTag(view, type, node) {
       let group = "default"
 
       // Lonely node
@@ -100,20 +100,20 @@ class NodeGraph extends Component {
         type === "topic" &&
         node.publishers.length + node.subscribers.length === 1 ) group = "lonely"
 
-      if (metadata !== undefined) {
-        if (metadata.type === type && metadata.active && metadata.active.name === node.name) group = "active"
-        else if (metadata.relations && metadata.relations.in.includes(node.name)) group = "input"
-        else if (metadata.relations && metadata.relations.out.includes(node.name)) group = "output"
+      if (view !== undefined) {
+        if (view.type === type && view.active && view.active.name === node.name) group = "active"
+        else if (view.relations && view.relations.in.includes(node.name)) group = "input"
+        else if (view.relations && view.relations.out.includes(node.name)) group = "output"
       }
 
       return group
     }
 
-    createGraph(rosGraph, metadata) {
+    createGraph(rosGraph, view) {
       let edges = []
       let nodes = []
 
-      if (!metadata) metadata = {
+      if (!view) view = {
           toggled: [],
           hidden: [],
           relations: {
@@ -124,9 +124,9 @@ class NodeGraph extends Component {
 
       // Deal with nodes
       rosGraph.nodes.nodes.forEach((node) => {
-          if (metadata.hidden && metadata.hidden.includes(node.name)) return
+          if (view.hidden && view.hidden.includes(node.name)) return
           const graphId = "node_" + node.name
-          const group = this.getGroupTag(metadata, "node", node)
+          const group = this.getGroupTag(view, "node", node)
 
           // ***** Add edges ******
           // Assuming topics but links may be services or actions etc.
@@ -142,9 +142,9 @@ class NodeGraph extends Component {
       })
 
       rosGraph.topics.forEach((node) => {
-          if (metadata.hidden.includes(node.name)) return
+          if (view.hidden.includes(node.name)) return
           const graphId = "topic_" + node.name
-          const group = this.getGroupTag(metadata, "topic", node)
+          const group = this.getGroupTag(view, "topic", node)
           nodes.push({id: graphId, label: node.name, shape: "ellipse", group: group})
       });
 
@@ -158,7 +158,7 @@ class NodeGraph extends Component {
     }
 
     render() {
-        const graph = this.createGraph(this.props.rosGraph, this.props.metadata)
+        const graph = this.createGraph(this.props.rosGraph, this.props.view)
         const events = {
           click: (event) =>  {
             if (event.nodes.length > 0) {
@@ -199,7 +199,7 @@ class NodeGraph extends Component {
 
 NodeGraph.propTypes = {
   rosGraph: PropTypes.instanceOf(RosGraph.RosGraph).isRequired,
-  metadata: PropTypes.instanceOf(RosGraphView).isRequired,
+  view: PropTypes.instanceOf(RosGraphView).isRequired,
   children: PropTypes.element,
 }
 
