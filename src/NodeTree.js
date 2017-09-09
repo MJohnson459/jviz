@@ -41,7 +41,7 @@ class NodeTree {
     const name = '/' + path[path_index]
     const id = path.slice(0, path_index + 1).join('/')
 
-    const active = metadata.type === type && metadata.active.id === id
+    const active = metadata.type === type && metadata.active.name === id
 
     // Add node and stop recursion if root node
     if (path_index === path.length - 1) {

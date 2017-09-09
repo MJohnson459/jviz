@@ -19,7 +19,8 @@ export default {
         display: 'block'
       },
       activeLink: {
-        background: '#31363F'
+        background: '#31363F',
+        color: 'rgba(122, 192, 210, 0.86)'
       },
       toggle: {
         base: {
