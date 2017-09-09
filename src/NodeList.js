@@ -18,10 +18,8 @@ class NodeList extends Component {
     constructor(props) {
         super(props);
 
-        this.type = "node"
-
         this.state = {
-            tree: NodeTree.getNodeTree(props.nodes.nodes, props.view, this.type),
+            tree: NodeTree.getNodeTree(props.nodes, props.view, props.type),
         }
     }
 
@@ -31,7 +29,7 @@ class NodeList extends Component {
      */
     componentWillReceiveProps(nextProps) {
       this.setState({
-        tree: NodeTree.getNodeTree(nextProps.nodes.nodes, nextProps.view, this.type),
+        tree: NodeTree.getNodeTree(nextProps.nodes, nextProps.view, this.props.type),
       })
     }
 
@@ -49,9 +47,10 @@ class NodeList extends Component {
 }
 
 NodeList.propTypes = {
-  view: PropTypes.instanceOf(RosGraphView).isRequired,
-  nodes: PropTypes.object.isRequired,
+  nodes: PropTypes.array.isRequired,
   setNodeActive: PropTypes.func.isRequired,
+  type: PropTypes.string.isRequired,
+  view: PropTypes.instanceOf(RosGraphView).isRequired,
 }
 
 export default NodeList;

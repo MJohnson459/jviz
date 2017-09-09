@@ -2,45 +2,27 @@ import _ from 'lodash';
 
 class Nodes {
   //   nodes: [{
-  //     name: "",
+  //     path: "",
   //     topics: {
-  //       publishers: [""], // topics.name
-  //       subscribers: [""] // topics.name
+  //       publishers: [""], // topics.path
+  //       subscribers: [""] // topics.path
   //     },
   //     services: {
-  //       servers: [""], // services.name
-  //       clients: [""]  // services.name
+  //       servers: [""], // services.path
+  //       clients: [""]  // services.path
   //     },
   //     actions: {
-  //       servers: [""], // actions.name
-  //       clients: [""]  // actions.name
+  //       servers: [""], // actions.path
+  //       clients: [""]  // actions.path
   //     }
   //   }],
 
-  constructor() {
-    this.nodes = []
-  }
-
-  push({
-    name,
-    topics,
-    services,
-    actions
-  }) {
-    this.nodes.push({
-      name: name,
-      topics: topics,
-      services: services,
-      actions: actions,
-    })
-  }
-
-  getTopicRelation(topicName) {
+  static getTopicRelation(nodes, topicName) {
     let publishers = []
     let subscribers = []
-    this.nodes.forEach((node) => {
-      if (node.topics.publishers.includes(topicName)) publishers.push(node.name)
-      if (node.topics.subscribers.includes(topicName)) subscribers.push(node.name)
+    nodes.forEach((node) => {
+      if (node.topics.publishers.includes(topicName)) publishers.push(node.path)
+      if (node.topics.subscribers.includes(topicName)) subscribers.push(node.path)
     })
     return {
       publishers: publishers,
@@ -49,7 +31,7 @@ class Nodes {
   }
 
   sort() {
-    this.nodes = _.sortBy(this.nodes, 'name');
+    this.nodes = _.sortBy(this.nodes, 'path');
     return this
   }
 }
@@ -60,31 +42,31 @@ class RosGraph {
   //   Nodes,
   //   Topics,
   //   services: [{
-  //     name: "",
+  //     path: "",
   //     type: "",
-  //     server: "",   // nodes.name
-  //     clients: [""] // nodes.name
+  //     server: "",   // nodes.path
+  //     clients: [""] // nodes.path
   //   }],
   //   actions: [{
-  //     name: "",
+  //     path: "",
   //     type: "",
-  //     server: "",   // nodes.name
-  //     clients: [""] // nodes.name
+  //     server: "",   // nodes.path
+  //     clients: [""] // nodes.path
   //   }]
   // }
 
-  constructor(nodes = new Nodes(), topics = [], services = [], actions = []) {
+  constructor(nodes = [], topics = [], services = [], actions = []) {
     this.nodes = nodes
     this.topics = topics
     this.services = services
     this.actions = actions
   }
 
-  getRelations(name, type) {
+  getRelations(path, type) {
     switch (type) {
       case "node":
         {
-          const result = _.find(this.nodes.nodes, {name: name})
+          const result = _.find(this.nodes, {path: path})
           if (result)
             return {
                 in: result.topics.subscribers,
@@ -95,7 +77,7 @@ class RosGraph {
         break
       case "topic":
         {
-          const result = _.find(this.topics, {name: name})
+          const result = _.find(this.topics, {path: path})
           if (result)
             return {
               in: result.publishers,
@@ -114,15 +96,15 @@ class RosGraph {
 
   }
 
-  findNode(name, type) {
+  findNode(path, type) {
     switch (type) {
       case "node":
           return _.find(this.nodes.nodes, {
-            name: name
+            path: path
           })
       case "topic":
           return _.find(this.topics, {
-            name: name
+            path: path
           })
       default:
     }
@@ -136,12 +118,12 @@ function getNodes(ros) {
     ros.getNodes((list) => {
 
       var updatedNodesCount = 0;
-      var newNodes = new Nodes()
+      var newNodes = []
 
       list.forEach((node) => {
         ros.getNodeDetails(node, (details) => {
           newNodes.push({
-            name: node,
+            path: node,
             topics: {
               publishers: details.publishing,
               subscribers: details.subscribing,
@@ -152,7 +134,7 @@ function getNodes(ros) {
           });
 
           if (++updatedNodesCount === list.length) {
-            return resolve(newNodes.sort());
+            return resolve(_.sortBy(newNodes, 'path'));
           }
         });
       });
@@ -167,15 +149,15 @@ function getTopics(ros, nodes) {
   return new Promise((resolve, reject) => {
     ros.getTopics((topics) => {
       const topicList = topics.topics.map((topicName, i) => {
-        const node = nodes.getTopicRelation(topicName)
+        const node = Nodes.getTopicRelation(nodes, topicName)
         return {
-          name: topicName,
+          path: topicName,
           messageType: topics.types[i],
           publishers: node.publishers,
           subscribers: node.subscribers,
         }
       });
-      const sortedTopics = _.sortBy(topicList, 'name');
+      const sortedTopics = _.sortBy(topicList, 'path');
       resolve({
         topics: sortedTopics,
         nodes: nodes

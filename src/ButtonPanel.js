@@ -7,14 +7,14 @@ import Publisher from './Publisher.js';
 import Subscriber from './Subscriber.js';
 
 function CreateSubscriberAction(props) {
-  const id = "subscriber_" + props.node.name;
+  const id = "subscriber_" + props.node.path;
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
-      <div data-tip={"Subscribe to " + props.node.name} className="SmallButton ColorTwo" onClick={() => {
+      <div data-tip={"Subscribe to " + props.node.path} className="SmallButton ColorTwo" onClick={() => {
         props.addWidget(id, (
-          <Subscriber key={id} ros={props.ros} topic={props.node.name} type={props.node.messageType}/>
-        ), props.node.name + " subscriber")
+          <Subscriber key={id} ros={props.ros} topic={props.node.path} type={props.node.messageType}/>
+        ), props.node.path + " subscriber")
       }}>
         Subscribe
       </div>
@@ -29,15 +29,15 @@ CreateSubscriberAction.propTypes = {
 }
 
 function CreatePublisherAction(props) {
-  const id = "publisher_" + props.node.name;
+  const id = "publisher_" + props.node.path;
   console.log("pub node", props.node)
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
-      <div data-tip={"Publish to " + props.node.name} className="SmallButton ColorThree" onClick={() => {
+      <div data-tip={"Publish to " + props.node.path} className="SmallButton ColorThree" onClick={() => {
         props.addWidget(id, (
-          <Publisher key={id} ros={props.ros} topic={props.node.name} type={props.node.messageType}/>
-        ), props.node.name + " publisher")
+          <Publisher key={id} ros={props.ros} topic={props.node.path} type={props.node.messageType}/>
+        ), props.node.path + " publisher")
       }}>
         Publish
       </div>
@@ -88,9 +88,9 @@ function ButtonPanel(props) {
         widgets.map((widget) => {
           switch (widget) {
             case "publish":
-              return <CreatePublisherAction key={"publish_" + props.node.name} ros={props.ros} addWidget={props.addWidget} node={props.node} />
+              return <CreatePublisherAction key={"publish_" + props.node.path} ros={props.ros} addWidget={props.addWidget} node={props.node} />
             case "subscribe":
-              return <CreateSubscriberAction key={"subscribe_" + props.node.name} ros={props.ros} addWidget={props.addWidget} node={props.node} />
+              return <CreateSubscriberAction key={"subscribe_" + props.node.path} ros={props.ros} addWidget={props.addWidget} node={props.node} />
             default:
               console.log("Couldn't create action for type: " + widget);
               return false;

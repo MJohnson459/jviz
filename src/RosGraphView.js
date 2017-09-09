@@ -49,12 +49,12 @@ class RosGraphView {
   /**
    * @private
    */
-  updateToggled(toggledList, id, toggled) {
+  updateToggled(toggledList, path, toggled) {
     if (!toggledList) toggledList = []
 
     // Not in toggled list but meant to be
     if (toggled) {
-      id.split("/").reduce((path, value) => {
+      path.split("/").reduce((path, value) => {
         const subId = [path, value].join('/')
         const toggledIndex = toggledList.indexOf(subId)
         if (toggledIndex === -1) toggledList.push(subId)
@@ -63,7 +63,7 @@ class RosGraphView {
     } else {
       // If we aren't meant to be toggled, remove element using splice
       // TODO: toggle all subtrees
-      const toggledIndex = toggledList.indexOf(id)
+      const toggledIndex = toggledList.indexOf(path)
       if (toggledIndex > -1) toggledList.splice(toggledIndex, 1)
     }
 
@@ -72,13 +72,13 @@ class RosGraphView {
 
   setNodeActive(treeNode, toggled, rosGraph) {
     // set node active
-    this.active = rosGraph.findNode(treeNode.id, treeNode.type) || treeNode
+    this.active = rosGraph.findNode(treeNode.path, treeNode.type) || treeNode
     this.type = treeNode.type
-    this.relations = rosGraph.getRelations(treeNode.id, treeNode.type)
+    this.relations = rosGraph.getRelations(treeNode.path, treeNode.type)
 
     // Toggled
     let newToggled = {}
-    newToggled[treeNode.type] = this.updateToggled(this.toggled[treeNode.type], treeNode.id, toggled)
+    newToggled[treeNode.type] = this.updateToggled(this.toggled[treeNode.type], treeNode.path, toggled)
     newToggled[this.relations.type] = [...this.relations.in, ...this.relations.out].reduce((toggledList, relation) => this.updateToggled(toggledList, relation, true), [])
 
     this.toggled = newToggled

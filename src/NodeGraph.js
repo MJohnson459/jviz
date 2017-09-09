@@ -101,9 +101,9 @@ class NodeGraph extends Component {
         node.publishers.length + node.subscribers.length === 1 ) group = "lonely"
 
       if (view !== undefined) {
-        if (view.type === type && view.active && view.active.name === node.name) group = "active"
-        else if (view.relations && view.relations.in.includes(node.name)) group = "input"
-        else if (view.relations && view.relations.out.includes(node.name)) group = "output"
+        if (view.type === type && view.active && view.active.path === node.path) group = "active"
+        else if (view.relations && view.relations.in.includes(node.path)) group = "input"
+        else if (view.relations && view.relations.out.includes(node.path)) group = "output"
       }
 
       return group
@@ -113,19 +113,12 @@ class NodeGraph extends Component {
       let edges = []
       let nodes = []
 
-      if (!view) view = {
-          toggled: [],
-          hidden: [],
-          relations: {
-            in: [],
-            out: [],
-          }
-        }
+      if (!view) view = new RosGraphView()
 
       // Deal with nodes
-      rosGraph.nodes.nodes.forEach((node) => {
-          if (view.hidden && view.hidden.includes(node.name)) return
-          const graphId = "node_" + node.name
+      rosGraph.nodes.forEach((node) => {
+          if (view.hidden && view.hidden.includes(node.path)) return
+          const graphId = "node_" + node.path
           const group = this.getGroupTag(view, "node", node)
 
           // ***** Add edges ******
@@ -138,14 +131,14 @@ class NodeGraph extends Component {
               edges.push({from: "topic_" + topic, to: graphId})
           })
 
-          nodes.push({id: graphId, label: node.name, shape: "box", group: group})
+          nodes.push({id: graphId, label: node.path, shape: "box", group: group})
       })
 
       rosGraph.topics.forEach((node) => {
-          if (view.hidden.includes(node.name)) return
-          const graphId = "topic_" + node.name
+          if (view.hidden.includes(node.path)) return
+          const graphId = "topic_" + node.path
           const group = this.getGroupTag(view, "topic", node)
-          nodes.push({id: graphId, label: node.name, shape: "ellipse", group: group})
+          nodes.push({id: graphId, label: node.path, shape: "ellipse", group: group})
       });
 
       const graph = {
@@ -163,15 +156,15 @@ class NodeGraph extends Component {
           click: (event) =>  {
             if (event.nodes.length > 0) {
               const index = event.nodes[0].indexOf('/')
-              let name = event.nodes[0]
+              let path = event.nodes[0]
               let type = "node"
               if (index > 0) {
-                name = event.nodes[0].slice(index)
+                path = event.nodes[0].slice(index)
                 type = event.nodes[0].slice(0, index - 1)
               }
               const node = {
-                id: name,
-                name: name,
+                path: path,
+                name: path,
                 type: type,
               }
               this.props.setNodeActive(node, true)

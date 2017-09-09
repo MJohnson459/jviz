@@ -8,7 +8,6 @@ import NodeGraph from './NodeGraph';
 import NodeList from './NodeList';
 import RosGraph from './RosGraph';
 import RosGraphView from './RosGraphView';
-import TopicList from './TopicList';
 import Widget from './Widget';
 
 import "../node_modules/react-grid-layout/css/styles.css";
@@ -47,7 +46,7 @@ class JViz extends Component {
 
     /**
      * @param treeNode.name {string} Node's label
-     * @param treeNode.id {string} Node's unique identifier
+     * @param treeNode.path {string} Node's unique identifier
      * @param treeNode.type {string} "node" or "topic" (TODO: move to enum)
      * @param toggled {boolean} True if the node should be expanded
      */
@@ -117,8 +116,8 @@ class JViz extends Component {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} />
-            <TopicList topics={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} />
+            <NodeList nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
+            <NodeList nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
             <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.view.active} type={this.state.view.type}/>
         </div>
         <div className="JViz-main">

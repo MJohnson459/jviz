@@ -12,8 +12,8 @@ class NodeTree {
   static addDecorator(node, relations) {
     let className = null;
 
-    if (relations.in.includes(node.id)) className = "NodeInput"
-    else if (relations.out.includes(node.id)) className = "NodeOutput"
+    if (relations.in.includes(node.path)) className = "NodeInput"
+    else if (relations.out.includes(node.path)) className = "NodeOutput"
 
     if (className) {
       node.decorators = {
@@ -32,38 +32,38 @@ class NodeTree {
    * @private
    * @param {object} data - The tree in which to add the node
    * @param {string} path - The full path
-   * @param {number} path_index - Tracks the recursive level down the path
+   * @param {number} pathIndex - Tracks the recursive level down the path
    * @param {array} toggled - A list of all toggled tree nodes
    */
-  static insert(data = [], path, path_index, view, type) {
-    const name = '/' + path[path_index]
-    const id = path.slice(0, path_index + 1).join('/')
+  static insert(data = [], path, pathIndex, view, type) {
+    const name = '/' + path[pathIndex]
+    const subpath = path.slice(0, pathIndex + 1).join('/')
 
-    const active = view.type === type && view.active.name === id
+    const active = view.type === type && view.active.path === subpath
 
     let treeNode = {
-      active: active,
-      id: id,
       name: name,
+      active: active,
+      path: subpath,
       type: type,
     }
 
     // Add node and stop recursion if root node
-    if (path_index === path.length - 1) {
+    if (pathIndex === path.length - 1) {
       NodeTree.addDecorator(treeNode, view.relations)
       data.push(treeNode);
       return data;
     }
 
     // Not a root node so need to check it should be toggled
-    var index = _.findIndex(data, (o) => o.name === name)
+    var index = _.findIndex(data, (o) => o.path === subpath)
     if (index === -1) {
-      treeNode.toggled = view.toggled[type] && view.toggled[type].includes(id)
+      treeNode.toggled = view.toggled[type] && view.toggled[type].includes(subpath)
       treeNode.children = []
       index = data.push(treeNode) - 1
     }
 
-    return NodeTree.insert(data[index].children, path, ++path_index, view, type);
+    return NodeTree.insert(data[index].children, path, ++pathIndex, view, type);
   }
 
   /**
@@ -81,8 +81,8 @@ class NodeTree {
 
     var data = [];
     nodes.forEach((node) => {
-      if (!view.hidden.includes(node.name)) {
-        const path = node.name.split("/")
+      if (!view.hidden.includes(node.path)) {
+        const path = node.path.split("/")
         NodeTree.insert(data, path, 1, view, type);
       }
     });
