@@ -4,6 +4,7 @@ import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 
 import NodeTree from './NodeTree';
+import RosGraphView from './RosGraphView';
 import SidebarItem from './SidebarItem';
 
 import styles from './styles/treebeard-theme';
@@ -48,7 +49,7 @@ class NodeList extends Component {
 }
 
 NodeList.propTypes = {
-  metadata: PropTypes.object.isRequired,
+  metadata: PropTypes.instanceOf(RosGraphView).isRequired,
   nodes: PropTypes.object.isRequired,
   setNodeActive: PropTypes.func.isRequired,
 }

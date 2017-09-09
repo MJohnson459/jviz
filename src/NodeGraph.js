@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Graph from 'react-graph-vis';
 
 import RosGraph from './RosGraph';
+import RosGraphView from './RosGraphView';
 
 class NodeGraph extends Component {
 
@@ -100,7 +101,7 @@ class NodeGraph extends Component {
         node.publishers.length + node.subscribers.length === 1 ) group = "lonely"
 
       if (metadata !== undefined) {
-        if (metadata.type === type && metadata.active && metadata.active.id === node.name) group = "active"
+        if (metadata.type === type && metadata.active && metadata.active.name === node.name) group = "active"
         else if (metadata.relations && metadata.relations.in.includes(node.name)) group = "input"
         else if (metadata.relations && metadata.relations.out.includes(node.name)) group = "output"
       }
@@ -198,7 +199,7 @@ class NodeGraph extends Component {
 
 NodeGraph.propTypes = {
   rosGraph: PropTypes.instanceOf(RosGraph.RosGraph).isRequired,
-  metadata: PropTypes.object.isRequired,
+  metadata: PropTypes.instanceOf(RosGraphView).isRequired,
   children: PropTypes.element,
 }
 

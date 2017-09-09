@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import ROSLIB from 'roslib';
 
+import ButtonPanel from './ButtonPanel';
+import NodeGraph from './NodeGraph';
 import NodeList from './NodeList';
+import RosGraph from './RosGraph';
+import RosGraphView from './RosGraphView';
 import TopicList from './TopicList';
 import Widget from './Widget';
-import RosGraph from './RosGraph';
-import NodeGraph from './NodeGraph';
-import ButtonPanel from './ButtonPanel';
 
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
@@ -20,39 +21,12 @@ class JViz extends Component {
     constructor(props) {
         super(props);
 
-        this.debugNames = [
-            '/clock',
-            '/cpu_monitor',
-            '/diag_agg',
-            '/hd_monitor',
-            '/monitor',
-            '/pr2_dashboard',
-            '/rosapi',
-            '/rosout_agg',
-            '/rosout',
-            '/rqt',
-            '/runtime_logger',
-            '/rviz',
-            '/rxloggerlevel',
-            '/statistics',
-            '/record',
-        ];
-
         this.state = {
             subscribers: [],
             widgets: [],
             rosGraph: new RosGraph.RosGraph(),
-            filteredGraph: [],
             autoExpand: true,
-            hideDebug: true,
-            metadata: {
-              toggled: [],
-              hidden: this.debugNames,
-              relations: {
-                in: [],
-                out: [],
-              }
-            }
+            metadata: new RosGraphView(),
         }
 
         this.addWidget = this.addWidget.bind(this)
@@ -65,37 +39,10 @@ class JViz extends Component {
     }
 
     updateRosGraph() {
-        RosGraph.getRosGraph(this.props.ros)
-          .then(result => this.setState({
-            rosGraph: result,
-          }))
-
-    }
-
-    /**
-     * @param toggledList {array} A list of all toggled nodes to update
-     * @param id {string} The id of the node to toggle
-     * @param toggled {boolean} True if the node should be expanded
-     */
-    updateToggled(toggledList, id, toggled = true) {
-      if (!toggledList) toggledList = []
-
-      // Not in toggled list but meant to be
-      if (toggled) {
-        id.split("/").reduce((path, value) => {
-          const subId = [path, value].join('/')
-          const toggledIndex = toggledList.indexOf(subId)
-          if (toggledIndex === -1) toggledList.push(subId)
-          return subId
-        })
-      } else {
-        // If we aren't meant to be toggled, remove element using splice
-        // TODO: toggle all subtrees
-        const toggledIndex = toggledList.indexOf(id)
-        if (toggledIndex > -1) toggledList.splice(toggledIndex, 1)
-      }
-
-      return toggledList
+      RosGraph.getRosGraph(this.props.ros)
+        .then(result => this.setState({
+          rosGraph: result,
+        }))
     }
 
     /**
@@ -105,29 +52,8 @@ class JViz extends Component {
      * @param toggled {boolean} True if the node should be expanded
      */
     setNodeActive(treeNode, toggled = true) {
-
-      // cleanup
-      let metadata = this.state.metadata
-      metadata.relations = {
-        in: [],
-        out: []
-      }
-
-      // set node active
-      console.log("find", treeNode, this.state.rosGraph.findNode(treeNode.id, treeNode.type))
-      metadata.active = this.state.rosGraph.findNode(treeNode.id, treeNode.type) || treeNode
-      metadata.type = treeNode.type
-      metadata.relations = this.state.rosGraph.getRelations(treeNode.id, treeNode.type)
-
-      // Toggled
-      let newToggled = {}
-      newToggled[treeNode.type] = this.updateToggled(this.state.metadata.toggled[treeNode.type], treeNode.id, toggled)
-      newToggled[metadata.relations.type] = [...metadata.relations.in, ...metadata.relations.out].reduce((toggledList, relation) => this.updateToggled(toggledList, relation), [])
-
-      metadata.toggled = newToggled
-
       this.setState({
-        metadata: metadata
+        metadata: this.state.metadata.setNodeActive(treeNode, toggled, this.state.rosGraph)
       })
     }
 
@@ -216,20 +142,11 @@ class JViz extends Component {
                 Refresh
             </div>
             <div className="SmallButton ColorTwo" onClick={() => {
-                let metadata = this.state.metadata
-                let debug = !this.state.hideDebug
-                if (debug) {
-                  metadata.hidden = this.debugNames
-                } else {
-                  // TODO: this won't work when filters are added
-                  metadata.hidden = []
-                }
                 this.setState({
-                    hideDebug: debug,
-                    metadata: metadata,
+                    metadata: this.state.metadata.toggleDebug(),
                   })
               }}>
-              {this.state.hideDebug ? "Show Debug" : "Hide Debug"}
+              {this.state.metadata.hideDebug ? "Show Debug" : "Hide Debug"}
             </div>
             <div data-tip="Create a Node Graph Widget" className="SmallButton ColorThree" onClick={() => {
                 this.addWidget("Node Graph", (

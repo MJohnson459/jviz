@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {Treebeard} from 'react-treebeard';
 
-import SidebarItem from './SidebarItem.js';
 import NodeTree from './NodeTree';
+import RosGraphView from './RosGraphView';
+import SidebarItem from './SidebarItem.js';
 
 import styles from './styles/treebeard-theme';
 
@@ -42,7 +43,7 @@ class TopicList extends Component {
 }
 
 TopicList.propTypes = {
-  metadata: PropTypes.object.isRequired,
+  metadata: PropTypes.instanceOf(RosGraphView).isRequired,
   setNodeActive: PropTypes.func.isRequired,
   topics: PropTypes.array.isRequired,
 }
