@@ -1,5 +1,7 @@
 /**
- * This class describes a view of the immutable rosgraph
+ * This class describes a view of the immutable rosgraph.
+ *
+ * Most methods in this class will return a copy of itself to help with React
  */
 class RosGraphView {
   constructor() {

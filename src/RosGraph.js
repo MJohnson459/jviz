@@ -78,37 +78,30 @@ class RosGraph {
     this.topics = topics
     this.services = services
     this.actions = actions
-
-    this.hidden = {
-      nodes: [],
-      topics: [],
-      services: [],
-      actions: []
-    }
   }
 
   getRelations(name, type) {
     switch (type) {
       case "node":
         {
-          const result = _.find(this.nodes.nodes, {
-            name: name
-          })
-          if (result) return { in: result.topics.subscribers,
-            out: result.topics.publishers,
-            type: "topic"
-          }
+          const result = _.find(this.nodes.nodes, {name: name})
+          if (result)
+            return {
+                in: result.topics.subscribers,
+                out: result.topics.publishers,
+                type: "topic"
+              }
         }
         break
       case "topic":
         {
-          const result = _.find(this.topics, {
-            name: name
-          })
-          if (result) return { in: result.publishers,
-            out: result.subscribers,
-            type: "node"
-          }
+          const result = _.find(this.topics, {name: name})
+          if (result)
+            return {
+              in: result.publishers,
+              out: result.subscribers,
+              type: "node"
+            }
         }
         break
       default:
