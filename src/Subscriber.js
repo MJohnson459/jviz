@@ -18,7 +18,7 @@ function Message(props) {
 }
 
 Message.propTypes = {
-  message: PropTypes.string.isRequired,
+  message: PropTypes.object.isRequired,
 }
 
 class Subscriber extends Component {

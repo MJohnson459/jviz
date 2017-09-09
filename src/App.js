@@ -28,9 +28,15 @@ class App extends Component {
       });
 
     this.ros.on('connection', () => {
-      console.log('Connected to websocket server.');
       this.setState({
           connected: true,
+      });
+    });
+
+    this.ros.on('error', (error) => {
+      console.log(error)
+      this.setState({
+          error: error,
       });
     });
   }
@@ -49,6 +55,7 @@ class App extends Component {
                 <button onClick={this.handleConnect} value="Connect">
                   Connect
                 </button>
+                {this.state.error ? <div style={{color: "rgb(161, 55, 55)", margin: 5}}>Unable to connect to server</div> : false}
             </div>
 
         );

@@ -7,14 +7,14 @@ import Publisher from './Publisher.js';
 import Subscriber from './Subscriber.js';
 
 function CreateSubscriberAction(props) {
-  const id = "subscriber_" + props.topic;
+  const id = "subscriber_" + props.node.name;
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
-      <div data-tip={"Subscribe to " + props.topic} className="SmallButton ColorOne" onClick={() => {
+      <div data-tip={"Subscribe to " + props.node.name} className="SmallButton ColorTwo" onClick={() => {
         props.addWidget(id, (
-          <Subscriber key={id} ros={props.ros} topic={props.topic} type={props.type}/>
-        ), props.topic + " subscriber")
+          <Subscriber key={id} ros={props.ros} topic={props.node.name} type={props.node.messageType}/>
+        ), props.node.name + " subscriber")
       }}>
         Subscribe
       </div>
@@ -23,21 +23,21 @@ function CreateSubscriberAction(props) {
 }
 
 CreateSubscriberAction.propTypes = {
-  topic: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+  node: PropTypes.object.isRequired,
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   addWidget: PropTypes.func.isRequired,
 }
 
 function CreatePublisherAction(props) {
-  const id = "publisher_" + props.topic;
+  const id = "publisher_" + props.node.name;
+  console.log("pub node", props.node)
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
-      <div data-tip={"Publish to " + props.topic} className="SmallButton ColorTwo" onClick={() => {
+      <div data-tip={"Publish to " + props.node.name} className="SmallButton ColorThree" onClick={() => {
         props.addWidget(id, (
-          <Publisher key={id} ros={props.ros} topic={props.topic} type={props.type}/>
-        ), props.topic + " publisher")
+          <Publisher key={id} ros={props.ros} topic={props.node.name} type={props.node.messageType}/>
+        ), props.node.name + " publisher")
       }}>
         Publish
       </div>
@@ -46,15 +46,14 @@ function CreatePublisherAction(props) {
 }
 
 CreatePublisherAction.propTypes = {
-  topic: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
+  node: PropTypes.object.isRequired,
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   addWidget: PropTypes.func.isRequired,
 }
 
 function ButtonPanel(props) {
 
-  if (props.header === undefined) {
+  if (props.node === undefined) {
     return (
       <div className="ButtonPanel">
         {props.children}
@@ -62,16 +61,9 @@ function ButtonPanel(props) {
     )
   }
 
-  const header = props.header;
-  // {
-  //   actionType: "topic",
-  //   topic: "/test/sub",
-  //   type: "std_msgs/String",
-  // }
-
   // TODO: This will be replaced by widget registration somehow
   var widgets = [];
-  switch (header.actionType) {
+  switch (props.type) {
     case "topic":
         widgets = ["publish", "subscribe"];
       break;
@@ -85,7 +77,7 @@ function ButtonPanel(props) {
 
       break;
     default:
-      console.log("No actions for type: " + header.actionType);
+      // console.log("No actions for type: " + props.node.type);
       return false;
   }
 
@@ -96,9 +88,9 @@ function ButtonPanel(props) {
         widgets.map((widget) => {
           switch (widget) {
             case "publish":
-              return <CreatePublisherAction key={"publish_" + header.topic} ros={props.ros} addWidget={props.addWidget} {...header} />
+              return <CreatePublisherAction key={"publish_" + props.node.name} ros={props.ros} addWidget={props.addWidget} node={props.node} />
             case "subscribe":
-              return <CreateSubscriberAction key={"subscribe_" + header.topic} ros={props.ros} addWidget={props.addWidget} {...header} />
+              return <CreateSubscriberAction key={"subscribe_" + props.node.name} ros={props.ros} addWidget={props.addWidget} node={props.node} />
             default:
               console.log("Couldn't create action for type: " + widget);
               return false;
@@ -110,7 +102,7 @@ function ButtonPanel(props) {
 }
 
 ButtonPanel.propTypes = {
-  header: PropTypes.object,
+  node: PropTypes.object,
   ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
   addWidget: PropTypes.func.isRequired,
   children: PropTypes.oneOfType([

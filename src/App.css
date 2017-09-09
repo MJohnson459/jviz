@@ -17,6 +17,20 @@
     border-bottom: 1px solid #303337;
 }
 
+.NodeActive {
+  color: #64908A;
+}
+.NodeInput {
+  color: rgb(177, 147, 18);
+}
+.NodeOutput {
+  color: rgb(128, 177, 18);
+}
+
+ /*
+  New color theme?
+  #351330,#424254,#64908A,#E8CAA4,#CC2A41
+ */
 
 .ColorOne {
   background-color: rgba(122, 192, 210, 0.86);
@@ -79,12 +93,13 @@
 
 .JViz-main {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column wrap;
   width: 100%;
+  flex: 1;
 }
 
 .Widget {
-    border: 1px solid #303337;
+    border: 1px solid hsla(0,0%,100%,.03);
     padding: 0px;
     display: flex;
     flex-direction: column;

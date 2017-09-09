@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
-import ROSLIB from 'roslib';
-import _ from 'lodash';
 
 import SidebarItem from './SidebarItem.js';
 import NodeTree from './NodeTree';
-import ButtonPanel from './ButtonPanel';
 
 import styles from './styles/treebeard-theme';
 
@@ -16,75 +12,39 @@ class TopicList extends Component {
     constructor(props) {
         super(props);
 
+        this.type = "topic"
         this.state = {
-            topics: [],
-            tree: [],
+            tree: NodeTree.getNodeTree(props.topics, props.metadata, this.type),
         }
-
-        this.getTopics();
-
-        this.getTopics = this.getTopics.bind(this);
-        this.onToggleTree = this.onToggleTree.bind(this);
     }
 
-    getTopics() {
-        this.props.ros.getTopics((topics) => {
-            const topicList = topics.topics.map((item, i) =>
-                {
-                    return {
-                        name: item,
-                        header: {
-                            actionType: "topic",
-                            topic: item,
-                            type: topics.types[i],
-                        }
-                    }
-                }
-            );
-
-            const sortedTopics = _.sortBy(topicList, 'name');
-
-            this.setState({
-                tree: NodeTree.getNodeTree(sortedTopics),
-            });
-        });
-    }
-
-    onToggleTree(node, toggled) {
-      // eslint-disable-next-line
-      if(this.state.cursor){this.state.cursor.active = false;}
-      node.active = true;
-      if(node.children){ node.toggled = toggled; }
-      this.setState({ cursor: node });
+    /**
+     * Called before new props are loaded. Used to update the graph tree
+     * @param {object} nextProps - New props to load
+     */
+    componentWillReceiveProps(nextProps) {
+      this.setState({
+        tree: NodeTree.getNodeTree(nextProps.topics, nextProps.metadata, this.type),
+      })
     }
 
     render() {
-
-      const header = this.state.cursor ? this.state.cursor.header : undefined;
-
       return (
         <SidebarItem name="Topic List">
           <Treebeard
             data={this.state.tree}
-            onToggle={this.onToggleTree}
+            onToggle={this.props.setNodeActive}
             style={styles}
            />
-         <ButtonPanel ros={this.props.ros} addWidget={this.props.addWidget} header={header}>
-            <div>
-              <ReactTooltip effect="solid" place="right" type="info"/>
-              <div data-tip="Refresh the list of topics" className="SmallButton ColorThree" onClick={this.getTopics}>
-                Refresh
-              </div>
-            </div>
-          </ButtonPanel>
         </SidebarItem>
       );
     }
 }
 
 TopicList.propTypes = {
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  addWidget: PropTypes.func.isRequired,
+  metadata: PropTypes.object.isRequired,
+  setNodeActive: PropTypes.func.isRequired,
+  topics: PropTypes.array.isRequired,
 }
 
 export default TopicList;

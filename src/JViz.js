@@ -3,10 +3,13 @@ import PropTypes from 'prop-types';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import ROSLIB from 'roslib';
 
-
 import NodeList from './NodeList';
 import TopicList from './TopicList';
 import Widget from './Widget';
+import RosGraph from './RosGraph';
+import NodeGraph from './NodeGraph';
+import ButtonPanel from './ButtonPanel';
+
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
 import './App.css';
@@ -17,16 +20,122 @@ class JViz extends Component {
     constructor(props) {
         super(props);
 
+        this.debugNames = [
+            '/clock',
+            '/cpu_monitor',
+            '/diag_agg',
+            '/hd_monitor',
+            '/monitor',
+            '/pr2_dashboard',
+            '/rosapi',
+            '/rosout_agg',
+            '/rosout',
+            '/rqt',
+            '/runtime_logger',
+            '/rviz',
+            '/rxloggerlevel',
+            '/statistics',
+            '/record',
+        ];
+
         this.state = {
             subscribers: [],
             widgets: [],
+            rosGraph: new RosGraph.RosGraph(),
+            filteredGraph: [],
+            autoExpand: true,
+            hideDebug: true,
+            metadata: {
+              toggled: [],
+              hidden: this.debugNames,
+              relations: {
+                in: [],
+                out: [],
+              }
+            }
         }
 
         this.addWidget = this.addWidget.bind(this)
-        this.createWidget = this.createWidget.bind(this)
+        this.renderWidget = this.renderWidget.bind(this)
         this.removeWidget = this.removeWidget.bind(this)
+        this.setNodeActive = this.setNodeActive.bind(this)
+        this.updateRosGraph = this.updateRosGraph.bind(this)
+
+        this.updateRosGraph()
     }
 
+    updateRosGraph() {
+        RosGraph.getRosGraph(this.props.ros)
+          .then(result => this.setState({
+            rosGraph: result,
+          }))
+
+    }
+
+    /**
+     * @param toggledList {array} A list of all toggled nodes to update
+     * @param id {string} The id of the node to toggle
+     * @param toggled {boolean} True if the node should be expanded
+     */
+    updateToggled(toggledList, id, toggled = true) {
+      if (!toggledList) toggledList = []
+
+      // Not in toggled list but meant to be
+      if (toggled) {
+        id.split("/").reduce((path, value) => {
+          const subId = [path, value].join('/')
+          const toggledIndex = toggledList.indexOf(subId)
+          if (toggledIndex === -1) toggledList.push(subId)
+          return subId
+        })
+      } else {
+        // If we aren't meant to be toggled, remove element using splice
+        // TODO: toggle all subtrees
+        const toggledIndex = toggledList.indexOf(id)
+        if (toggledIndex > -1) toggledList.splice(toggledIndex, 1)
+      }
+
+      return toggledList
+    }
+
+    /**
+     * @param treeNode.name {string} Node's label
+     * @param treeNode.id {string} Node's unique identifier
+     * @param treeNode.type {string} "node" or "topic" (TODO: move to enum)
+     * @param toggled {boolean} True if the node should be expanded
+     */
+    setNodeActive(treeNode, toggled = true) {
+
+      // cleanup
+      let metadata = this.state.metadata
+      metadata.relations = {
+        in: [],
+        out: []
+      }
+
+      // set node active
+      console.log("find", treeNode, this.state.rosGraph.findNode(treeNode.id, treeNode.type))
+      metadata.active = this.state.rosGraph.findNode(treeNode.id, treeNode.type) || treeNode
+      metadata.type = treeNode.type
+      metadata.relations = this.state.rosGraph.getRelations(treeNode.id, treeNode.type)
+
+      // Toggled
+      let newToggled = {}
+      newToggled[treeNode.type] = this.updateToggled(this.state.metadata.toggled[treeNode.type], treeNode.id, toggled)
+      newToggled[metadata.relations.type] = [...metadata.relations.in, ...metadata.relations.out].reduce((toggledList, relation) => this.updateToggled(toggledList, relation), [])
+
+      metadata.toggled = newToggled
+
+      this.setState({
+        metadata: metadata
+      })
+    }
+
+    /**
+     * @param id {string} Unique identifier of the new widget
+     * @param element {React.Component} The react component to add to the window
+     * @param name {string} The label to give the widget
+     */
     addWidget(id, element, name) {
         console.log("Adding widget: ", id, element, name)
 
@@ -49,10 +158,17 @@ class JViz extends Component {
         }));
     }
 
-    createWidget(widget) {
+    /**
+     * @param widget {Widget} The widget to render
+     * @param widget.id {string} Unique identifier
+     * @param widget.layout {Layout} Grid layout
+     * @param widget.name {string} Label of the widget
+     * @param widget.element {React.Component} React component of the widget
+     */
+    renderWidget(widget) {
         return (
             <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
-                {widget.element}
+                {React.cloneElement(widget.element, {rosGraph: this.state.rosGraph, metadata: this.state.metadata})}
             </Widget>
         );
     }
@@ -72,28 +188,58 @@ class JViz extends Component {
 
 
   render() {
-
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList ros={this.props.ros} addWidget={this.addWidget} hidden={false} />
-            <TopicList ros={this.props.ros} addWidget={this.addWidget} hidden={false} />
+            <NodeList nodes={this.state.rosGraph.nodes} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <TopicList topics={this.state.rosGraph.topics} metadata={this.state.metadata} setNodeActive={this.setNodeActive} />
+            <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.metadata.active} type={this.state.metadata.type}/>
         </div>
-
-        <ResponsiveReactGridLayout
-            className="JViz-main"
-            breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
-            cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}
-            rowHeight={30}
-            draggableHandle=".HeaderName"
-            onLayoutChange={(layout, layouts) => {
+        <div className="JViz-main">
+          <ResponsiveReactGridLayout
+              breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
+              className="JViz-main"
+              cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}
+              draggableHandle=".HeaderName"
+              margin={[5, 5]}
+              onLayoutChange={(layout, layouts) => {
                 this.setState({
-                    layouts: layouts,
+                  layouts: layouts,
                 })
-            }}>
-            {this.state.widgets.map(this.createWidget)}
-        </ResponsiveReactGridLayout>
-
+              }}
+              rowHeight={30}
+              >
+              {this.state.widgets.map(this.renderWidget)}
+          </ResponsiveReactGridLayout>
+          <div className="ButtonPanel">
+            <div data-tip="Refresh the entire ros graph" className="SmallButton ColorOne" onClick={this.updateRosGraph}>
+                Refresh
+            </div>
+            <div className="SmallButton ColorTwo" onClick={() => {
+                let metadata = this.state.metadata
+                let debug = !this.state.hideDebug
+                if (debug) {
+                  metadata.hidden = this.debugNames
+                } else {
+                  // TODO: this won't work when filters are added
+                  metadata.hidden = []
+                }
+                this.setState({
+                    hideDebug: debug,
+                    metadata: metadata,
+                  })
+              }}>
+              {this.state.hideDebug ? "Show Debug" : "Hide Debug"}
+            </div>
+            <div data-tip="Create a Node Graph Widget" className="SmallButton ColorThree" onClick={() => {
+                this.addWidget("Node Graph", (
+                    <NodeGraph key={"node_graph"} rosGraph={this.state.rosGraph} metadata={this.state.metadata} setNodeActive={this.setNodeActive}/>
+                ))
+              }}>
+              Node Graph
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
