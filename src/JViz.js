@@ -212,11 +212,21 @@ class JViz extends Component {
             <div data-tip="Refresh the entire ros graph" className="SmallButton ColorOne" onClick={this.updateRosGraph}>
                 Refresh
             </div>
-            <div className="SmallButton ColorTwo" onClick={() => this.setState({
-                  hideDebug: !this.state.hideDebug,
-                  filteredGraph: this.filterNodeGraph(this.state.rosGraph),
-                })}>
-              Toggle Debug
+            <div className="SmallButton ColorTwo" onClick={() => {
+                let metadata = this.state.metadata
+                let debug = !this.state.hideDebug
+                if (debug) {
+                  metadata.hidden = this.debugNames
+                } else {
+                  // TODO: this won't work when filters are added
+                  metadata.hidden = []
+                }
+                this.setState({
+                    hideDebug: debug,
+                    metadata: metadata,
+                  })
+              }}>
+              {this.state.hideDebug ? "Show Debug" : "Hide Debug"}
             </div>
             <div data-tip="Create a Node Graph Widget" className="SmallButton ColorThree" onClick={() => {
                 this.addWidget("Node Graph", (

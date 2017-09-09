@@ -190,8 +190,6 @@ class NodeGraph extends Component {
                   lonely.highlight = !this.state.lonely.highlight
                   this.setState({lonely: lonely})
                 }}>{this.state.lonely.highlight ? "hide lonely" : "lonely"}</span>
-              <span className='SmallButton ColorThree' onClick={() => {
-                this.forceUpdate()}}>redraw</span>
             </div>
         </div>
         );
