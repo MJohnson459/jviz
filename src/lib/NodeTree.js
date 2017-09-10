@@ -75,6 +75,7 @@ function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, 
       toggled: !!view.toggled[type] && view.toggled[type].includes(subpath),
       type: type,
     }
+    data.push(stem)
   } else {
     stem = data[index]
     stem.children = stem.children || []
@@ -104,5 +105,6 @@ function GetNodeTree(nodes: Array<RosGraph.Primative> = [], view: RosGraphView =
   return data;
 }
 
+export {GetNodeTree}
 export type {NodeTree}
 export default GetNodeTree;

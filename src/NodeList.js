@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 
-import NodeTree from './lib/NodeTree';
+import * as NodeTree from './lib/NodeTree';
 import RosGraphView from './lib/RosGraphView';
 import SidebarItem from './SidebarItem';
 
@@ -19,7 +19,7 @@ class NodeList extends Component {
         super(props);
 
         this.state = {
-            tree: NodeTree.getNodeTree(props.nodes, props.view, props.type),
+            tree: NodeTree.GetNodeTree(props.nodes, props.view, props.type),
         }
     }
 
@@ -29,7 +29,7 @@ class NodeList extends Component {
      */
     componentWillReceiveProps(nextProps) {
       this.setState({
-        tree: NodeTree.getNodeTree(nextProps.nodes, nextProps.view, this.props.type),
+        tree: NodeTree.GetNodeTree(nextProps.nodes, nextProps.view, this.props.type),
       })
     }
 
