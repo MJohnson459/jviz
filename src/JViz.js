@@ -19,7 +19,7 @@ const ResponsiveReactGridLayout  = WidthProvider(Responsive);
 type TreeNode = {
   name: string,
   path: string,
-  type: string,
+  type: RosGraph.PrimitiveType,
 }
 
 type Props = {

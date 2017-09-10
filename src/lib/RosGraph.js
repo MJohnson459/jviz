@@ -4,6 +4,12 @@ import _ from 'lodash';
 
 type Id = string
 
+type PrimitiveType =
+  | "node"
+  | "topic"
+  | "service"
+  | "action"
+
 type Node = {
   path: string,
   topics: Object,
@@ -12,23 +18,26 @@ type Node = {
 }
 
 type Topic = {
-
+  path: string,
+  messageType: string,
+  publishers: Array<Id>,
+  subscribers: Array<Id>,
 }
 
 type Service = {
-
+  path: string,
 }
 
 type Action = {
-
+  path: string,
 }
 
-type RosType = Node | Topic | Service | Action
+type Primative = Node | Topic | Service | Action
 
 type Relations = {
   in: Array<Id>,
   out: Array<Id>,
-  type: string
+  type: PrimitiveType
 }
 
 class RosGraph {
@@ -44,7 +53,7 @@ class RosGraph {
     this.actions = actions
   }
 
-  getRelations(path: string, type: string): ?Relations {
+  getRelations(path: string, type: PrimitiveType): ?Relations {
     switch (type) {
       case "node":
         {
@@ -72,7 +81,7 @@ class RosGraph {
     }
   }
 
-  findNode(path: string, type: string): ?Node | Topic {
+  findNode(path: string, type: PrimitiveType): ?Node | Topic {
     switch (type) {
       case "node":
           return _.find(this.nodes, {
@@ -119,7 +128,7 @@ function getNodes(ros: Object): Promise<Array<Node>> {
   })
 }
 
-function getTopicRelation(nodes: Array<Node>, topicName: string) {
+function getTopicRelation(nodes: Array<Node>, topicName: string): {publishers: Array<Id>, subscribers: Array<Id>} {
   let publishers = []
   let subscribers = []
   nodes.forEach((node) => {
@@ -135,7 +144,7 @@ function getTopicRelation(nodes: Array<Node>, topicName: string) {
 function getTopics(ros: Object, nodes: Array<Node>): Promise<{topics: Array<Topic>, nodes: Array<Node>}> {
   return new Promise((resolve, reject) => {
     ros.getTopics((topics) => {
-      const topicList = topics.topics.map((topicName, i) => {
+      const topicList: Array<Topic> = topics.topics.map((topicName, i) => {
         const node = getTopicRelation(nodes, topicName)
         return {
           path: topicName,
@@ -144,7 +153,7 @@ function getTopics(ros: Object, nodes: Array<Node>): Promise<{topics: Array<Topi
           subscribers: node.subscribers,
         }
       });
-      const sortedTopics = _.sortBy(topicList, 'path');
+      const sortedTopics: Array<Topic> = _.sortBy(topicList, 'path');
       resolve({
         topics: sortedTopics,
         nodes: nodes
@@ -162,5 +171,5 @@ function GetRosGraph(ros: RosGraph): Promise<RosGraph> {
 }
 
 export {RosGraph, GetRosGraph}
-export type {Node, Topic, Service, Action, Relations, Id, RosType}
+export type {Node, Topic, Service, Action, Relations, Id, Primative, PrimitiveType}
 export default {RosGraph, GetRosGraph}

@@ -28,12 +28,12 @@ const DEBUG_NAMES = [
 
 type TreeNode = {
   path: string,
-  type: string,
+  type: RosGraph.PrimitiveType,
 }
 
 class RosGraphView {
-  active: ?RosGraph.RosType
-  type: ?string
+  active: ?RosGraph.Primative
+  type: ?RosGraph.PrimitiveType
   toggled: Object
   hidden: Array<RosGraph.Id>
   hideDebug: boolean
