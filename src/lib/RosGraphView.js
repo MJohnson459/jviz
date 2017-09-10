@@ -1,43 +1,54 @@
+// @flow
+import * as RosGraph from './RosGraph'
+
+
 /**
  * This class describes a view of the immutable rosgraph.
  *
  * Most methods in this class will return a copy of itself to help with React
  */
-class RosGraphView {
-  constructor() {
-    this.debugNames = [
-        '/clock',
-        '/cpu_monitor',
-        '/diag_agg',
-        '/hd_monitor',
-        '/monitor',
-        '/pr2_dashboard',
-        '/rosapi',
-        '/rosout_agg',
-        '/rosout',
-        '/rqt',
-        '/runtime_logger',
-        '/rviz',
-        '/rxloggerlevel',
-        '/statistics',
-        '/record',
-    ];
 
-    this.active = null
-    this.type = null
-    this.toggled = []
-    this.hidden = this.debugNames
+const DEBUG_NAMES = [
+    '/clock',
+    '/cpu_monitor',
+    '/diag_agg',
+    '/hd_monitor',
+    '/monitor',
+    '/pr2_dashboard',
+    '/rosapi',
+    '/rosout_agg',
+    '/rosout',
+    '/rqt',
+    '/runtime_logger',
+    '/rviz',
+    '/rxloggerlevel',
+    '/statistics',
+    '/record',
+];
+
+type TreeNode = {
+  path: string,
+  type: string,
+}
+
+class RosGraphView {
+  active: ?RosGraph.RosType
+  type: ?string
+  toggled: Object
+  hidden: Array<RosGraph.Id>
+  hideDebug: boolean
+  relations: ?RosGraph.Relations
+
+  constructor() {
+    this.toggled = {}
+    this.hidden = DEBUG_NAMES
     this.hideDebug = true
-    this.relations = {
-        in: [],
-        out: [],
-      }
   }
 
   toggleDebug() {
     this.hideDebug = !this.hideDebug
     if (this.hideDebug) {
-      this.hidden = this.debugNames
+      this.hidden = DEBUG_NAMES
     } else {
       // TODO: this won't work when filters are added
       this.hidden = []
@@ -49,8 +60,7 @@ class RosGraphView {
   /**
    * @private
    */
-  updateToggled(toggledList, path, toggled) {
-    if (!toggledList) toggledList = []
+  updateToggled(toggledList: Array<RosGraph.Id> = [], path: string, toggled: boolean): Array<RosGraph.Id> {
 
     // Not in toggled list but meant to be
     if (toggled) {
@@ -70,17 +80,18 @@ class RosGraphView {
     return toggledList
   }
 
-  setNodeActive(treeNode, toggled, rosGraph) {
+  setNodeActive(treeNode: TreeNode, toggled: boolean, rosGraph: RosGraph.RosGraph) {
     // set node active
     this.active = rosGraph.findNode(treeNode.path, treeNode.type) || treeNode
     this.type = treeNode.type
-    this.relations = rosGraph.getRelations(treeNode.path, treeNode.type)
+    const relations = rosGraph.getRelations(treeNode.path, treeNode.type)
 
     // Toggled
-    let newToggled = {}
+    let newToggled: Object = {}
     newToggled[treeNode.type] = this.updateToggled(this.toggled[treeNode.type], treeNode.path, toggled)
-    newToggled[this.relations.type] = [...this.relations.in, ...this.relations.out].reduce((toggledList, relation) => this.updateToggled(toggledList, relation, true), [])
+    if (relations) newToggled[relations.type] = [...relations.in, ...relations.out].reduce((toggledList, relation) => this.updateToggled(toggledList, relation, true), [])
 
+    this.relations = relations
     this.toggled = newToggled
 
     return this

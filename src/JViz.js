@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import ROSLIB from 'roslib';
 
 import ButtonPanel from './ButtonPanel';
 import NodeGraph from './NodeGraph';
 import NodeList from './NodeList';
-import RosGraph from './lib/RosGraph';
+import * as RosGraph from './lib/RosGraph';
 import RosGraphView from './lib/RosGraphView';
 import Widget from './Widget';
 
@@ -16,29 +16,47 @@ import './styles/App.css';
 
 const ResponsiveReactGridLayout  = WidthProvider(Responsive);
 
-class JViz extends Component {
-    constructor(props) {
+type TreeNode = {
+  name: string,
+  path: string,
+  type: string,
+}
+
+type Props = {
+  ros: ROSLIB.Ros,
+}
+
+type WidgetType = {
+  element: React.Element<any>,
+  id: string,
+  layout: Object,
+  name: ?string,
+}
+
+type State = {
+  autoExpand: boolean,
+  layouts: ?Object,
+  rosGraph: RosGraph.RosGraph,
+  view: RosGraphView,
+  widgets: Array<WidgetType>,
+}
+
+class JViz extends React.Component<Props, State> {
+    state = {
+      autoExpand: true,
+      layouts: {},
+      rosGraph: new RosGraph.RosGraph(),
+      view: new RosGraphView(),
+      widgets: [],
+    }
+
+    constructor(props: Props) {
         super(props);
-
-        this.state = {
-            subscribers: [],
-            widgets: [],
-            rosGraph: new RosGraph.RosGraph(),
-            autoExpand: true,
-            view: new RosGraphView(),
-        }
-
-        this.addWidget = this.addWidget.bind(this)
-        this.renderWidget = this.renderWidget.bind(this)
-        this.removeWidget = this.removeWidget.bind(this)
-        this.setNodeActive = this.setNodeActive.bind(this)
-        this.updateRosGraph = this.updateRosGraph.bind(this)
-
         this.updateRosGraph()
     }
 
-    updateRosGraph() {
-      RosGraph.getRosGraph(this.props.ros)
+    updateRosGraph = () => {
+      RosGraph.GetRosGraph(this.props.ros)
         .then(result => this.setState({
           rosGraph: result,
         }))
@@ -50,7 +68,7 @@ class JViz extends Component {
      * @param treeNode.type {string} "node" or "topic" (TODO: move to enum)
      * @param toggled {boolean} True if the node should be expanded
      */
-    setNodeActive(treeNode, toggled = true) {
+    setNodeActive = (treeNode: TreeNode, toggled: boolean = true) => {
       this.setState({
         view: this.state.view.setNodeActive(treeNode, toggled, this.state.rosGraph)
       })
@@ -58,10 +76,10 @@ class JViz extends Component {
 
     /**
      * @param id {string} Unique identifier of the new widget
-     * @param element {React.Component} The react component to add to the window
+     * @param element {React.Node} The react component to add to the window
      * @param name {string} The label to give the widget
      */
-    addWidget(id, element, name) {
+    addWidget = (id: string, element: React.Element<any>, name: ?string) => {
         console.log("Adding widget: ", id, element, name)
 
         // TODO: calculate layout
@@ -88,9 +106,9 @@ class JViz extends Component {
      * @param widget.id {string} Unique identifier
      * @param widget.layout {Layout} Grid layout
      * @param widget.name {string} Label of the widget
-     * @param widget.element {React.Component} React component of the widget
+     * @param widget.element {React.Node} React component of the widget
      */
-    renderWidget(widget) {
+    renderWidget = (widget: WidgetType) => {
         return (
             <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
                 {React.cloneElement(widget.element, {rosGraph: this.state.rosGraph, view: this.state.view})}
@@ -98,7 +116,7 @@ class JViz extends Component {
         );
     }
 
-    removeWidget(widget) {
+    removeWidget = (widget: WidgetType) => {
         console.log("Removing", widget.id)
 
         const widgets = this.state.widgets.filter((item)=>{
@@ -159,10 +177,6 @@ class JViz extends Component {
       </div>
     );
   }
-}
-
-JViz.propTypes = {
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
 }
 
 export default JViz;

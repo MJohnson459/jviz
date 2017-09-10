@@ -9,6 +9,7 @@
     "react-scripts": "^1.0.7"
   },
   "dependencies": {
+    "flow-bin": "^0.54.1",
     "prop-types": "^15.5.10",
     "react": "^15.4.2",
     "react-custom-scroll": "^2.0.0",
@@ -26,17 +27,18 @@
     "yamljs": "^0.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "ros": "docker-compose -f test/docker-compose.yml up --build -d",
-    "lint": "eslint ./src",
-    "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "docs": "jsdoc -R README.md src --verbose --pedantic"
+    "build": "react-scripts build",
+    "deploy": "gh-pages -d build",
+    "docs": "jsdoc -R README.md src --verbose --pedantic",
+    "eject": "react-scripts eject",
+    "flow": "flow",
+    "lint": "eslint ./src",
+    "predeploy": "npm run build",
+    "ros": "docker-compose -f test/docker-compose.yml up --build -d",
+    "start": "react-scripts start",
+    "storybook": "start-storybook -p 9009 -s public",
+    "test": "react-scripts test --env=jsdom"
   },
   "homepage": "http://MJohnson459.github.io/jviz"
 }

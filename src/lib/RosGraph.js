@@ -1,68 +1,50 @@
+// @flow
+
 import _ from 'lodash';
 
-class Nodes {
-  //   nodes: [{
-  //     path: "",
-  //     topics: {
-  //       publishers: [""], // topics.path
-  //       subscribers: [""] // topics.path
-  //     },
-  //     services: {
-  //       servers: [""], // services.path
-  //       clients: [""]  // services.path
-  //     },
-  //     actions: {
-  //       servers: [""], // actions.path
-  //       clients: [""]  // actions.path
-  //     }
-  //   }],
+type Id = string
 
-  static getTopicRelation(nodes, topicName) {
-    let publishers = []
-    let subscribers = []
-    nodes.forEach((node) => {
-      if (node.topics.publishers.includes(topicName)) publishers.push(node.path)
-      if (node.topics.subscribers.includes(topicName)) subscribers.push(node.path)
-    })
-    return {
-      publishers: publishers,
-      subscribers: subscribers
-    }
-  }
+type Node = {
+  path: string,
+  topics: Object,
+  services: Object,
+  actions: Object,
+}
 
-  sort() {
-    this.nodes = _.sortBy(this.nodes, 'path');
-    return this
-  }
+type Topic = {
+
+}
+
+type Service = {
+
+}
+
+type Action = {
+
+}
+
+type RosType = Node | Topic | Service | Action
+
+type Relations = {
+  in: Array<Id>,
+  out: Array<Id>,
+  type: string
 }
 
 class RosGraph {
+  nodes: Array<Node>
+  topics: Array<Topic>
+  services: Array<Service>
+  actions: Array<Action>
 
-  // {
-  //   Nodes,
-  //   Topics,
-  //   services: [{
-  //     path: "",
-  //     type: "",
-  //     server: "",   // nodes.path
-  //     clients: [""] // nodes.path
-  //   }],
-  //   actions: [{
-  //     path: "",
-  //     type: "",
-  //     server: "",   // nodes.path
-  //     clients: [""] // nodes.path
-  //   }]
-  // }
-
-  constructor(nodes = [], topics = [], services = [], actions = []) {
+  constructor(nodes: Array<Node> = [], topics: Array<Topic> = [], services: Array<Service> = [], actions: Array<Action> = []) {
     this.nodes = nodes
     this.topics = topics
     this.services = services
     this.actions = actions
   }
 
-  getRelations(path, type) {
+  getRelations(path: string, type: string): ?Relations {
     switch (type) {
       case "node":
         {
@@ -88,18 +70,12 @@ class RosGraph {
         break
       default:
     }
-
-    return {
-        in: [],
-        out: []
-      }
-
   }
 
-  findNode(path, type) {
+  findNode(path: string, type: string): ?Node | Topic {
     switch (type) {
       case "node":
-          return _.find(this.nodes.nodes, {
+          return _.find(this.nodes, {
             path: path
           })
       case "topic":
@@ -108,12 +84,10 @@ class RosGraph {
           })
       default:
     }
-
-    return null
   }
 }
 
-function getNodes(ros) {
+function getNodes(ros: Object): Promise<Array<Node>> {
   return new Promise((resolve, reject) => {
     ros.getNodes((list) => {
 
@@ -145,11 +119,24 @@ function getNodes(ros) {
   })
 }
 
-function getTopics(ros, nodes) {
+function getTopicRelation(nodes: Array<Node>, topicName: string) {
+  let publishers = []
+  let subscribers = []
+  nodes.forEach((node) => {
+    if (node.topics.publishers.includes(topicName)) publishers.push(node.path)
+    if (node.topics.subscribers.includes(topicName)) subscribers.push(node.path)
+  })
+  return {
+    publishers: publishers,
+    subscribers: subscribers
+  }
+}
+
+function getTopics(ros: Object, nodes: Array<Node>): Promise<{topics: Array<Topic>, nodes: Array<Node>}> {
   return new Promise((resolve, reject) => {
     ros.getTopics((topics) => {
       const topicList = topics.topics.map((topicName, i) => {
-        const node = Nodes.getTopicRelation(nodes, topicName)
+        const node = getTopicRelation(nodes, topicName)
         return {
           path: topicName,
           messageType: topics.types[i],
@@ -166,16 +153,14 @@ function getTopics(ros, nodes) {
   })
 }
 
-export default {
-  RosGraph,
-  getRosGraph(ros) {
-    return new Promise((resolve, reject) => {
-      return getNodes(ros)
-        .then((nodes) => getTopics(ros, nodes))
-        .then(({
-          topics,
-          nodes
-        }) => resolve(new RosGraph(nodes, topics)))
-    })
-  }
+function GetRosGraph(ros: RosGraph): Promise<RosGraph> {
+  return new Promise((resolve, reject) => {
+    return getNodes(ros)
+      .then((nodes) => getTopics(ros, nodes))
+      .then(({topics,nodes}) => resolve(new RosGraph(nodes, topics)))
+  })
 }
+
+export {RosGraph, GetRosGraph}
+export type {Node, Topic, Service, Action, Relations, Id, RosType}
+export default {RosGraph, GetRosGraph}
