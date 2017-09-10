@@ -1,8 +1,5 @@
 [ignore]
-.*/build/*
-.*/out/*
-.*/doc/*
-.*/.git/*
+
 [include]
 
 [libs]
@@ -10,4 +7,3 @@
 [lints]
 
 [options]
-traces=5
