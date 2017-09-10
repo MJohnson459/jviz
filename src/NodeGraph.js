@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Graph from 'react-graph-vis';
 
-import RosGraph from './RosGraph';
-import RosGraphView from './RosGraphView';
+import RosGraph from './lib/RosGraph';
+import RosGraphView from './lib/RosGraphView';
 
 class NodeGraph extends Component {
 

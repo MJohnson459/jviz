@@ -6,8 +6,8 @@ import ROSLIB from 'roslib';
 import ButtonPanel from './ButtonPanel';
 import NodeGraph from './NodeGraph';
 import NodeList from './NodeList';
-import RosGraph from './RosGraph';
-import RosGraphView from './RosGraphView';
+import RosGraph from './lib/RosGraph';
+import RosGraphView from './lib/RosGraphView';
 import Widget from './Widget';
 
 import "../node_modules/react-grid-layout/css/styles.css";

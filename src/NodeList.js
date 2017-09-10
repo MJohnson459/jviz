@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 
-import NodeTree from './NodeTree';
-import RosGraphView from './RosGraphView';
+import NodeTree from './lib/NodeTree';
+import RosGraphView from './lib/RosGraphView';
 import SidebarItem from './SidebarItem';
 
 import styles from './styles/treebeard-theme';
