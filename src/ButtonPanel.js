@@ -1,12 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import ReactTooltip from 'react-tooltip';
 import ROSLIB from 'roslib';
 
-import Publisher from './Publisher.js';
-import Subscriber from './Subscriber.js';
+import * as RosGraph from './lib/RosGraph'
+import Publisher from './Publisher';
+import Subscriber from './Subscriber';
 
-function CreateSubscriberAction(props) {
+type TopicWidgetProps = {
+  addWidget: (id: string, element: React.Element<any>, name?: string) => void,
+  node: RosGraph.Topic,
+  ros: ROSLIB.Ros,
+}
+
+function CreateSubscriberAction(props: TopicWidgetProps) {
   const id = "subscriber_" + props.node.path;
   return (
     <div>
@@ -22,13 +29,7 @@ function CreateSubscriberAction(props) {
   )
 }
 
-CreateSubscriberAction.propTypes = {
-  node: PropTypes.object.isRequired,
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  addWidget: PropTypes.func.isRequired,
-}
-
-function CreatePublisherAction(props) {
+function CreatePublisherAction(props: TopicWidgetProps) {
   const id = "publisher_" + props.node.path;
   console.log("pub node", props.node)
   return (
@@ -45,15 +46,16 @@ function CreatePublisherAction(props) {
   )
 }
 
-CreatePublisherAction.propTypes = {
-  node: PropTypes.object.isRequired,
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  addWidget: PropTypes.func.isRequired,
+type Props = {
+  addWidget: (id: string, element: React.Element<any>, name?: string) => void,
+  children?: React.Node,
+  node: ?RosGraph.Primitive,
+  ros: ROSLIB.Ros,
 }
 
-function ButtonPanel(props) {
+function ButtonPanel(props: Props) {
 
-  if (props.node === undefined) {
+  if (!props.node) {
     return (
       <div className="ButtonPanel">
         {props.children}
@@ -62,10 +64,12 @@ function ButtonPanel(props) {
   }
 
   // TODO: This will be replaced by widget registration somehow
-  var widgets = [];
-  switch (props.type) {
+  var buttons = [];
+  switch (props.node.type) {
     case "topic":
-        widgets = ["publish", "subscribe"];
+        const topic: RosGraph.Topic = props.node
+        buttons.push(<CreatePublisherAction key={"publish_" + topic.path} ros={props.ros} addWidget={props.addWidget} node={topic} />)
+        buttons.push(<CreateSubscriberAction key={"subscribe_" + topic.path} ros={props.ros} addWidget={props.addWidget} node={topic} />)
       break;
     case "node":
 
@@ -84,31 +88,8 @@ function ButtonPanel(props) {
   return (
     <div className="ButtonPanel">
       {props.children}
-      {
-        widgets.map((widget) => {
-          switch (widget) {
-            case "publish":
-              return <CreatePublisherAction key={"publish_" + props.node.path} ros={props.ros} addWidget={props.addWidget} node={props.node} />
-            case "subscribe":
-              return <CreateSubscriberAction key={"subscribe_" + props.node.path} ros={props.ros} addWidget={props.addWidget} node={props.node} />
-            default:
-              console.log("Couldn't create action for type: " + widget);
-              return false;
-          }
-        })
-      }
+      {buttons}
     </div>)
 
 }
-
-ButtonPanel.propTypes = {
-  node: PropTypes.object,
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  addWidget: PropTypes.func.isRequired,
-  children: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.arrayOf(PropTypes.element),
-  ]),
-}
-
 export default ButtonPanel;

@@ -26,13 +26,15 @@ const DEBUG_NAMES = [
     '/record',
 ];
 
-type TreeNode = {
+type SimpleNode = {
+  name: string,
   path: string,
   type: RosGraph.PrimitiveType,
 }
 
+
 class RosGraphView {
-  active: ?RosGraph.Primative
+  active: ?RosGraph.Primitive
   type: ?RosGraph.PrimitiveType
   toggled: Object
   hidden: Array<RosGraph.Id>
@@ -80,9 +82,9 @@ class RosGraphView {
     return toggledList
   }
 
-  setNodeActive(treeNode: TreeNode, toggled: boolean, rosGraph: RosGraph.RosGraph) {
+  setNodeActive(treeNode: SimpleNode, toggled: boolean, rosGraph: RosGraph.RosGraph) {
     // set node active
-    this.active = rosGraph.findNode(treeNode.path, treeNode.type) || treeNode
+    this.active = rosGraph.findNode(treeNode.path, treeNode.type)
     this.type = treeNode.type
     const relations = rosGraph.getRelations(treeNode.path, treeNode.type)
 
@@ -98,4 +100,5 @@ class RosGraphView {
   }
 }
 
+export type {SimpleNode}
 export default RosGraphView;

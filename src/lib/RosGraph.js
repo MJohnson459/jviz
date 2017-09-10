@@ -5,34 +5,38 @@ import _ from 'lodash';
 type Id = string
 
 type PrimitiveType =
-  | "node"
-  | "topic"
-  | "service"
   | "action"
+  | "node"
+  | "service"
+  | "topic"
 
 type Node = {
-  path: string,
-  topics: Object,
-  services: Object,
   actions: Object,
+  path: string,
+  services: Object,
+  topics: Object,
+  type: "node",
 }
 
 type Topic = {
-  path: string,
   messageType: string,
+  path: string,
   publishers: Array<Id>,
   subscribers: Array<Id>,
+  type: "topic",
 }
 
 type Service = {
   path: string,
+  type: "service",
 }
 
 type Action = {
   path: string,
+  type: "action",
 }
 
-type Primative = Node | Topic | Service | Action
+type Primitive = Node | Topic | Service | Action
 
 type Relations = {
   in: Array<Id>,
@@ -113,7 +117,8 @@ function getNodes(ros: Object): Promise<Array<Node>> {
             },
             services: {
               clients: details.services
-            }
+            },
+            type: "node",
           });
 
           if (++updatedNodesCount === list.length) {
@@ -151,6 +156,7 @@ function getTopics(ros: Object, nodes: Array<Node>): Promise<{topics: Array<Topi
           messageType: topics.types[i],
           publishers: node.publishers,
           subscribers: node.subscribers,
+          type: "topic",
         }
       });
       const sortedTopics: Array<Topic> = _.sortBy(topicList, 'path');
@@ -171,5 +177,5 @@ function GetRosGraph(ros: RosGraph): Promise<RosGraph> {
 }
 
 export {RosGraph, GetRosGraph}
-export type {Node, Topic, Service, Action, Relations, Id, Primative, PrimitiveType}
+export type {Node, Topic, Service, Action, Relations, Id, Primitive, PrimitiveType}
 export default {RosGraph, GetRosGraph}

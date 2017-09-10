@@ -1,33 +1,41 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
+import styles from './styles/treebeard-theme';
 
 import * as NodeTree from './lib/NodeTree';
+import * as RosGraph from './lib/RosGraph'
 import RosGraphView from './lib/RosGraphView';
 import SidebarItem from './SidebarItem';
 
-import styles from './styles/treebeard-theme';
+import type {SimpleNode} from './lib/RosGraphView';
+
+type Props = {
+  nodes: Array<{path: string}>,
+  view: RosGraphView,
+  type: RosGraph.PrimitiveType,
+  setNodeActive: (treeNode: SimpleNode, toggled: boolean) => void,
+}
+
+type State = {
+  tree: NodeTree.NodeTree,
+}
 
 /**
  * Draws a list of nodes and gives options for interaction
  * @extends react.Component
  */
-class NodeList extends Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            tree: NodeTree.GetNodeTree(props.nodes, props.view, props.type),
-        }
+class NodeList extends React.Component<Props, State> {
+    state = {
+        tree: NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type),
     }
 
     /**
      * Called before new props are loaded. Used to update the graph tree
      * @param {object} nextProps - New props to load
      */
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
       this.setState({
         tree: NodeTree.GetNodeTree(nextProps.nodes, nextProps.view, this.props.type),
       })
@@ -35,7 +43,7 @@ class NodeList extends Component {
 
     render() {
         return (
-        <SidebarItem name="Node List" hidden={this.props.hidden}>
+        <SidebarItem name="Node List">
             <Treebeard
                 data={this.state.tree}
                 onToggle={this.props.setNodeActive}
@@ -44,13 +52,6 @@ class NodeList extends Component {
         </SidebarItem>
         );
     }
-}
-
-NodeList.propTypes = {
-  nodes: PropTypes.array.isRequired,
-  setNodeActive: PropTypes.func.isRequired,
-  type: PropTypes.string.isRequired,
-  view: PropTypes.instanceOf(RosGraphView).isRequired,
 }
 
 export default NodeList;

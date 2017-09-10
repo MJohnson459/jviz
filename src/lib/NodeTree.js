@@ -93,7 +93,7 @@ function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, 
  * @param {array} view.relations.out - The list of nodes that are outputs (expanded)
  * @return {object} A new full tree
  */
-function GetNodeTree(nodes: Array<RosGraph.Primative> = [], view: RosGraphView = new RosGraphView(), type: RosGraph.PrimitiveType) {
+function GetNodeTree(nodes: Array<{path: string}> = [], view: RosGraphView = new RosGraphView(), type: RosGraph.PrimitiveType): NodeTree {
 
   var data: NodeTreeArr = [];
   nodes.forEach((node) => {

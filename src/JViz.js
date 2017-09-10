@@ -136,7 +136,7 @@ class JViz extends React.Component<Props, State> {
         <div className="JViz-side">
             <NodeList nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
             <NodeList nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
-            <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.view.active} type={this.state.view.type}/>
+            <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.view.active} />
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout
