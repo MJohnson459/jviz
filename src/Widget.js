@@ -1,7 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react'
+import PropTypes from 'prop-types'
 
-function Widget(props) {
+type Props = {
+  name: string,
+  onRequestClose: () => void,
+  children: React.Element<any>,
+}
+
+function Widget(props: Props) {
     const gridProps = Object.assign({}, props);
     delete gridProps.name;
     delete gridProps.onRequestClose;
@@ -17,15 +24,6 @@ function Widget(props) {
             </div>
         </div>
     );
-}
-
-Widget.propTypes = {
-  name: PropTypes.string.isRequired,
-  onRequestClose: PropTypes.func.isRequired,
-  children: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.arrayOf(PropTypes.element),
-  ]).isRequired,
 }
 
 export default Widget;

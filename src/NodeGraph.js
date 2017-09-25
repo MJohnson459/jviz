@@ -1,5 +1,4 @@
 // @flow
-
 import * as React from 'react';
 import Graph from 'react-graph-vis';
 

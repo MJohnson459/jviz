@@ -1,21 +1,17 @@
-import React, { Component } from 'react';
+// @flow
+import * as React from 'react';
 import PropTypes from 'prop-types';
 
-class SidebarItem extends Component {
-  constructor(props) {
-    super(props);
+type Props = {
+  children: React.Element<any>,
+  name: string,
+}
 
-    this.onRequestHide = this.onRequestHide.bind(this);
-  }
-
-  onRequestHide() {
-
-  }
-
+class SidebarItem extends React.Component<Props> {
   render() {
     return (
         <div {...this.props} className={'SidebarItem'} >
-            <div className={'WidgetHeader'} onClick={this.onRequestHide}>
+            <div className={'WidgetHeader'}>
                 <div className={'HeaderName'}>{this.props.name}</div>
             </div>
             { this.props.hidden ||
@@ -27,15 +23,6 @@ class SidebarItem extends Component {
     );
   }
 
-}
-
-SidebarItem.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.arrayOf(PropTypes.element),
-  ]).isRequired,
-  hidden: PropTypes.bool,
-  name: PropTypes.string.isRequired,
 }
 
 export default SidebarItem;

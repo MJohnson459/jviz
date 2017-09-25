@@ -1,56 +1,71 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import ROSLIB from 'roslib';
 import Message from './Message'
 
-class Publisher extends Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      messageDetails: null,
-      auto: false,
-      repeat: 0,
+type RosMessage = {
+  header?: {
+    stamp: {
+      secs: number,
+      nsecs: number,
     }
+  }
+}
 
-    this.frequency = [
-      {interval: 0, display: "Single"},
-      {interval: 10000, display: "0.1 Hz"},
-      {interval: 5000, display: "0.5 Hz"},
-      {interval: 1000, display: "1 Hz"},
-      {interval: 200, display: "5 Hz"},
-      {interval: 100, display: "10 Hz"}]
+type Details = {
+  examples: Array<mixed>,
+  fieldarraylen: Array<number>,
+  fieldnames: Array<string>,
+  fieldtypes: Array<string>,
+  type: string,
+}
 
-    this.publisher = new ROSLIB.Topic({
-      ros : this.props.ros,
-      name : this.props.topic,
-      messageType : this.props.type,
-    });
+type Props = {
+  details: Array<Details>,
+  ros: ROSLIB.Ros,
+  topic: string,
+  type: string,
+}
 
-    this.props.ros.getMessageDetails(this.props.type, (details)=>{
-      this.setState({
-        messageDetails: details,
-        message: this.decodeTypeDefsRec(details[0], details),
-        values: details.map((message) => message.examples),
-      })
-    }, (message)=>{
-      console.log("msg details FAILED", this.props.type, message)
-    });
+type State = {
+  auto: boolean,
+  message: RosMessage,
+  repeat: number,
+  values: Array<Array<mixed>>,
+}
 
-    this.publish = this.publish.bind(this);
-    this.decodeTypeDefsRec = this.decodeTypeDefsRec.bind(this);
-    this.toggleRepeat = this.toggleRepeat.bind(this);
+class Publisher extends React.Component<Props, State> {
+  state = {
+    auto: false,
+    message: this.decodeTypeDefsRec(this.props.details[0], this.props.details),
+    repeat: 0,
+    values: this.props.details.map((message) => message.examples),
   }
 
+  intervalId: ?number = null
+
+  frequency = [
+    {interval: 0, display: "Single"},
+    {interval: 10000, display: "0.1 Hz"},
+    {interval: 5000, display: "0.5 Hz"},
+    {interval: 1000, display: "1 Hz"},
+    {interval: 200, display: "5 Hz"},
+    {interval: 100, display: "10 Hz"}]
+
+  publisher = new ROSLIB.Topic({
+    ros : this.props.ros,
+    name : this.props.topic,
+    messageType : this.props.type,
+  })
+
   // calls itself recursively to resolve type definition using hints.
-  decodeTypeDefsRec(theType, hints) {
+  decodeTypeDefsRec(theType: Details, hints: Array<Details>) {
     var typeDefDict = {};
     for (var i = 0; i < theType.fieldnames.length; i++) {
-      const arrayLen = theType.fieldarraylen[i];
-      const fieldName = theType.fieldnames[i];
-      const fieldType = theType.fieldtypes[i];
-      var fieldExample = theType.examples[i];
+      const arrayLen: number = theType.fieldarraylen[i];
+      const fieldName: string = theType.fieldnames[i];
+      const fieldType: string = theType.fieldtypes[i];
+      var fieldExample: any = theType.examples[i];
       if (fieldType.indexOf('/') === -1) { // check the fieldType includes '/' or not
         if (arrayLen === -1) {
           if (fieldType === "float64") {
@@ -91,18 +106,19 @@ class Publisher extends Component {
   }
 
   componentWillUnmount() {
-    if (this.state.repeat) {
+    if (this.state.repeat && this.intervalId) {
       clearInterval(this.intervalId);
     }
-    this.setState({repeat: false})
+    this.setState({repeat: 0})
   }
 
   publish() {
-    var messageObj = this.state.message;
+    if (!this.state.message) return
+    var messageObj: RosMessage = this.state.message;
 
     if (this.state.auto) {
-      const time = Date.now();
-      messageObj.header.stamp = {
+      const time = Date.now()
+      if (messageObj.header) messageObj.header.stamp = {
           secs: time / 1000,
           nsecs: time % 1000,
       }
@@ -115,7 +131,7 @@ class Publisher extends Component {
 
   toggleRepeat() {
     const index = (this.state.repeat + 1) % this.frequency.length
-    clearInterval(this.intervalId)
+    if (this.intervalId) clearInterval(this.intervalId)
 
     if (index !== 0) {
       this.intervalId = setInterval(this.publish, this.frequency[index].interval); // publish at 1Hz
@@ -129,38 +145,30 @@ class Publisher extends Component {
   render() {
     return (
       <div className="Publisher">
-        { this.state.messageDetails === null ||
-          <div style={{display: "flex", flexDirection: "column", flex: 1}}>
-            <div style={{padding: 5, overflowY: "auto", flex: 1}}>
-              <Message name={this.props.type}
-                values={this.state.values}
-                messageDetails={this.state.messageDetails}
-                message={this.state.message}
-                auto={this.state.auto}
-                updateState={(state) => this.setState(state)}
-                />
+        <div style={{display: "flex", flexDirection: "column", flex: 1}}>
+          <div style={{padding: 5, overflowY: "auto", flex: 1}}>
+            <Message
+              auto={this.state.auto}
+              message={this.state.message}
+              messageDetails={this.props.details}
+              name={this.props.type}
+              updateState={(state) => this.setState(state)}
+              values={this.state.values}
+              />
+          </div>
+          <div className="ButtonPanel">
+            <div className="SmallButton ColorOne" onClick={this.publish}>
+              Publish
             </div>
-            <div className="ButtonPanel">
-              <div className="SmallButton ColorOne" onClick={this.publish}>
-                Publish
-              </div>
-              <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
-                {this.frequency[this.state.repeat].display}
-              </div>
+            <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
+              {this.frequency[this.state.repeat].display}
             </div>
           </div>
-        }
-        {this.props.children}
+        </div>
+
       </div>
     );
   }
-}
-
-Publisher.propTypes = {
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  topic: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  children: PropTypes.element,
 }
 
 export default Publisher;

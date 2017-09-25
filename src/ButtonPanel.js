@@ -20,7 +20,7 @@ function CreateSubscriberAction(props: TopicWidgetProps) {
       <ReactTooltip effect="solid" place="right" type="info"/>
       <div data-tip={"Subscribe to " + props.node.path} className="SmallButton ColorTwo" onClick={() => {
         props.addWidget(id, (
-          <Subscriber key={id} ros={props.ros} topic={props.node.path} type={props.node.messageType}/>
+          <Subscriber ros={props.ros} topic={props.node.path} type={props.node.messageType}/>
         ), props.node.path + " subscriber")
       }}>
         Subscribe
@@ -32,13 +32,21 @@ function CreateSubscriberAction(props: TopicWidgetProps) {
 function CreatePublisherAction(props: TopicWidgetProps) {
   const id = "publisher_" + props.node.path;
   console.log("pub node", props.node)
+
+
+
+
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
       <div data-tip={"Publish to " + props.node.path} className="SmallButton ColorThree" onClick={() => {
-        props.addWidget(id, (
-          <Publisher key={id} ros={props.ros} topic={props.node.path} type={props.node.messageType}/>
-        ), props.node.path + " publisher")
+        props.ros.getMessageDetails(props.node.messageType, (details) => {
+          props.addWidget(id, (
+            <Publisher ros={props.ros} details={details} topic={props.node.path} type={props.node.messageType}/>
+          ), props.node.path + " publisher")
+        }, (message) => {
+          console.log("Message details failed", this.props.type, message)
+        })
       }}>
         Publish
       </div>

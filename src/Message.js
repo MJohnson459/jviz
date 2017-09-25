@@ -1,32 +1,97 @@
-import React, { Component } from 'react';
+// @flow
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-class Message extends Component {
-  constructor(props) {
-    super(props);
+type Path = Array<string>
+type Index = number
 
-    this.MessageField = this.MessageField.bind(this);
-    this.MessageFieldArray = this.MessageFieldArray.bind(this);
-    this.MessageType = this.MessageType.bind(this);
-    this.MessageHeader = this.MessageHeader.bind(this);
+type RosMessage = {
+  header?: {
+    stamp: {
+      secs: number,
+      nsecs: number,
+    }
+  }
+}
+
+type Details = {
+  examples: Array<mixed>,
+  fieldarraylen: Array<number>,
+  fieldnames: Array<string>,
+  fieldtypes: Array<string>,
+  type: string,
+}
+
+type ReplaceMe = {
+  fieldIndex: Index,
+  messageIndex: Index,
+  name: string,
+  path: Path,
+  type: string,
+}
+
+type Props = {
+  auto: boolean,
+  message: RosMessage,
+  messageDetails: Array<Details>,
+  updateState: ({message?: RosMessage, values?: Array<Array<mixed>>, auto?: boolean}) => void,
+  values: Array<Array<mixed>>,
+}
+
+const primitivesFloat = [
+  "float32",
+  "float64",
+];
+const primitivesInteger = [
+  "int8",
+  "uint8",
+  "int16",
+  "uint16",
+  "int32",
+  "uint32",
+  "int64",
+  "uint64",
+];
+const primitives = [
+  "byte",
+  "bool",
+  "string",
+];
+
+class Message extends React.Component<Props> {
+  constructor(props: Props) {
+    super(props);
   }
 
-  MessageField(props) {
+  MessageField = ({fieldIndex, messageIndex, name, path, type}: ReplaceMe): React.Element<any> => {
     return (
-      <div className="MessageLine" key={props.messageIndex + '_'+ props.fieldIndex}>
-        <span className="MessageLabel">{props.name} ({this.props.messageDetails[props.messageIndex].fieldtypes[props.fieldIndex]}):</span>
+      <div className="MessageLine">
+        <span className="MessageLabel">{name} ({this.props.messageDetails[messageIndex].fieldtypes[fieldIndex]}):</span>
         <input className="MessageTypeInput"
           type="text"
-          value={this.props.values[props.messageIndex][props.fieldIndex]}
+          value={this.props.values[messageIndex][fieldIndex]}
           onChange={
             (event) => {
               // Update message
               const message = this.props.message;
-              _.set(message, props.path, event.target.value);
+              var value = null
+
+              if (primitives.includes(type)) {
+                value = event.target.value
+              } else if (primitivesFloat.includes(type)) {
+                value = parseFloat(event.target.value)
+              } else if (primitivesInteger.includes(type)) {
+                value = parseInt(event.target.value, 10)
+              } else {
+                console.log("I was not expecting this message type", type)
+                return
+              }
+
+              _.set(message, path, value);
 
               const values = this.props.values;
-              values[props.messageIndex][props.fieldIndex] = event.target.value;
+              values[messageIndex][fieldIndex] = value;
 
               this.props.updateState({
                 message: message,
@@ -38,93 +103,18 @@ class Message extends Component {
       )
     }
 
-    MessageFieldFloat(props) {
-      return (
-        <div className="MessageLine" key={props.messageIndex + '_'+ props.fieldIndex}>
-          <span className="MessageLabel">{props.name} ({this.props.messageDetails[props.messageIndex].fieldtypes[props.fieldIndex]}):</span>
-          <input className="MessageTypeInput"
-            type="text"
-            value={this.props.values[props.messageIndex][props.fieldIndex]}
-            onChange={
-              (event) => {
-                // Update message
-                const message = this.props.message;
-                _.set(message, props.path, parseFloat(event.target.value, 10));
+    MessageFieldArray = ({messageIndex, path}: {messageIndex: Index, path: Path}): React.Element<any> => {
+      const message = this.props.messageDetails[messageIndex];
 
-                const values = this.props.values;
-                values[props.messageIndex][props.fieldIndex] = parseFloat(event.target.value, 10);
-
-                this.props.updateState({
-                  message: message,
-                  values: values,
-                });
-              }
-            }/>
-        </div>
-      )
-    }
-
-    MessageFieldInteger(props) {
-      return (
-        <div className="MessageLine" key={props.messageIndex + '_'+ props.fieldIndex}>
-          <span className="MessageLabel">{props.name} ({this.props.messageDetails[props.messageIndex].fieldtypes[props.fieldIndex]}):</span>
-          <input className="MessageTypeInput"
-            type="text"
-            value={this.props.values[props.messageIndex][props.fieldIndex]}
-            onChange={
-              (event) => {
-                // Update message
-                const message = this.props.message;
-                _.set(message, props.path, parseInt(event.target.value, 10));
-
-                const values = this.props.values;
-                values[props.messageIndex][props.fieldIndex] = parseInt(event.target.value, 10);
-
-                this.props.updateState({
-                  message: message,
-                  values: values,
-                });
-              }
-            }/>
-        </div>
-      )
-    }
-
-    MessageFieldArray(props) {
-      const message = this.props.messageDetails[props.index];
-      const primitivesFloat = [
-        "float32",
-        "float64",
-      ];
-      const primitivesInteger = [
-        "int8",
-        "uint8",
-        "int16",
-        "uint16",
-        "int32",
-        "uint32",
-        "int64",
-        "uint64",
-      ];
-      const primitives = [
-        "byte",
-        "bool",
-        "string",
-      ];
-
-      const x = message.fieldtypes.map((field, i)=>{
+      const x: Array<React.Element<any>> = message.fieldtypes.map((field, i) => {
         const name = message.fieldnames[i];
-        const path = [...props.path, name];
-        if (primitives.includes(field)) {
-          return this.MessageField({name: name, fieldIndex: i, messageIndex: props.index, path: path});
-        } else if (primitivesFloat.includes(field)) {
-          return this.MessageFieldFloat({name: name, fieldIndex: i, messageIndex: props.index, path: path});
-        } else if (primitivesInteger.includes(field)) {
-          return this.MessageFieldInteger({name: name, fieldIndex: i, messageIndex: props.index, path: path});
+        const newPath = path.concat(name);
+        if (primitives.includes(field) || primitivesFloat.includes(field) || primitivesInteger.includes(field)) {
+          return this.MessageField({name: name, fieldIndex: i, messageIndex: messageIndex, path: newPath, type: field});
         } else if (field === "std_msgs/Header") {
-          return this.MessageHeader({name: name, index: props.index + 1, path: path});
+          return this.MessageHeader({name: name, messageIndex: messageIndex + 1, path: newPath});
         } else {
-          return this.MessageType({name: name, index: props.index + 1, path: path});
+          return this.MessageType({name: name, messageIndex: messageIndex + 1, path: newPath});
         }
       })
 
@@ -133,37 +123,33 @@ class Message extends Component {
       )
     }
 
-    MessageType(props) {
+    MessageType = ({messageIndex, name, path}: {messageIndex: Index, name: string, path: Path}): React.Element<any> => {
       return (
-        <div key={props.messageIndex + '_'+ props.fieldIndex}>
-          <div className="MessageLabel" style={{marginRight: 5}}>{props.name}:</div>
-          {this.MessageFieldArray({index: props.index, path: props.path})}
+        <div>
+          <div className="MessageLabel" style={{marginRight: 5}}>{name}:</div>
+          {this.MessageFieldArray({messageIndex: messageIndex, path: path})}
         </div>
       );
     }
 
-    MessageHeader(props) {
+    MessageHeader = ({messageIndex, name, path}: {messageIndex: Index, name: string, path: Path}): React.Element<any> => {
       return (
-        <div key={props.messageIndex + '_'+ props.fieldIndex}>
+        <div>
           <div className="MessageLine">
-            <span className="MessageLabel">{props.name}:</span>
-            <select className="MessageTypeInput" value={this.props.auto} onChange={(event) => this.props.updateState({auto: event.target.value === "true"})}>
+            <span className="MessageLabel">{name}:</span>
+            <select className="MessageTypeInput" value={this.props.auto} onChange={(event: {target: {value: boolean}}) => this.props.updateState({auto: event.target.value === "true"})}>
               <option value={true}>auto</option>
               <option value={false}>manual</option>
             </select>
           </div>
-          {this.props.auto || this.MessageFieldArray({index: props.index, path: props.path})}
+          {this.props.auto || this.MessageFieldArray({messageIndex: messageIndex, path: path})}
         </div>
       )
     }
 
     render() {
-      return this.MessageFieldArray({...this.props, index: 0, path: []});
+      return this.MessageFieldArray({messageIndex: 0, path: []});
     }
-}
-
-Message.propTypes = {
-  messageDetails: PropTypes.array.isRequired,
 }
 
 export default Message;

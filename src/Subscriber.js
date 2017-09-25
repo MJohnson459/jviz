@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import ROSLIB from 'roslib';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import YAML from 'yamljs';
@@ -7,7 +7,9 @@ import YAML from 'yamljs';
 import './styles/dark.css';
 import {List, AutoSizer} from 'react-virtualized';
 
-function Message(props) {
+type Message = {}
+
+function YamlMessage(props: {message: Message}) {
     return (
         <div className="Message">
             <SyntaxHighlighter language="yaml" className="Message" useInlineStyles={false}>
@@ -17,46 +19,49 @@ function Message(props) {
     )
 }
 
-Message.propTypes = {
-  message: PropTypes.object.isRequired,
+type Props = {
+  ros: ROSLIB.Ros,
+  topic: string,
+  type: string,
 }
 
-class Subscriber extends Component {
+type State = {
+  autoscroll: boolean,
+  index: number,
+  messageCount: number,
+  messages: Array<Message>,
+}
 
-    constructor(props) {
-        super(props);
+class Subscriber extends React.Component<Props, State> {
+  updateDuration = 500  // Time between drawing new messages in milliseconds
+  messageBuffer = [] // Where to store new messages between draws
+  messageCount = 0 // Max size of the message list
+  listComponent = undefined
 
-        // Time between drawing new messages
-        this.updateDuration = 500; //ms
 
-        // Where to store new messages between draws
-        this.messageBuffer = [];
+  nextUpdate = Date.now() + this.updateDuration // ms
 
-        this.messageCount = 0;
+  subscriber = new ROSLIB.Topic({
+      ros : this.props.ros,
+      name : this.props.topic,
+      messageType : this.props.type,
+  })
 
-        // Max size of the message list
-        this.MAX_HISTORY = 1000;
+  MAX_HISTORY = 1000
+  MAX_BUFFER = 500
 
-        // Max buffer size (mainly used when paused)
-        this.MAX_BUFFER = 500;
+  state: State = {
+    messages: [],
+    autoscroll: true,
+    index: -1,
+    messageCount: 0,
+  }
 
-        this.state = {
-            messages: [],
-            autoscroll: true,
-            index: -1,
-            messageCount: 0,
-        }
-
-        this.nextUpdate = Date.now() + this.updateDuration; // ms
-
-        this.rowRenderer = this.rowRenderer.bind(this);
-        this.onRowsRendered = this.onRowsRendered.bind(this);
-        this.calculateRowHeight = this.calculateRowHeight.bind(this);
+    constructor(props: Props) {
+      super(props);
     }
 
-    calculateRowHeight({
-        index
-    }) {
+    calculateRowHeight({index}: {index: number}) {
         const rowHeight = 15;
         const message = this.state.messages[index];
         const yamlMessage = YAML.stringify(message, 2);
@@ -73,13 +78,7 @@ class Subscriber extends Component {
     }
 
     subscribe() {
-        this.subscriber = new ROSLIB.Topic({
-            ros : this.props.ros,
-            name : this.props.topic,
-            messageType : this.props.type,
-        });
-
-        this.subscriber.subscribe((message) => {
+        this.subscriber.subscribe((message: string) => {
             this.messageBuffer.unshift(message);
             this.messageCount += 1;
 
@@ -116,10 +115,10 @@ class Subscriber extends Component {
     rowRenderer({
       key,         // Unique key within array of rows
       index,       // Index of row within collection
-      // isScrolling, // The List is currently being scrolled
-      // isVisible,   // This row is visible within the List (eg it is not an overscanned row)
+      isScrolling, // The List is currently being scrolled
+      isVisible,   // This row is visible within the List (eg it is not an overscanned row)
       style        // Style object to be applied to row (to position it)
-    }) {
+    } : {key: string, index: number, isScrolling: boolean, isVisible: boolean, style: any}) {
         const message = this.state.messages[index];
 
         return (
@@ -127,16 +126,16 @@ class Subscriber extends Component {
               key={key}
               style={style}
             >
-                <Message message={message}/>
+                <YamlMessage message={message}/>
             </div>)
     }
 
     onRowsRendered({
-        // overscanStartIndex,
-        // overscanStopIndex,
+        overscanStartIndex,
+        overscanStopIndex,
         startIndex,
-        // stopIndex
-    }) {
+        stopIndex
+    }: {overscanStartIndex: number, overscanStopIndex: number, startIndex: number, stopIndex: number}) {
         this.setState({
             index: this.state.autoscroll ? 0 : startIndex,
         })
@@ -149,7 +148,7 @@ class Subscriber extends Component {
         <div className='Subscriber'>
             <div style={{ flex: '1 1 auto' }}>
                 <AutoSizer>
-                  {({ height, width }) => (
+                  {({ height, width }: {height: number, width: number}) => (
                     <List
                         ref={(input) => {this.listComponent = input}}
                         height={height}
@@ -169,17 +168,9 @@ class Subscriber extends Component {
                 <div style={{flex: 2}}>Received: {this.state.messageCount}</div>
                 <div style={{flex: "0 0 100px", textAlign: "right", cursor: "pointer", color: this.state.autoscroll ? "red" : "green"}} onClick={() => this.setState({autoscroll: !this.state.autoscroll})}>{this.state.index + 1} / {this.state.messages.length}</div>
             </div>
-            {this.props.children}
         </div>
         );
     }
-}
-
-Subscriber.propTypes = {
-  ros: PropTypes.instanceOf(ROSLIB.Ros).isRequired,
-  children: PropTypes.element,
-  topic: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
 }
 
 export default Subscriber;

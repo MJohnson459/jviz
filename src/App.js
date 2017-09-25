@@ -1,39 +1,45 @@
-import React, { Component } from 'react';
+// @flow
+import * as React from 'react';
 import logo from './logo.svg';
 import JViz from './JViz'
 import './styles/App.css';
 
 import ROSLIB from 'roslib';
 
-class App extends Component {
+type Props = {
 
-  constructor() {
-    super();
-    this.state = {
-      url: "ws://localhost:9090",
-      connected: false,
-    }
+}
 
-    this.handleConnect = this.handleConnect.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+type State = {
+  connected: boolean,
+  error?: string,
+  url: string,
+}
+
+class App extends React.Component<Props, State> {
+  state = {
+    connected: false,
+    url: "ws://localhost:9090",
   }
 
-  handleChange(event) {
+  ros = null
+
+  handleChange = (event: {target: {value: string}}) => {
     this.setState({url: event.target.value});
   }
 
-  handleConnect() {
+  handleConnect = () => {
     this.ros = new ROSLIB.Ros({
         url : this.state.url,
       });
 
-    this.ros.on('connection', () => {
+    if (this.ros) this.ros.on('connection', () => {
       this.setState({
           connected: true,
       });
     });
 
-    this.ros.on('error', (error) => {
+    if (this.ros) this.ros.on('error', (error) => {
       console.log(error)
       this.setState({
           error: error,
