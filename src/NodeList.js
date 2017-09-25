@@ -11,8 +11,8 @@ import SidebarItem from './SidebarItem';
 
 import type {SimpleNode} from './lib/RosGraphView';
 
-type Props = {
-  nodes: Array<{path: string}>,
+type Props<A> = {
+  nodes: Array<A>,
   view: RosGraphView,
   type: RosGraph.PrimitiveType,
   setNodeActive: (treeNode: SimpleNode, toggled: boolean) => void,
@@ -26,7 +26,7 @@ type State = {
  * Draws a list of nodes and gives options for interaction
  * @extends react.Component
  */
-class NodeList extends React.Component<Props, State> {
+class NodeList extends React.Component<Props<*>, State> {
     state = {
         tree: NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type),
     }
@@ -35,7 +35,7 @@ class NodeList extends React.Component<Props, State> {
      * Called before new props are loaded. Used to update the graph tree
      * @param {object} nextProps - New props to load
      */
-    componentWillReceiveProps(nextProps: Props) {
+    componentWillReceiveProps(nextProps: Props<*>) {
       this.setState({
         tree: NodeTree.GetNodeTree(nextProps.nodes, nextProps.view, this.props.type),
       })
