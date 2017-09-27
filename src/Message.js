@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 type Path = Array<string>
@@ -60,10 +59,6 @@ const primitives = [
 ];
 
 class Message extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
   MessageField = ({fieldIndex, messageIndex, name, path, type}: ReplaceMe): React.Element<any> => {
     return (
       <div className="MessageLine">

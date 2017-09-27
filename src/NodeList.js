@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import ReactTooltip from 'react-tooltip';
 import {Treebeard} from 'react-treebeard';
 import styles from './styles/treebeard-theme';
 

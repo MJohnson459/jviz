@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import PropTypes from 'prop-types';
 
 type Props = {
   children: React.Element<any>,
