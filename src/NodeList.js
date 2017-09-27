@@ -11,10 +11,11 @@ import SidebarItem from './SidebarItem';
 import type {SimpleNode} from './lib/RosGraphView';
 
 type Props<A> = {
+  name: string,
   nodes: Array<A>,
-  view: RosGraphView,
-  type: RosGraph.PrimitiveType,
   setNodeActive: (treeNode: SimpleNode, toggled: boolean) => void,
+  type: RosGraph.PrimitiveType,
+  view: RosGraphView,
 }
 
 type State = {
@@ -42,7 +43,7 @@ class NodeList extends React.Component<Props<*>, State> {
 
     render() {
         return (
-        <SidebarItem name="Node List">
+        <SidebarItem name={this.props.name}>
             <Treebeard
                 data={this.state.tree}
                 onToggle={this.props.setNodeActive}

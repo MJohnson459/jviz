@@ -134,8 +134,8 @@ class JViz extends React.Component<Props, State> {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
-            <NodeList nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
+            <NodeList name="Node List" nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
+          <NodeList name="Topic List" nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
             <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.view.active} />
         </div>
         <div className="JViz-main">
