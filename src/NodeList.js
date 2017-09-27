@@ -11,6 +11,7 @@ import SidebarItem from './SidebarItem';
 import type {SimpleNode} from './lib/RosGraphView';
 
 type Props<A> = {
+  filter: string,
   name: string,
   nodes: Array<A>,
   setNodeActive: (treeNode: SimpleNode, toggled: boolean) => void,
@@ -18,34 +19,18 @@ type Props<A> = {
   view: RosGraphView,
 }
 
-type State = {
-  tree: NodeTree.NodeTree,
-}
-
 /**
  * Draws a list of nodes and gives options for interaction
  * @extends react.Component
  */
-class NodeList extends React.Component<Props<*>, State> {
-    state = {
-        tree: NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type),
-    }
-
-    /**
-     * Called before new props are loaded. Used to update the graph tree
-     * @param {object} nextProps - New props to load
-     */
-    componentWillReceiveProps(nextProps: Props<*>) {
-      this.setState({
-        tree: NodeTree.GetNodeTree(nextProps.nodes, nextProps.view, this.props.type),
-      })
-    }
+class NodeList extends React.Component<Props<*>> {
 
     render() {
+      const tree = NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type, this.props.filter)
         return (
         <SidebarItem name={this.props.name}>
             <Treebeard
-                data={this.state.tree}
+                data={tree}
                 onToggle={this.props.setNodeActive}
                 style={styles}
              />

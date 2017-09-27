@@ -1,5 +1,4 @@
 // @flow
-
 import _ from 'lodash';
 
 type Id = string
@@ -57,7 +56,7 @@ class RosGraph {
     this.actions = actions
   }
 
-  getRelations(path: string, type: PrimitiveType): ?Relations {
+  getRelations = (path: string, type: PrimitiveType): ?Relations => {
     switch (type) {
       case "node":
         {
@@ -176,6 +175,14 @@ function GetRosGraph(ros: RosGraph): Promise<RosGraph> {
   })
 }
 
-export {RosGraph, GetRosGraph}
+function filterGraph(rosGraph: RosGraph, filter: string): RosGraph {
+  const nodes = _.filter(rosGraph.nodes, (p) => {return p.path.includes(filter)})
+  const topics = _.filter(rosGraph.topics, (p) => {return p.path.includes(filter)})
+  const services = _.filter(rosGraph.services, (p) => {return p.path.includes(filter)})
+  const actions = _.filter(rosGraph.actions, (p) => {return p.path.includes(filter)})
+  return new RosGraph(nodes, topics, services, actions)
+}
+
+export {RosGraph, GetRosGraph, filterGraph}
 export type {Node, Topic, Service, Action, Relations, Id, Primitive, PrimitiveType}
 export default {RosGraph, GetRosGraph}

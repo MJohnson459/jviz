@@ -8,23 +8,26 @@ import * as RosGraph from './RosGraph';
 
 type NodeTreeObj = {
   active: boolean,
+  children?: Array<NodeTreeObj>,
   decorators?: ?Object,
   name: string,
   path: string,
-  type: RosGraph.PrimitiveType,
-  children?: Array<NodeTreeObj>,
   toggled?: boolean,
+  type: RosGraph.PrimitiveType,
 }
 
 type NodeTreeArr = Array<NodeTreeObj>
 type NodeTree = NodeTreeObj | NodeTreeArr
 
-function addDecorator(path: string, relations: ?RosGraph.Relations): ?Object {
+function addDecorator(path: string, relations: ?RosGraph.Relations, filter: string): ?Object {
   let className = null;
-  if (!relations) return
 
-  if (relations.in.includes(path)) className = "NodeInput"
-  else if (relations.out.includes(path)) className = "NodeOutput"
+  if (!path.includes(filter)) className = "NodeFiltered"
+
+  if (relations) {
+    if (relations.in.includes(path)) className = "NodeInput"
+    if (relations.out.includes(path)) className = "NodeOutput"
+  }
 
   if (className) {
     return {
@@ -45,16 +48,17 @@ function addDecorator(path: string, relations: ?RosGraph.Relations): ?Object {
  * @param {number} pathIndex - Tracks the recursive level down the path
  * @param {array} toggled - A list of all toggled tree nodes
  */
-function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, view: RosGraphView, type: RosGraph.PrimitiveType) {
+function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, view: RosGraphView, type: RosGraph.PrimitiveType, filter: string) {
   const name: string = '/' + path[pathIndex]
   const subpath: string = path.slice(0, pathIndex + 1).join('/')
   const active: boolean = view.active ? view.type === type && view.active.path === subpath : false
 
     // Add node and stop recursion if root node
   if (pathIndex === path.length - 1) {
+    const decorator = active ? undefined : addDecorator(subpath, view.relations, filter)
     const leaf: NodeTreeObj = {
       active: active,
-      decorators: addDecorator(subpath, view.relations),
+      decorators: decorator,
       name: name,
       path: subpath,
       type: type,
@@ -67,9 +71,11 @@ function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, 
   var index: number = _.findIndex(data, (o) => o.path === subpath)
   var stem: ?NodeTreeObj = null
   if (index === -1) {
+    const decorator = active ? undefined : addDecorator(subpath, view.relations, filter)
     stem = {
       active: active,
       children: [],
+      decorators: decorator,
       name: name,
       path: subpath,
       toggled: !!view.toggled[type] && view.toggled[type].includes(subpath),
@@ -82,7 +88,7 @@ function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, 
     stem.toggled = !!view.toggled[type] && view.toggled[type].includes(subpath)
   }
 
-  return insert(stem.children, path, ++pathIndex, view, type);
+  return insert(stem.children, path, ++pathIndex, view, type, filter);
 }
 
 /**
@@ -93,13 +99,13 @@ function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, 
  * @param {array} view.relations.out - The list of nodes that are outputs (expanded)
  * @return {object} A new full tree
  */
-function GetNodeTree(nodes: Array<{path: string}> = [], view: RosGraphView = new RosGraphView(), type: RosGraph.PrimitiveType): NodeTree {
+function GetNodeTree(nodes: Array<{path: string}> = [], view: RosGraphView = new RosGraphView(), type: RosGraph.PrimitiveType, filter: string): NodeTree {
 
   var data: NodeTreeArr = [];
   nodes.forEach((node) => {
     if (!view.hidden.includes(node.path)) {
       const path = node.path.split("/")
-      insert(data, path, 1, view, type);
+      insert(data, path, 1, view, type, filter);
     }
   });
   return data;

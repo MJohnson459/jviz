@@ -35,6 +35,8 @@ type WidgetType = {
 
 type State = {
   autoExpand: boolean,
+  filter: string,
+  filteredGraph: ?RosGraph.RosGraph,
   layouts: ?Object,
   rosGraph: RosGraph.RosGraph,
   view: RosGraphView,
@@ -44,6 +46,8 @@ type State = {
 class JViz extends React.Component<Props, State> {
     state = {
       autoExpand: true,
+      filter: "",
+      filteredGraph: undefined,
       layouts: {},
       rosGraph: new RosGraph.RosGraph(),
       view: new RosGraphView(),
@@ -129,14 +133,23 @@ class JViz extends React.Component<Props, State> {
 
     }
 
+  handleFilter = (event: {target: {value: string}}) => {
+    const filter = event.target.value;
+    this.setState({
+      filter: filter,
+      filteredGraph: RosGraph.filterGraph(this.state.rosGraph, filter),
+    });
+  }
+
 
   render() {
     return (
       <div className="JViz">
         <div className="JViz-side">
-            <NodeList name="Node List" nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
-          <NodeList name="Topic List" nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
-            <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.view.active} />
+          <div style={{padding: 5, display: "flex"}}><input type="text" style={{flex: 1}} onChange={this.handleFilter} placeholder="filter..." value={this.state.filter}/></div>
+          <NodeList name="Node List" nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} filter={this.state.filter} type="node"/>
+          <NodeList name="Topic List" nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} filter={this.state.filter} type="topic"/>
+          <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.view.active} />
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout

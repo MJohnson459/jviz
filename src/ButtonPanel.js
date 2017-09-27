@@ -31,11 +31,6 @@ function CreateSubscriberAction(props: TopicWidgetProps) {
 
 function CreatePublisherAction(props: TopicWidgetProps) {
   const id = "publisher_" + props.node.path;
-  console.log("pub node", props.node)
-
-
-
-
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>

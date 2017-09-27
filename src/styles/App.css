@@ -26,6 +26,9 @@
 .NodeOutput {
   color: rgb(128, 177, 18);
 }
+.NodeFiltered {
+  color: hsla(0,0%,100%,.2);
+}
 
  /*
   New color theme?
