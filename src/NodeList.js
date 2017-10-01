@@ -11,7 +11,6 @@ import SidebarItem from './SidebarItem';
 import type {SimpleNode} from './lib/RosGraphView';
 
 type Props<A> = {
-  filter: string,
   name: string,
   nodes: Array<A>,
   setNodeActive: (treeNode: SimpleNode, toggled: boolean) => void,
@@ -26,7 +25,7 @@ type Props<A> = {
 class NodeList extends React.Component<Props<*>> {
 
     render() {
-      const tree = NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type, this.props.filter)
+      const tree = NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type)
         return (
         <SidebarItem name={this.props.name}>
             <Treebeard

@@ -40,6 +40,8 @@ class RosGraphView {
   hidden: Array<RosGraph.Id>
   hideDebug: boolean
   relations: ?RosGraph.Relations
+  search: ?string
+  filter: ?string
 
   constructor() {
     this.toggled = {}
@@ -56,6 +58,21 @@ class RosGraphView {
       this.hidden = []
     }
 
+    return this
+  }
+
+  hideItem = (path: string, type: string) => {
+    this.hidden.push(path)
+    return this
+  }
+
+  searchFor = (search: string) => {
+    this.search = search
+    return this
+  }
+
+  filterFor = (filter: string) => {
+    this.filter = filter
     return this
   }
 

@@ -13,7 +13,7 @@ type TopicWidgetProps = {
   ros: ROSLIB.Ros,
 }
 
-function CreateSubscriberAction(props: TopicWidgetProps) {
+function CreateSubscriberButton(props: TopicWidgetProps) {
   const id = "subscriber_" + props.node.path;
   return (
     <div>
@@ -29,7 +29,7 @@ function CreateSubscriberAction(props: TopicWidgetProps) {
   )
 }
 
-function CreatePublisherAction(props: TopicWidgetProps) {
+function CreatePublisherButton(props: TopicWidgetProps) {
   const id = "publisher_" + props.node.path;
   return (
     <div>
@@ -49,10 +49,29 @@ function CreatePublisherAction(props: TopicWidgetProps) {
   )
 }
 
+type HideProps = {
+  path: string,
+  type: string,
+  hideItem: (path: string, type: string) => void,
+}
+
+function HideItemButton(props: HideProps) {
+  return (
+    <div>
+      <ReactTooltip effect="solid" place="right" type="info"/>
+      <div data-tip={"Hide " + props.path} className="SmallButton ColorOne" onClick={() => {
+        props.hideItem(props.path, props.type)
+      }}>
+        Hide
+      </div>
+    </div>
+  )
+}
+
 type Props = {
   addWidget: (id: string, element: React.Element<any>, name?: string) => void,
-  children?: React.Node,
-  node: ?RosGraph.Primitive,
+  hideItem: (path: string, type: string) => void,
+  node: RosGraph.Primitive,
   ros: ROSLIB.Ros,
 }
 
@@ -71,11 +90,13 @@ function ButtonPanel(props: Props) {
   switch (props.node.type) {
     case "topic":
         const topic: RosGraph.Topic = props.node
-        buttons.push(<CreatePublisherAction key={"publish_" + topic.path} ros={props.ros} addWidget={props.addWidget} node={topic} />)
-        buttons.push(<CreateSubscriberAction key={"subscribe_" + topic.path} ros={props.ros} addWidget={props.addWidget} node={topic} />)
+        buttons.push(<CreatePublisherButton key={"publish_" + topic.path} ros={props.ros} addWidget={props.addWidget} node={topic} />)
+        buttons.push(<CreateSubscriberButton key={"subscribe_" + topic.path} ros={props.ros} addWidget={props.addWidget} node={topic} />)
+        buttons.push(<HideItemButton key={"hide_" + topic.path} hideItem={props.hideItem} path={topic.path} type={props.node.type} />)
       break;
     case "node":
-
+      const node: RosGraph.Node = props.node
+      buttons.push(<HideItemButton key={"hide_" + node.path} hideItem={props.hideItem} path={node.path} type={props.node.type} />)
       break;
     case "service":
 
@@ -90,7 +111,6 @@ function ButtonPanel(props: Props) {
 
   return (
     <div className="ButtonPanel">
-      {props.children}
       {buttons}
     </div>)
 

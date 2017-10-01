@@ -35,8 +35,6 @@ type WidgetType = {
 
 type State = {
   autoExpand: boolean,
-  filter: string,
-  filteredGraph: ?RosGraph.RosGraph,
   layouts: ?Object,
   rosGraph: RosGraph.RosGraph,
   view: RosGraphView,
@@ -46,8 +44,6 @@ type State = {
 class JViz extends React.Component<Props, State> {
     state = {
       autoExpand: true,
-      filter: "",
-      filteredGraph: undefined,
       layouts: {},
       rosGraph: new RosGraph.RosGraph(),
       view: new RosGraphView(),
@@ -133,12 +129,14 @@ class JViz extends React.Component<Props, State> {
 
     }
 
-  handleFilter = (event: {target: {value: string}}) => {
-    const filter = event.target.value;
+  handleSearch = (event: {target: {value: string}}) => {
     this.setState({
-      filter: filter,
-      filteredGraph: RosGraph.filterGraph(this.state.rosGraph, filter),
+      view: this.state.view.searchFor(event.target.value),
     });
+  }
+
+  hideItem = (path: string, type: string) => {
+    this.setState({view: this.state.view.hideItem(path, type)})
   }
 
 
@@ -146,10 +144,10 @@ class JViz extends React.Component<Props, State> {
     return (
       <div className="JViz">
         <div className="JViz-side">
-          <div style={{padding: 5, display: "flex"}}><input type="text" style={{flex: 1}} onChange={this.handleFilter} placeholder="filter..." value={this.state.filter}/></div>
-          <NodeList name="Node List" nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} filter={this.state.filter} type="node"/>
-          <NodeList name="Topic List" nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} filter={this.state.filter} type="topic"/>
-          <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} node={this.state.view.active} />
+          <div style={{padding: 5, display: "flex"}}><input type="text" style={{flex: 1}} onChange={this.handleSearch} placeholder="search..." value={this.state.view.search}/></div>
+          <NodeList name="Node List" nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
+          <NodeList name="Topic List" nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
+          {this.state.view.active ? <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} hideItem={this.hideItem} node={this.state.view.active} /> : false}
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout
@@ -184,6 +182,15 @@ class JViz extends React.Component<Props, State> {
                 ))
               }}>
               Node Graph
+            </div>
+            <div className="SmallButton ColorOne" onClick={() => {
+                const view = this.state.view
+                view.hidden = []
+                this.setState({
+                    view: view,
+                  })
+              }}>
+              Unhide
             </div>
           </div>
         </div>
