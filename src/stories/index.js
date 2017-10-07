@@ -8,13 +8,11 @@ import { storiesOf } from '@storybook/react';
 import { linkTo } from '@storybook/addon-links';
 import { Welcome } from '@storybook/react/demo';
 
-import NodeTree from '../NodeTree';
-import RosGraph from '../RosGraph';
-import NodeGraph from '../NodeGraph';
-import Widget from '../Widget';
+import NodeTree from '../lib/NodeTree';
+import RosGraph from '../lib/RosGraph';
 
 import styles from '../styles/treebeard-theme';
-import '../App.css';
+import '../styles/App.css';
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 

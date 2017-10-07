@@ -5,14 +5,14 @@ import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
 import { linkTo } from '@storybook/addon-links';
 
-import RosGraph from '../RosGraph';
+import RosGraph from '../lib/RosGraph';
 import NodeGraph from '../NodeGraph';
 import Widget from '../Widget';
 import Graph from 'react-graph-vis';
 import vis from 'vis';
 
 import styles from '../styles/treebeard-theme';
-import '../App.css';
+import '../styles/App.css';
 
 function connectRos() {
   const ros = new ROSLIB.Ros({
