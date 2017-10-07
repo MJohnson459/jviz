@@ -1,14 +1,14 @@
 version: "2"
 services:
   master:
-    image: ros:kinetic-robot
+    build: .
+    image: ros-jviz-test
     command: roscore
     ports:
       - "11311:11311"
     stop_signal: SIGINT
 
   rosbridge-server:
-    build: .
     image: ros-jviz-test
     command: roslaunch rosbridge_server rosbridge_websocket.launch --wait
     ports:

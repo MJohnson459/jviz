@@ -153,7 +153,7 @@ class JViz extends React.Component<Props, State> {
           <ResponsiveReactGridLayout
               breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
               className="JViz-main"
-              cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}
+              cols={{lg: 20, md: 14, sm: 10, xs: 6, xxs: 3}}
               draggableHandle=".HeaderName"
               margin={[5, 5]}
               onLayoutChange={(layout, layouts) => {

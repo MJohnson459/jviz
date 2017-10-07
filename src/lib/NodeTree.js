@@ -53,7 +53,7 @@ function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, 
 
     // Add node and stop recursion if root node
   if (pathIndex === path.length - 1) {
-    const decorator = active ? undefined : addDecorator(subpath, view.relations, view.search)
+    const decorator = active ? undefined : addDecorator(subpath, view.relations)
     const leaf: NodeTreeObj = {
       active: active,
       decorators: decorator,
@@ -69,7 +69,7 @@ function insert(data: NodeTreeArr = [], path: Array<string>, pathIndex: number, 
   var index: number = _.findIndex(data, (o) => o.path === subpath)
   var stem: ?NodeTreeObj = null
   if (index === -1) {
-    const decorator = active ? undefined : addDecorator(subpath, view.relations, view.search)
+    const decorator = active ? undefined : addDecorator(subpath, view.relations)
     stem = {
       active: active,
       children: [],
