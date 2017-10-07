@@ -4,8 +4,10 @@ import ReactTooltip from 'react-tooltip';
 import ROSLIB from 'roslib';
 
 import * as RosGraph from './lib/RosGraph'
+import Subscriber from './lib/Subscriber'
+
 import Publisher from './Publisher';
-import Subscriber from './Subscriber';
+import SubscriberFeed from './SubscriberFeed';
 
 type TopicWidgetProps = {
   addWidget: (id: string, element: React.Element<any>, name?: string) => void,
@@ -19,8 +21,9 @@ function CreateSubscriberButton(props: TopicWidgetProps) {
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
       <div data-tip={"Subscribe to " + props.node.path} className="SmallButton ColorTwo" onClick={() => {
+        const sub = new Subscriber({ros: props.ros, topic: props.node.path, type: props.node.messageType})
         props.addWidget(id, (
-          <Subscriber ros={props.ros} topic={props.node.path} type={props.node.messageType}/>
+          <SubscriberFeed subscriber={sub}/>
         ), props.node.path + " subscriber")
       }}>
         Subscribe
