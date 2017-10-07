@@ -19,10 +19,8 @@ type NodeTreeObj = {
 type NodeTreeArr = Array<NodeTreeObj>
 type NodeTree = NodeTreeObj | NodeTreeArr
 
-function addDecorator(path: string, relations: ?RosGraph.Relations, filter: ?string): ?Object {
+function addDecorator(path: string, relations: ?RosGraph.Relations): ?Object {
   let className = null;
-
-  if (filter && !path.includes(filter)) className = "NodeFiltered"
 
   if (relations) {
     if (relations.in.includes(path)) className = "NodeInput"
