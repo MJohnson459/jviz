@@ -4,32 +4,28 @@ import ROSLIB from 'roslib';
 type Message = {}
 
 type Props = {
+  onReceiveMessage: ({messages: Array<Message>, messageCount: number}) => void,
   ros: ROSLIB.Ros,
   topic: string,
   type: string,
 }
 
 class Subscriber {
-  messages: Array<Message>
-  messageCount: number
+  MAX_BUFFER: number = 500
+  MAX_HISTORY: number = 1000
+  UPDATE_DURATION: number = 500 // Time between drawing new messages in milliseconds
+
+  messageBuffer: Array<Message> = [] // Where to store new messages between draws
+  messageCount: number = 0
+  messages: Array<Message> = []
+  nextUpdate: number = Date.now() + this.UPDATE_DURATION // ms
   subscriber: ROSLIB.Topic
-
-  updateDuration = 500  // Time between drawing new messages in milliseconds
-  messageBuffer = [] // Where to store new messages between draws
-  messageCount = 0 // Max size of the message list
-  messages = []
-  nextUpdate = Date.now() + this.updateDuration // ms
+  topic: string
 
 
-  MAX_HISTORY = 1000
-  MAX_BUFFER = 500
-
-  state = {
-    messages: [],
-    messageCount: 0,
-  }
 
   constructor(props: Props) {
+    this.topic = props.topic
     this.subscriber = new ROSLIB.Topic({
       ros: props.ros,
       name: props.topic,
@@ -45,16 +41,17 @@ class Subscriber {
       const timePassed = Date.now() >= this.nextUpdate;
 
       if (bufferFull || timePassed) {
-        const totalSize = this.state.messages.length + this.messageBuffer.length;
-        if (totalSize > this.MAX_HISTORY) {
-          this.messages.slice(0, this.MAX_HISTORY - totalSize)
-        }
-
         this.messages.unshift(...this.messageBuffer)
+
+        if (this.messages.length > this.MAX_HISTORY) {
+          this.messages = this.messages.slice(0, this.MAX_HISTORY)
+        }
 
         // Clear buffer
         this.messageBuffer = [];
-        this.nextUpdate = Date.now() + this.updateDuration;
+        this.nextUpdate = Date.now() + this.UPDATE_DURATION;
+
+        props.onReceiveMessage({messages: this.messages, messageCount: this.messageCount})
       }
     })
   }

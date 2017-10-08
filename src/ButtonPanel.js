@@ -4,32 +4,12 @@ import ReactTooltip from 'react-tooltip';
 import ROSLIB from 'roslib';
 
 import * as RosGraph from './lib/RosGraph'
-import Subscriber from './lib/Subscriber'
-
 import Publisher from './Publisher';
-import SubscriberFeed from './SubscriberFeed';
 
 type TopicWidgetProps = {
   addWidget: (id: string, element: React.Element<any>, name?: string) => void,
   node: RosGraph.Topic,
   ros: ROSLIB.Ros,
-}
-
-function CreateSubscriberButton(props: TopicWidgetProps) {
-  const id = "subscriber_" + props.node.path;
-  return (
-    <div>
-      <ReactTooltip effect="solid" place="right" type="info"/>
-      <div data-tip={"Subscribe to " + props.node.path} className="SmallButton ColorTwo" onClick={() => {
-        const sub = new Subscriber({ros: props.ros, topic: props.node.path, type: props.node.messageType})
-        props.addWidget(id, (
-          <SubscriberFeed subscriber={sub}/>
-        ), props.node.path + " subscriber")
-      }}>
-        Subscribe
-      </div>
-    </div>
-  )
 }
 
 function CreatePublisherButton(props: TopicWidgetProps) {
@@ -73,6 +53,7 @@ function HideItemButton(props: HideProps) {
 
 type Props = {
   addWidget: (id: string, element: React.Element<any>, name?: string) => void,
+  addSubscriber: (node: RosGraph.Topic) => void,
   hideItem: (path: string, type: string) => void,
   node: RosGraph.Primitive,
   ros: ROSLIB.Ros,
@@ -94,7 +75,7 @@ function ButtonPanel(props: Props) {
     case "topic":
         const topic: RosGraph.Topic = props.node
         buttons.push(<CreatePublisherButton key={"publish_" + topic.path} ros={props.ros} addWidget={props.addWidget} node={topic} />)
-        buttons.push(<CreateSubscriberButton key={"subscribe_" + topic.path} ros={props.ros} addWidget={props.addWidget} node={topic} />)
+        buttons.push(<div key={"subscribe_" + topic.path} data-tip={"Subscribe to " + props.node.path} className="SmallButton ColorTwo" onClick={(e) => props.addSubscriber(topic)}>Subscribe</div>)
         buttons.push(<HideItemButton key={"hide_" + topic.path} hideItem={props.hideItem} path={topic.path} type={props.node.type} />)
       break;
     case "node":
@@ -114,6 +95,7 @@ function ButtonPanel(props: Props) {
 
   return (
     <div className="ButtonPanel">
+      <ReactTooltip effect="solid" place="right" type="info"/>
       {buttons}
     </div>)
 

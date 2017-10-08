@@ -6,8 +6,6 @@ import jsyaml from 'js-yaml';
 import './styles/dark.css';
 import {List, AutoSizer} from 'react-virtualized';
 
-import Subscriber from './lib/Subscriber';
-
 type Message = {}
 
 function YamlMessage(props: {message: Message}) {
@@ -21,7 +19,8 @@ function YamlMessage(props: {message: Message}) {
 }
 
 type Props = {
-  subscriber: Subscriber,
+  messages: Array<Message>,
+  messageCount: number,
 }
 
 type State = {
@@ -39,7 +38,7 @@ class SubscriberFeed extends React.Component<Props, State> {
 
   calculateRowHeight = ({index}: {index: number}) => {
     const rowHeight = 15;
-    const message = this.props.subscriber.messages[index];
+    const message = this.props.messages[index];
     const yamlMessage: string = jsyaml.dump(message);
     const size: number = yamlMessage.split(/\r\n|\r|\n/).length;
     return  size * rowHeight ;
@@ -47,7 +46,7 @@ class SubscriberFeed extends React.Component<Props, State> {
 
   // draw a single message row
   rowRenderer = ({key, index, isScrolling, isVisible, style}: {key: string, index: number, isScrolling: boolean, isVisible: boolean, style: {}}) => {
-    const message = this.props.subscriber.messages[index];
+    const message = this.props.messages[index];
     return (
       <div key={key} style={style}>
         <YamlMessage message={message}/>
@@ -71,11 +70,11 @@ class SubscriberFeed extends React.Component<Props, State> {
               ref={(input) => {this.listComponent = input}}
               height={height}
               rowHeight={this.calculateRowHeight}
-              rowCount={this.props.subscriber.messages.length}
+              rowCount={this.props.messages.length}
               rowRenderer={this.rowRenderer}
               width={width}
               onRowsRendered={this.onRowsRendered}
-              messageCount={this.props.subscriber.messageCount}
+              messageCount={this.props.messageCount}
               scrollToIndex={this.state.index}
               scrollToAlignment="start"
             />
@@ -83,8 +82,8 @@ class SubscriberFeed extends React.Component<Props, State> {
         </AutoSizer>
       </div>
       <div style={{margin: 5, display: "flex", marginRight: 20}}>
-        <div style={{flex: 1}}>Received: {this.props.subscriber.messageCount}</div>
-        <div style={{flex: 1, textAlign: "right", cursor: "pointer", color: this.state.autoscroll ? "red" : "green"}} onClick={() => this.setState({autoscroll: !this.state.autoscroll})}>{this.state.index + 1} / {this.props.subscriber.messages.length}</div>
+        <div style={{flex: 1}}>Received: {this.props.messageCount}</div>
+        <div style={{flex: 1, textAlign: "right", cursor: "pointer", color: this.state.autoscroll ? "red" : "green"}} onClick={() => this.setState({autoscroll: !this.state.autoscroll})}>{this.state.index + 1} / {this.props.messages.length}</div>
       </div>
     </div>
     );

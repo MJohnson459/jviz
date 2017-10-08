@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {Responsive, WidthProvider} from 'react-grid-layout';
 import ROSLIB from 'roslib';
+import {Map} from 'immutable';
 
 import ButtonPanel from './ButtonPanel';
 import NodeGraph from './NodeGraph';
@@ -9,6 +10,9 @@ import NodeList from './NodeList';
 import * as RosGraph from './lib/RosGraph';
 import RosGraphView from './lib/RosGraphView';
 import Widget from './Widget';
+
+import Subscriber from './lib/Subscriber'
+import SubscriberFeed from './SubscriberFeed';
 
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
@@ -35,19 +39,21 @@ type WidgetType = {
 
 type State = {
   autoExpand: boolean,
+  dataGenerators: Map<string, Object>,
   layouts: ?Object,
   rosGraph: RosGraph.RosGraph,
   view: RosGraphView,
-  widgets: Array<WidgetType>,
+  widgets: Map<string, WidgetType>,
 }
 
 class JViz extends React.Component<Props, State> {
     state = {
       autoExpand: true,
+      dataGenerators: Map(),
       layouts: {},
       rosGraph: new RosGraph.RosGraph(),
       view: new RosGraphView(),
-      widgets: [],
+      widgets: Map(),
     }
 
     constructor(props: Props) {
@@ -74,60 +80,73 @@ class JViz extends React.Component<Props, State> {
       })
     }
 
-    /**
-     * @param id {string} Unique identifier of the new widget
-     * @param element {React.Node} The react component to add to the window
-     * @param name {string} The label to give the widget
-     */
-    addWidget = (id: string, element: React.Element<any>, name: ?string) => {
-        console.log("Adding widget: ", id, element, name)
+  /**
+   * @param id {string} Unique identifier of the new widget
+   * @param element {React.Node} The react component to add to the window
+   * @param name {string} The label to give the widget
+   */
+  addWidget = (id: string, element: React.Element<any>, name: ?string): void => {
+    console.log("Adding widget: ", id, element, name)
 
-        // TODO: calculate layout
-        const layout =
-        {
-            i: id,
-            x: 4,
-            y: Infinity,
-            w: 2,
-            h: 6
-        }
-
-        this.setState(prevState => ({
-            widgets: [...prevState.widgets, {
-              id: id,
-              element: element,
-              name: name,
-              layout: layout}],
-        }));
+    // TODO: calculate layout
+    const layout =
+    {
+      i: id,
+      x: 4,
+      y: Infinity,
+      w: 2,
+      h: 6
     }
 
-    /**
-     * @param widget {Widget} The widget to render
-     * @param widget.id {string} Unique identifier
-     * @param widget.layout {Layout} Grid layout
-     * @param widget.name {string} Label of the widget
-     * @param widget.element {React.Node} React component of the widget
-     */
-    renderWidget = (widget: WidgetType) => {
-        return (
-            <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
-                {React.cloneElement(widget.element, {rosGraph: this.state.rosGraph, view: this.state.view})}
-            </Widget>
-        );
+    this.setState({
+      widgets: this.state.widgets.set(id, {
+        id: id,
+        element: element,
+        name: name,
+        layout: layout}),
+    })
+  }
+
+  /**
+   * @param widget {Widget} The widget to render
+   * @param widget.id {string} Unique identifier
+   * @param widget.layout {Layout} Grid layout
+   * @param widget.name {string} Label of the widget
+   * @param widget.element {React.Node} React component of the widget
+   */
+  renderWidget = (widget: WidgetType) => {
+    return (
+      <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
+        {React.cloneElement(widget.element, {rosGraph: this.state.rosGraph, view: this.state.view})}
+      </Widget>
+    );
+  }
+
+  removeWidget = (widget: WidgetType) => {
+    console.log("Removing", widget.id)
+
+    this.setState({
+      widgets: this.state.widgets.delete(widget.id),
+    })
+
+  }
+
+  updateWidget = (id: string, element: React.Element<any>): void => {
+    console.log("Updating widget " + id)
+
+    if (!this.state.widgets.has(id)) {
+      console.log("Updating widget " + id + " failed: widget doesn't exist", id)
+      return
     }
 
-    removeWidget = (widget: WidgetType) => {
-        console.log("Removing", widget.id)
-
-        const widgets = this.state.widgets.filter((item)=>{
-            return item.id !== widget.id;
-        });
-
-        this.setState({
-            widgets: widgets,
-        })
-
-    }
+    this.setState({
+      widgets: this.state.widgets.update(id, (oldWidget) => {
+        var widget = oldWidget;
+        widget.element = element
+        return widget
+      })
+    })
+  }
 
   handleSearch = (event: {target: {value: string}}) => {
     this.setState({
@@ -139,6 +158,23 @@ class JViz extends React.Component<Props, State> {
     this.setState({view: this.state.view.hideItem(path, type)})
   }
 
+  addSubscriber = (node: RosGraph.Topic) => {
+    console.log("Adding subscriber", node)
+
+    const widgetId = "subscriber_" + node.path
+    this.addWidget(widgetId, (<SubscriberFeed messages={[]} messageCount={0}/>), node.path + " subscriber")
+
+    const sub: Subscriber = new Subscriber({ros: this.props.ros, topic: node.path, type: node.messageType, onReceiveMessage: ({messages, messageCount}) => {
+      this.updateWidget(widgetId, (
+        <SubscriberFeed messages={messages} messageCount={messageCount}/>
+      ))
+    }})
+    const genId = "subscriber_" + node.path
+    this.setState({
+      dataGenerators: this.state.dataGenerators.set(genId, sub)
+    })
+  }
+
 
   render() {
     return (
@@ -147,7 +183,7 @@ class JViz extends React.Component<Props, State> {
           <div style={{padding: 5, display: "flex"}}><input type="text" style={{flex: 1}} onChange={this.handleSearch} placeholder="search..." value={this.state.view.search}/></div>
           <NodeList name="Node List" nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
           <NodeList name="Topic List" nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
-          {this.state.view.active ? <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} hideItem={this.hideItem} node={this.state.view.active} /> : false}
+          {this.state.view.active ? <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} addSubscriber={this.addSubscriber} hideItem={this.hideItem} node={this.state.view.active} /> : false}
         </div>
         <div className="JViz-main">
           <ResponsiveReactGridLayout
@@ -163,7 +199,7 @@ class JViz extends React.Component<Props, State> {
               }}
               rowHeight={30}
               >
-              {this.state.widgets.map(this.renderWidget)}
+              {this.state.widgets.toArray().map(this.renderWidget)}
           </ResponsiveReactGridLayout>
           <div className="ButtonPanel">
             <div data-tip="Refresh the entire ros graph" className="SmallButton ColorOne" onClick={this.updateRosGraph}>
