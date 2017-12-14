@@ -7,7 +7,6 @@ import NodeGraph from './NodeGraph';
 import NodeList from './NodeList';
 import * as RosGraph from './lib/RosGraph';
 import RosGraphView from './lib/RosGraphView';
-import Widget from './Widget';
 
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
@@ -98,33 +97,21 @@ class JViz extends React.Component<Props, State> {
         }));
     }
 
-    /**
-     * @param widget {Widget} The widget to render
-     * @param widget.id {string} Unique identifier
-     * @param widget.layout {Layout} Grid layout
-     * @param widget.name {string} Label of the widget
-     * @param widget.element {React.Node} React component of the widget
-     */
-    renderWidget = (widget: WidgetType) => {
-        return (
-            <Widget key={widget.id} data-grid={widget.layout} name={widget.name || widget.id} onRequestClose={() => this.removeWidget(widget)}>
-                {React.cloneElement(widget.element, {rosGraph: this.state.rosGraph, view: this.state.view})}
-            </Widget>
-        );
-    }
+  renderWidget = (widget: WidgetType) => {
+    return (widget.element);
+  }
 
-    removeWidget = (widget: WidgetType) => {
-        console.log("Removing", widget.id)
+  removeWidget = (id: string) => {
+    console.log("Removing", id)
 
-        const widgets = this.state.widgets.filter((item)=>{
-            return item.id !== widget.id;
-        });
+    const widgets = this.state.widgets.filter((item)=>{
+      return item.id !== id;
+    });
 
-        this.setState({
-            widgets: widgets,
-        })
-
-    }
+    this.setState({
+      widgets: widgets,
+    })
+  }
 
   handleSearch = (event: {target: {value: string}}) => {
     this.setState({
@@ -144,7 +131,7 @@ class JViz extends React.Component<Props, State> {
           <div style={{padding: 5, display: "flex"}}><input type="text" style={{flex: 1}} onChange={this.handleSearch} placeholder="search..." value={this.state.view.search}/></div>
           <NodeList name="Node List" nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
           <NodeList name="Topic List" nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
-          {this.state.view.active ? <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} hideItem={this.hideItem} node={this.state.view.active} /> : false}
+          {this.state.view.active ? <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} removeWidget={this.removeWidget} hideItem={this.hideItem} node={this.state.view.active} /> : false}
         </div>
         <div className="JViz-main">
           <NodeGraph key={"node_graph"} rosGraph={this.state.rosGraph} view={this.state.view} setNodeActive={this.setNodeActive}/>
@@ -171,7 +158,7 @@ class JViz extends React.Component<Props, State> {
           </div>
         </div>
         <div className="Sidebar">
-          {this.state.widgets.map(this.renderWidget)}
+          {this.state.widgets.map(widget => widget.element)}
         </div>
       </div>
     );

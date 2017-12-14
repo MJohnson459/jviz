@@ -6,6 +6,7 @@ import YAML from 'yamljs';
 // import { Scrollbars } from 'react-custom-scrollbars';
 import './styles/dark.css';
 import {List, AutoSizer} from 'react-virtualized';
+import Widget from './Widget';
 
 type Message = {}
 
@@ -125,30 +126,32 @@ class Subscriber extends React.Component<Props, State> {
 
   render() {
     return (
-    <div className='Subscriber'>
-      <div style={{ flex: '1 1 auto' }}>
-        <AutoSizer>
-          {({ height, width }: {height: number, width: number}) => (
-            <List
-              ref={(input) => {this.listComponent = input}}
-              height={height}
-              rowHeight={this.calculateRowHeight}
-              rowCount={this.state.messages.length}
-              rowRenderer={this.rowRenderer}
-              width={width}
-              onRowsRendered={this.onRowsRendered}
-              messageCount={this.state.messageCount}
-              scrollToIndex={this.state.index}
-              scrollToAlignment="start"
-            />
-          )}
-        </AutoSizer>
-      </div>
-      <div style={{margin: 5, display: "flex", marginRight: 20}}>
-        <div style={{flex: 2}}>Received: {this.state.messageCount}</div>
-        <div style={{flex: "0 0 100px", textAlign: "right", cursor: "pointer", color: this.state.autoscroll ? "red" : "green"}} onClick={() => this.setState({autoscroll: !this.state.autoscroll})}>{this.state.index + 1} / {this.state.messages.length}</div>
-      </div>
-    </div>
+      <Widget name={"Sub: " + this.props.topic} onRequestClose={this.props.onRequestClose}>
+        <div className='Subscriber'>
+          <div style={{ flex: '1 1 auto' }}>
+            <AutoSizer>
+              {({ height, width }: {height: number, width: number}) => (
+                <List
+                  ref={(input) => {this.listComponent = input}}
+                  height={height}
+                  rowHeight={this.calculateRowHeight}
+                  rowCount={this.state.messages.length}
+                  rowRenderer={this.rowRenderer}
+                  width={width}
+                  onRowsRendered={this.onRowsRendered}
+                  messageCount={this.state.messageCount}
+                  scrollToIndex={this.state.index}
+                  scrollToAlignment="start"
+                />
+              )}
+            </AutoSizer>
+          </div>
+          <div style={{margin: 5, display: "flex", marginRight: 20}}>
+            <div style={{flex: 2}}>Received: {this.state.messageCount}</div>
+            <div style={{flex: "0 0 100px", textAlign: "right", cursor: "pointer", color: this.state.autoscroll ? "red" : "green"}} onClick={() => this.setState({autoscroll: !this.state.autoscroll})}>{this.state.index + 1} / {this.state.messages.length}</div>
+          </div>
+        </div>
+      </Widget>
     );
   }
 }

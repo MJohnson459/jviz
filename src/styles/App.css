@@ -123,7 +123,7 @@
     flex: 0 0 40px;
 }
 
-.WidgetHeader .HeaderClose {
+.Widget .Header .Close {
     visibility: hidden;
     width: 20px;
     height: 25px;
@@ -139,7 +139,7 @@
     float: right;
 }
 
-.WidgetHeader:hover .HeaderClose {
+.Widget .Header:hover .Close {
     visibility: visible;
 }
 
@@ -159,6 +159,8 @@
     color: hsla(0,0%,100%,.7);
     vertical-align: middle;
     float: left;
+    user-select: none;
+    flex: 1;
 }
 
 .ItemList {
