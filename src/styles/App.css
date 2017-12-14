@@ -161,6 +161,7 @@
     float: left;
     user-select: none;
     flex: 1;
+    overflow-y: hidden;
 }
 
 .ItemList {
@@ -252,7 +253,6 @@
     width: 100%;
     height: auto;
     display: block;
-    border-bottom: 1px solid hsla(0,0%,100%,.06);
     margin: 5px 0px;
 }
 
