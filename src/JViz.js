@@ -157,9 +157,7 @@ class JViz extends React.Component<Props, State> {
             </div>
           </div>
         </div>
-        <div className="Sidebar">
-          {this.state.widgets.map(widget => widget.element)}
-        </div>
+        {this.state.widgets.length ? <div className="Sidebar">{this.state.widgets.map(widget => widget.element)}</div> : false}
       </div>
     );
   }

@@ -66,11 +66,7 @@ class Subscriber extends React.Component<Props, State> {
   render() {
     return (
       <Widget name={"Sub: " + this.props.topic + " (" + this.state.messageCount + ")"} onRequestClose={this.props.onRequestClose}>
-        <div className='Subscriber'>
-          <div style={{ flex: '1 1 auto' }}>
-            <YamlMessage message={this.state.message} />
-          </div>
-        </div>
+        <YamlMessage message={this.state.message} />
       </Widget>
     );
   }

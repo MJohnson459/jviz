@@ -7,22 +7,26 @@ type Props = {
   children: React.Element<any>,
 }
 
-function Widget(props: Props) {
-    const gridProps = Object.assign({}, props);
-    delete gridProps.name;
-    delete gridProps.onRequestClose;
+type State = {
+  minimised: bool,
+}
 
+class Widget extends React.Component<Props, State> {
+  state = {
+    minimised: false
+  }
+
+  render() {
     return (
-        <div {...gridProps} className={'Widget'} >
-            <div className={'Header'}>
-                <div className={'Name'}>{props.name}</div>
-                {props.onRequestClose ? <div className={'Close'} onClick={props.onRequestClose}>x</div> : false}
-            </div>
-            <div className={'Main'}>
-                {props.children}
-            </div>
-        </div>
+     <div className={'Widget'} >
+       <div className={'Header'} onClick={() => this.setState({minimised: !this.state.minimised})}>
+        <div className={'Name'}>{this.props.name}</div>
+        {this.props.onRequestClose ? <div className={'Close'} onClick={this.props.onRequestClose}>x</div> : false}
+      </div>
+      {this.state.minimised ? false : <div className={'Main'}>{this.props.children}</div>}
+    </div>
     );
+  }
 }
 
 export default Widget;
