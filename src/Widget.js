@@ -3,7 +3,7 @@ import * as React from 'react'
 
 type Props = {
   name: string,
-  onRequestClose: () => void,
+  onRequestClose?: () => void,
   children: React.Element<any>,
 }
 
@@ -14,11 +14,11 @@ function Widget(props: Props) {
 
     return (
         <div {...gridProps} className={'Widget'} >
-            <div className={'WidgetHeader'}>
-                <div className={'HeaderName'}>{props.name}</div>
-                <div className={'HeaderClose'} onClick={props.onRequestClose}>x</div>
+            <div className={'Header'}>
+                <div className={'Name'}>{props.name}</div>
+                {props.onRequestClose ? <div className={'Close'} onClick={props.onRequestClose}>x</div> : false}
             </div>
-            <div className={'WidgetMain'}>
+            <div className={'Main'}>
                 {props.children}
             </div>
         </div>

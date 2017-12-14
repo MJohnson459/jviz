@@ -85,15 +85,6 @@
   flex: 1;
 }
 
-.JViz-side {
-  display: flex;
-  flex-flow: column;
-  height: inherit;
-  width: 250px;
-  background-color: #2e3136;
-
-}
-
 .JViz-main {
   display: flex;
   flex-flow: column wrap;
@@ -101,38 +92,35 @@
   flex: 1;
 }
 
-.Widget {
-    border: 1px solid hsla(0,0%,100%,.03);
+.ButtonPanel {
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 25px;
+  padding: 2px;
+}
+
+.Sidebar {
+  display: flex;
+  flex-flow: column;
+  height: inherit;
+  width: 250px;
+  background-color: #2e3136;
+  border: 1px solid #2c2c2c;
+}
+
+.Sidebar .Widget {
+    border-top: 1px solid hsla(0,0%,100%,.06);
     padding: 0px;
     display: flex;
     flex-direction: column;
 }
 
-.Widget .WidgetMain {
-    padding: 0px;
-    vertical-align: middle;
-    background-color: #2e3136;
-    color: hsla(0,0%,100%,.7);
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.WidgetHeader {
+.Sidebar .Widget .Header {
     height: 40px;
     display: flex;
     background-color: #32363c;
     border-bottom: 1px solid #36393e;
     flex: 0 0 40px;
-}
-
-.HeaderName {
-    margin: 0;
-    padding: 10px;
-    color: hsla(0,0%,100%,.7);
-    vertical-align: middle;
-    user-select: none;
-    flex: 1;
 }
 
 .WidgetHeader .HeaderClose {
@@ -155,22 +143,7 @@
     visibility: visible;
 }
 
-.ButtonPanel {
-  display: flex;
-  flex-direction: row;
-  flex: 0 0 25px;
-  padding: 2px;
-
-}
-
-.SidebarItem {
-    border-top: 1px solid hsla(0,0%,100%,.06);
-    padding: 0px;
-    display: flex;
-    flex-direction: column;
-}
-
-.SidebarItemMain {
+.Sidebar .Widget .Main {
     padding: 0px;
     vertical-align: middle;
     color: hsla(0,0%,100%,.7);
@@ -179,7 +152,7 @@
     flex: 1;
 }
 
-.SidebarItemHeaderName {
+.Sidebar .Widget .Header .Name {
     height: 100%;
     margin: 0;
     padding: 10px;

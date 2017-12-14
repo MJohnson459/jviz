@@ -6,7 +6,7 @@ import styles from './styles/treebeard-theme';
 import * as NodeTree from './lib/NodeTree';
 import * as RosGraph from './lib/RosGraph'
 import RosGraphView from './lib/RosGraphView';
-import SidebarItem from './SidebarItem';
+import Widget from './Widget';
 
 import type {SimpleNode} from './lib/RosGraphView';
 
@@ -27,13 +27,13 @@ class NodeList extends React.Component<Props<*>> {
     render() {
       const tree = NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type)
         return (
-        <SidebarItem name={this.props.name}>
+        <Widget name={this.props.name}>
             <Treebeard
                 data={tree}
                 onToggle={this.props.setNodeActive}
                 style={styles}
              />
-        </SidebarItem>
+        </Widget>
         );
     }
 }
