@@ -24,18 +24,18 @@ type Props<A> = {
  */
 class NodeList extends React.Component<Props<*>> {
 
-    render() {
-      const tree = NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type)
-        return (
-        <Widget name={this.props.name}>
-            <Treebeard
-                data={tree}
-                onToggle={this.props.setNodeActive}
-                style={styles}
-             />
-        </Widget>
-        );
-    }
+  render() {
+    const tree = NodeTree.GetNodeTree(this.props.nodes, this.props.view, this.props.type)
+    return (
+    <Widget name={this.props.name}>
+        <Treebeard
+          data={tree}
+          onToggle={this.props.setNodeActive}
+          style={styles}
+         />
+    </Widget>
+    );
+  }
 }
 
 export default NodeList;

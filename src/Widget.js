@@ -33,7 +33,7 @@ class Widget extends React.Component<Props, State> {
         <div className={'Name'}>{this.formatName(this.props.name)}</div>
         {this.props.onRequestClose ? <div className={'Close'} onClick={this.props.onRequestClose}>x</div> : false}
       </div>
-      {this.state.minimised ? false : <div className={'Main'}>{this.props.children}</div>}
+      {this.state.minimised ? false : <div className={'Main'}><div className={'Content'}>{this.props.children}</div></div>}
     </div>
     );
   }
