@@ -64,8 +64,13 @@ class Subscriber extends React.Component<Props, State> {
   }
 
   render() {
+    let state = "Red"
+    if (this.state.messageCount > 0) {
+      if (this.state.message) state = "Green"
+      else state = "Amber"
+    }
     return (
-      <Widget name={"Sub: " + this.props.topic + " (" + this.state.messageCount + ")"} onRequestClose={this.props.onRequestClose}>
+      <Widget name={"Sub: " + this.props.topic + " (" + this.state.messageCount + ")"} state={state} onRequestClose={this.props.onRequestClose}>
         <YamlMessage message={this.state.message} />
       </Widget>
     );

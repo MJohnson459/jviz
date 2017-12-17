@@ -279,6 +279,20 @@
     min-width: 0px;
 }
 
+.StateGreen {
+    width: 5px;
+    background-color: rgba(128, 177, 18, 0.67);
+}
+
+.StateAmber {
+    width: 5px;
+    background-color: orange;
+}
+
+.StateRed {
+    width: 5px;
+    background-color: #CC2A41;
+}
 
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
