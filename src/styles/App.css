@@ -85,15 +85,6 @@
   flex: 1;
 }
 
-.JViz-side {
-  display: flex;
-  flex-flow: column;
-  height: inherit;
-  width: 250px;
-  background-color: #2e3136;
-
-}
-
 .JViz-main {
   display: flex;
   flex-flow: column wrap;
@@ -101,24 +92,30 @@
   flex: 1;
 }
 
+.ButtonPanel {
+  display: flex;
+  flex-direction: row;
+  flex: 0 0 25px;
+  padding: 2px;
+}
+
+.Sidebar {
+  display: flex;
+  flex-flow: column;
+  height: inherit;
+  width: 250px;
+  background-color: #2e3136;
+  border: 1px solid #2c2c2c;
+}
+
 .Widget {
-    border: 1px solid hsla(0,0%,100%,.03);
+    border-top: 1px solid hsla(0,0%,100%,.06);
     padding: 0px;
     display: flex;
     flex-direction: column;
 }
 
-.Widget .WidgetMain {
-    padding: 0px;
-    vertical-align: middle;
-    background-color: #2e3136;
-    color: hsla(0,0%,100%,.7);
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.WidgetHeader {
+.Widget .Header {
     height: 40px;
     display: flex;
     background-color: #32363c;
@@ -126,16 +123,7 @@
     flex: 0 0 40px;
 }
 
-.HeaderName {
-    margin: 0;
-    padding: 10px;
-    color: hsla(0,0%,100%,.7);
-    vertical-align: middle;
-    user-select: none;
-    flex: 1;
-}
-
-.WidgetHeader .HeaderClose {
+.Widget .Header .Close {
     visibility: hidden;
     width: 20px;
     height: 25px;
@@ -151,41 +139,35 @@
     float: right;
 }
 
-.WidgetHeader:hover .HeaderClose {
+.Widget .Header:hover .Close {
     visibility: visible;
 }
 
-.ButtonPanel {
-  display: flex;
-  flex-direction: row;
-  flex: 0 0 25px;
-  padding: 2px;
-
-}
-
-.SidebarItem {
-    border-top: 1px solid hsla(0,0%,100%,.06);
-    padding: 0px;
-    display: flex;
-    flex-direction: column;
-}
-
-.SidebarItemMain {
+.Widget .Main {
     padding: 0px;
     vertical-align: middle;
     color: hsla(0,0%,100%,.7);
     display: flex;
     flex-direction: column;
     flex: 1;
+    overflow: hidden;
 }
 
-.SidebarItemHeaderName {
+.Widget .Main .Content {
+  width: 270px;
+  overflow: auto;
+}
+
+.Widget .Header .Name {
     height: 100%;
     margin: 0;
     padding: 10px;
     color: hsla(0,0%,100%,.7);
     vertical-align: middle;
     float: left;
+    user-select: none;
+    flex: 1;
+    overflow-y: hidden;
 }
 
 .ItemList {
@@ -211,6 +193,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, #444 1px, transparent 1px), linear-gradient(to bottom, #444 1px, transparent 1px);
 }
 
 .ItemList .Item {
@@ -277,7 +261,6 @@
     width: 100%;
     height: auto;
     display: block;
-    border-bottom: 1px solid hsla(0,0%,100%,.06);
     margin: 5px 0px;
 }
 
@@ -302,6 +285,28 @@
     min-width: 0px;
 }
 
+.StateGreen {
+    width: 5px;
+    background-color: rgba(128, 177, 18, 0.67);
+}
+
+.StateAmber {
+    width: 5px;
+    background-color: rgba(177, 147, 18, 0.67);
+}
+
+.StateRed {
+    width: 5px;
+    background-color: rgba(190, 100, 100, 0.67); /* #9D2A26; */
+}
+
+.InputTextBox {
+  flex: 1;
+  background-color: hsla(0,0%,100%,.2);
+  border: 5px solid hsla(0,0%,100%,.0);
+  border-radius: 2px;
+  color: hsla(0,0%,100%,.8);
+}
 
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }

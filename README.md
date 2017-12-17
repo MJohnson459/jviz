@@ -12,9 +12,9 @@
 - [Goals](#goals)
 - [Demo](#demo)
 - [Tasks](#tasks)
-	- [Priority 1](#priority-1)
-	- [Priority 2](#priority-2)
-	- [Future](#future)
+  - [Priority 1](#priority-1)
+  - [Priority 2](#priority-2)
+  - [Future](#future)
 
 <!-- /TOC -->
 

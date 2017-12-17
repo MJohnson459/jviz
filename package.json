@@ -27,6 +27,7 @@
     "react-treebeard": "^2.0.3",
     "react-virtualized": "^9.10.1",
     "roslib": "git+https://github.com/RobotWebTools/roslibjs.git#cb51d2c",
+    "uuid": "^3.1.0",
     "yamljs": "*"
   },
   "scripts": {

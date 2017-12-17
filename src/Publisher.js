@@ -2,6 +2,7 @@
 import * as React from 'react';
 import ROSLIB from 'roslib';
 import Message from './Message'
+import Widget from './Widget';
 
 type RosMessage = {
   header?: {
@@ -105,14 +106,14 @@ class Publisher extends React.Component<Props, State> {
     return typeDefDict;
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     if (this.state.repeat && this.intervalId) {
       clearInterval(this.intervalId);
     }
     this.setState({repeat: 0})
   }
 
-  publish() {
+  publish = () => {
     if (!this.state.message) return
     var messageObj: RosMessage = this.state.message;
 
@@ -129,7 +130,7 @@ class Publisher extends React.Component<Props, State> {
     this.publisher.publish(message);
   }
 
-  toggleRepeat() {
+  toggleRepeat = () => {
     const index = (this.state.repeat + 1) % this.frequency.length
     if (this.intervalId) clearInterval(this.intervalId)
 
@@ -144,29 +145,30 @@ class Publisher extends React.Component<Props, State> {
 
   render() {
     return (
-      <div className="Publisher">
-        <div style={{display: "flex", flexDirection: "column", flex: 1}}>
-          <div style={{padding: 5, overflowY: "auto", flex: 1}}>
-            <Message
-              auto={this.state.auto}
-              message={this.state.message}
-              messageDetails={this.props.details}
-              name={this.props.type}
-              updateState={(state) => this.setState(state)}
-              values={this.state.values}
-              />
-          </div>
-          <div className="ButtonPanel">
-            <div className="SmallButton ColorOne" onClick={this.publish}>
-              Publish
+      <Widget name={"Pub: " + this.props.topic} onRequestClose={this.props.onRequestClose}>
+        <div className="Publisher">
+          <div style={{display: "flex", flexDirection: "column", flex: 1}}>
+            <div style={{padding: 5, overflowY: "auto", flex: 1}}>
+              <Message
+                auto={this.state.auto}
+                message={this.state.message}
+                messageDetails={this.props.details}
+                name={this.props.type}
+                updateState={(state) => this.setState(state)}
+                values={this.state.values}
+                />
             </div>
-            <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
-              {this.frequency[this.state.repeat].display}
+            <div className="ButtonPanel">
+              <div className="SmallButton ColorOne" onClick={this.publish}>
+                Publish
+              </div>
+              <div className="SmallButton ColorTwo" onClick={this.toggleRepeat}>
+                {this.frequency[this.state.repeat].display}
+              </div>
             </div>
           </div>
         </div>
-
-      </div>
+      </Widget>
     );
   }
 }
