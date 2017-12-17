@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import ReactTooltip from 'react-tooltip';
 
 type Props = {
   name: string,
@@ -26,7 +27,8 @@ class Widget extends React.Component<Props, State> {
   render() {
     return (
     <div className={'Widget'} >
-      <div className={'Header'} onClick={() => this.setState({minimised: !this.state.minimised})}>
+      <ReactTooltip effect="solid" place="left" type="info"/>
+      <div className={'Header'} data-tip={this.props.name} onClick={() => this.setState({minimised: !this.state.minimised})}>
         { this.props.state ? <div className={"State" + this.props.state}></div> : false}
         <div className={'Name'}>{this.formatName(this.props.name)}</div>
         {this.props.onRequestClose ? <div className={'Close'} onClick={this.props.onRequestClose}>x</div> : false}

@@ -40,13 +40,14 @@ class RosGraphView {
   hidden: Array<RosGraph.Id>
   hideDebug: boolean
   relations: ?RosGraph.Relations
-  search: ?string
+  search: string
   filter: ?string
 
   constructor() {
     this.toggled = {}
     this.hidden = DEBUG_NAMES
     this.hideDebug = true
+    this.search = ""
   }
 
   toggleDebug() {

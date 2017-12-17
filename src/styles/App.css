@@ -294,6 +294,14 @@
     background-color: #CC2A41;
 }
 
+.InputTextBox {
+  flex: 1;
+  background-color: hsla(0,0%,100%,.2);
+  border: 5px solid hsla(0,0%,100%,.0);
+  border-radius: 2px;
+  color: hsla(0,0%,100%,.8);
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

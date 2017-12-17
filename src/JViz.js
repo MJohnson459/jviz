@@ -101,7 +101,15 @@ class JViz extends React.Component<Props, State> {
   handleSearch = (event: {target: {value: string}}) => {
     this.setState({
       view: this.state.view.searchFor(event.target.value),
-    });
+    })
+  }
+
+  handleSearchKey = (event: {keyCode: string}) => {
+    if (event.keyCode === 27) {
+      this.setState({
+        view: this.state.view.searchFor(""),
+      })
+    }
   }
 
   hideItem = (path: string, type: string) => {
@@ -113,7 +121,7 @@ class JViz extends React.Component<Props, State> {
     return (
       <div className="JViz">
         <div className="Sidebar">
-          <div style={{padding: 5, display: "flex"}}><input type="text" style={{flex: 1}} onChange={this.handleSearch} placeholder="search..." value={this.state.view.search}/></div>
+          <div style={{padding: 5, display: "flex"}}><input type="text" className="InputTextBox" onChange={this.handleSearch} onKeyDown={this.handleSearchKey} placeholder="Search..." value={this.state.view.search}/></div>
           <NodeList name="Node List" nodes={this.state.rosGraph.nodes} view={this.state.view} setNodeActive={this.setNodeActive} type="node"/>
           <NodeList name="Topic List" nodes={this.state.rosGraph.topics} view={this.state.view} setNodeActive={this.setNodeActive} type="topic"/>
           {this.state.view.active ? <ButtonPanel ros={this.props.ros} addWidget={this.addWidget} removeWidget={this.removeWidget} hideItem={this.hideItem} node={this.state.view.active} /> : false}
