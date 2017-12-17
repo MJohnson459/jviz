@@ -75,34 +75,19 @@ class JViz extends React.Component<Props, State> {
      * @param element {React.Node} The react component to add to the window
      * @param name {string} The label to give the widget
      */
-    addWidget = (id: string, element: React.Element<any>, name: ?string) => {
-        console.log("Adding widget: ", id, element, name)
+    addWidget = (id: string, element: React.Element<any>) => {
+      console.log("Adding: ", id, element)
 
-        // TODO: calculate layout
-        const layout =
-        {
-            i: id,
-            x: 4,
-            y: Infinity,
-            w: 2,
-            h: 6
-        }
-
-        this.setState(prevState => ({
-            widgets: [...prevState.widgets, {
-              id: id,
-              element: element,
-              name: name,
-              layout: layout}],
-        }));
+      this.setState(prevState => ({
+        widgets: [...prevState.widgets, {
+          id: id,
+          element: element
+        }],
+      }));
     }
 
-  renderWidget = (widget: WidgetType) => {
-    return (widget.element);
-  }
-
   removeWidget = (id: string) => {
-    console.log("Removing", id)
+    console.log("Removing: ", id)
 
     const widgets = this.state.widgets.filter((item)=>{
       return item.id !== id;

@@ -2,6 +2,7 @@
 import * as React from 'react';
 import ReactTooltip from 'react-tooltip';
 import ROSLIB from 'roslib';
+import UUID from 'uuid/v4';
 
 import * as RosGraph from './lib/RosGraph'
 import Publisher from './Publisher';
@@ -15,13 +16,13 @@ type TopicWidgetProps = {
 }
 
 function CreateSubscriberButton(props: TopicWidgetProps) {
-  const id = "subscriber_" + props.node.path;
+  const id = UUID();
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
       <div data-tip={"Subscribe to " + props.node.path} className="SmallButton ColorTwo" onClick={() => {
         props.addWidget(id, (
-          <Subscriber ros={props.ros} topic={props.node.path} type={props.node.messageType} onRequestClose={() => props.removeWidget(id)}/>
+          <Subscriber key={id} ros={props.ros} topic={props.node.path} type={props.node.messageType} onRequestClose={() => props.removeWidget(id)}/>
         ), props.node.path + " subscriber")
       }}>
         Subscribe
@@ -31,14 +32,14 @@ function CreateSubscriberButton(props: TopicWidgetProps) {
 }
 
 function CreatePublisherButton(props: TopicWidgetProps) {
-  const id = "publisher_" + props.node.path;
+  const id = UUID();
   return (
     <div>
       <ReactTooltip effect="solid" place="right" type="info"/>
       <div data-tip={"Publish to " + props.node.path} className="SmallButton ColorThree" onClick={() => {
         props.ros.getMessageDetails(props.node.messageType, (details) => {
           props.addWidget(id, (
-            <Publisher ros={props.ros} details={details} topic={props.node.path} type={props.node.messageType} onRequestClose={() => props.removeWidget(id)} />
+            <Publisher key={id} ros={props.ros} details={details} topic={props.node.path} type={props.node.messageType} onRequestClose={() => props.removeWidget(id)} />
           ), props.node.path + " publisher")
         }, (message) => {
           console.log("Message details failed", this.props.type, message)
