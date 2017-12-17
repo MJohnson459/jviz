@@ -106,14 +106,14 @@ class Publisher extends React.Component<Props, State> {
     return typeDefDict;
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     if (this.state.repeat && this.intervalId) {
       clearInterval(this.intervalId);
     }
     this.setState({repeat: 0})
   }
 
-  publish() {
+  publish = () => {
     if (!this.state.message) return
     var messageObj: RosMessage = this.state.message;
 
@@ -130,7 +130,7 @@ class Publisher extends React.Component<Props, State> {
     this.publisher.publish(message);
   }
 
-  toggleRepeat() {
+  toggleRepeat = () => {
     const index = (this.state.repeat + 1) % this.frequency.length
     if (this.intervalId) clearInterval(this.intervalId)
 
