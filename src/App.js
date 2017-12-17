@@ -1,10 +1,10 @@
 // @flow
 import * as React from 'react';
+import ROSLIB from 'roslib';
+
 import logo from './logo.svg';
 import JViz from './JViz'
 import './styles/App.css';
-
-import ROSLIB from 'roslib';
 
 type Props = {
 
@@ -30,27 +30,37 @@ class App extends React.Component<Props, State> {
   }
 
   handleConnect = () => {
-    this.ros = new ROSLIB.Ros({
-        url : this.state.url,
+    try {
+      this.ros = new ROSLIB.Ros({
+          url : this.state.url,
+        });
+
+      if (this.ros) this.ros.on('connection', () => {
+        this.setState({
+            connected: true,
+        });
       });
 
-    if (this.ros) this.ros.on('connection', () => {
-      this.setState({
-          connected: true,
+      if (this.ros) this.ros.on('error', (error) => {
+        console.log(error)
+        this.setState({
+          error: (
+            <div style={{color: "rgb(161, 55, 55)", margin: 5}}>
+              <div>Unable to establish connection to rosbridge server</div>
+            </div>
+          ),
+        });
       });
-    });
-
-    if (this.ros) this.ros.on('error', (error) => {
-      console.log(error)
+    } catch (e) {
+      console.log("Failed to create ros instance", e)
       this.setState({
         error: (
           <div style={{color: "rgb(161, 55, 55)", margin: 5}}>
-            <div>Unable to connect to server</div>
-            <div>{error}</div>
+            <div>{e.message}</div>
           </div>
         ),
       });
-    });
+    }
   }
 
   render() {
