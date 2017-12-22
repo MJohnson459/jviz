@@ -198,8 +198,8 @@ class NodeGraph extends React.Component<Props, State> {
     }
     return (
     <div className="NodeGraph">
-      <div style={{ flex: '1 1 auto', display: 'flex'}}>
-        <Graph graph={graph} options={this.state.options} style={{flex: 1}} events={events} />
+      <div style={{ flex: '1 1 auto'}}>
+        <Graph graph={graph} options={this.state.options} style={{height: "100%"}} events={events} />
       </div>
       <div className="ButtonPanel">
         <span className='SmallButton ColorTwo' onClick={() =>
