@@ -3,7 +3,6 @@ import * as React from 'react';
 import ROSLIB from 'roslib';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import YAML from 'yamljs';
-// import { Scrollbars } from 'react-custom-scrollbars';
 import './styles/dark.css';
 import Widget from './Widget';
 

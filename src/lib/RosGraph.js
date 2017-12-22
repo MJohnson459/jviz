@@ -10,14 +10,14 @@ type PrimitiveType =
   | "topic"
 
 type Node = {
-  actions: Object,
+  actions: Array<Id>,
   path: string,
   services: {
-    client: ?Array<Id>,
+    clients: Array<Id>,
   },
   topics: {
-    publishers: ?Array<Id>,
-    subscribers: ?Array<Id>,
+    publishers: Array<Id>,
+    subscribers: Array<Id>,
   },
   type: "node",
 }
@@ -65,13 +65,14 @@ class RosGraph {
     switch (type) {
       case "node":
         {
-          const result = _.find(this.nodes, {path: path})
-          if (result)
+          const result: ?Node = _.find(this.nodes, {path: path})
+          if (result) {
             return {
                 in: result.topics.subscribers,
                 out: result.topics.publishers,
                 type: "topic"
               }
+            }
         }
         break
       case "topic":
@@ -104,12 +105,13 @@ class RosGraph {
   }
 }
 
-function getNodeDetails(ros: Object, node: String): Promise<Node> {
+function getNodeDetails(ros: Object, node: string): Promise<Node> {
   return new Promise((resolve, reject) => {
 
-    ros.getNodeDetails(node, (subscribing, publishing, services) => {
-      resolve({
+    ros.getNodeDetails(node, (subscribing: Array<Id>, publishing: Array<Id>, services: Array<Id>) => {
+      let detailedNode: Node = {
         path: node,
+        actions: [],
         topics: {
           publishers: publishing,
           subscribers: subscribing,
@@ -118,10 +120,12 @@ function getNodeDetails(ros: Object, node: String): Promise<Node> {
           clients: services
         },
         type: "node",
-      })
+      }
+
+      resolve(detailedNode)
 
     // Failed callback
-    }, (message) => {
+  }, (message: string) => {
       console.error("Failed to get node details", node, message)
       reject(message)
     })
@@ -151,8 +155,8 @@ function getTopicRelation(nodes: Array<Node>, topicName: string): {publishers: A
   let publishers = []
   let subscribers = []
   nodes.forEach((node) => {
-    if (node.topics.publishers && node.topics.publishers.includes(topicName)) publishers.push(node.path)
-    if (node.topics.subscribers && node.topics.subscribers.includes(topicName)) subscribers.push(node.path)
+    if (node.topics && node.topics.publishers && node.topics.publishers.includes(topicName)) publishers.push(node.path)
+    if (node.topics && node.topics.subscribers && node.topics.subscribers.includes(topicName)) subscribers.push(node.path)
   })
   return {
     publishers: publishers,

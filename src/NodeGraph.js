@@ -148,13 +148,16 @@ class NodeGraph extends React.Component<Props, State> {
 
       // ***** Add edges ******
       // Assuming topics but links may be services or actions etc.
-      node.topics.publishers && node.topics.publishers.forEach((topic) => {
-        edges.push({ from: graphId, to: "topic_" + topic })
-      })
+      if (node.topics) {
+        let topics = node.topics
+        topics.publishers && topics.publishers.forEach((topic) => {
+          edges.push({ from: graphId, to: "topic_" + topic })
+        })
 
-      node.topics.subscribers && node.topics.subscribers.forEach((topic) => {
-        edges.push({ from: "topic_" + topic, to: graphId })
-      })
+        topics.subscribers && topics.subscribers.forEach((topic) => {
+          edges.push({ from: "topic_" + topic, to: graphId })
+        })
+      }
 
       nodes.push({id: graphId, label: node.path, shape: "box", group: group})
     })
