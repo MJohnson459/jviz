@@ -13,14 +13,14 @@ type Props = {
 
 type State = {
   connected: boolean,
-  error?: string,
+  error: ?React.Element<*>,
   url: string,
 }
 
 class App extends React.Component<Props, State> {
   state = {
     connected: false,
-    error: false,
+    error: undefined,
     url: "ws://localhost:9090",
   }
 

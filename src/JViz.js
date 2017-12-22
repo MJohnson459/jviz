@@ -25,8 +25,6 @@ type Props = {
 type WidgetType = {
   element: React.Element<any>,
   id: string,
-  layout: Object,
-  name: ?string,
 }
 
 type State = {

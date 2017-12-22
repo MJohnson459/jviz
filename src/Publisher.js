@@ -23,6 +23,7 @@ type Details = {
 
 type Props = {
   details: Array<Details>,
+  onRequestClose?: () => void,
   ros: ROSLIB.Ros,
   topic: string,
   type: string,

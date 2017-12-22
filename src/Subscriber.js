@@ -20,6 +20,7 @@ function YamlMessage(props: {message: Message}) {
 }
 
 type Props = {
+  onRequestClose?: () => void,
   ros: ROSLIB.Ros,
   topic: string,
   type: string,
