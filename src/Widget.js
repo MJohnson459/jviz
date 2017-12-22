@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react'
 import ReactTooltip from 'react-tooltip';
+import './styles/Widget.css';
 
 type Props = {
   name: string,

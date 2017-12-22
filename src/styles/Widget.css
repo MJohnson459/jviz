@@ -1,0 +1,61 @@
+.Widget {
+    border-top: 1px solid hsla(0,0%,100%,.06);
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.Widget .Header {
+    height: 40px;
+    display: flex;
+    background-color: #32363c;
+    border-bottom: 1px solid #36393e;
+    flex: 0 0 40px;
+}
+
+.Widget .Header .Close {
+    visibility: hidden;
+    width: 20px;
+    height: 25px;
+    background-color: #2e3136;
+    padding: 1px;
+    margin: 2px;
+    text-align: center;
+    cursor: pointer;
+    line-height: 25px;
+    vertical-align: middle;
+    font-weight: bold;
+    color: hsla(0,0%,100%,.7);
+    float: right;
+}
+
+.Widget .Header:hover .Close {
+    visibility: visible;
+}
+
+.Widget .Main {
+    padding: 0px;
+    vertical-align: middle;
+    color: hsla(0,0%,100%,.7);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.Widget .Main .Content {
+  width: 270px;
+  overflow: auto;
+}
+
+.Widget .Header .Name {
+    height: 100%;
+    margin: 0;
+    padding: 10px;
+    color: hsla(0,0%,100%,.7);
+    vertical-align: middle;
+    float: left;
+    user-select: none;
+    flex: 1;
+    overflow-y: hidden;
+}

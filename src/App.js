@@ -5,6 +5,7 @@ import ROSLIB from 'roslib';
 import logo from './logo.svg';
 import JViz from './JViz'
 import './styles/App.css';
+import {version} from '../package.json';
 
 type Props = {
 
@@ -67,31 +68,34 @@ class App extends React.Component<Props, State> {
     var x = "";
     if (this.state.connected) {
         x = (
-            <JViz ros={this.ros} />
+            <div className="App">
+              <JViz ros={this.ros} />
+            </div>
         );
     } else {
         x = (
-            <div>
-                <div className="App-header">
-                  <img src={logo} className="App-logo" alt="logo" />
+            <div className="App">
+                <div className="AppHeader">
+                  <img src={logo} className="Logo" alt="logo" />
                   <h2>Welcome to JViz</h2>
                 </div>
-                <p>Connect to url</p>
-                <input type="url" name="url" value={this.state.url} onChange={this.handleChange}/>
-                <button onClick={this.handleConnect} value="Connect">
-                  Connect
-                </button>
-                {this.state.error}
+                <div className="AppMain">
+                  <p>Connect to url</p>
+                  <input type="url" name="url" value={this.state.url} onChange={this.handleChange}/>
+                  <button onClick={this.handleConnect} value="Connect">
+                    Connect
+                  </button>
+                  {this.state.error}
+                </div>
+                <div className="AppFooter">
+                  <div style={{float: "right"}}>JViz Version: {version}</div>
+                </div>
             </div>
 
         );
     }
 
-    return (
-      <div className="App">
-        {x}
-      </div>
-    );
+    return x;
   }
 }
 

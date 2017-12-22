@@ -10,7 +10,7 @@ import RosGraphView from './lib/RosGraphView';
 
 import "../node_modules/react-grid-layout/css/styles.css";
 import "../node_modules/react-resizable/css/styles.css";
-import './styles/App.css';
+import './styles/JViz.css';
 
 type TreeNode = {
   name: string,
