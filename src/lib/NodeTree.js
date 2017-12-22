@@ -101,7 +101,7 @@ function GetNodeTree(nodes: Array<{path: string}> = [], view: RosGraphView = new
 
   var data: NodeTreeArr = [];
   nodes.forEach((node) => {
-    if (!view.hidden.includes(node.path) && (view.search ? node.path.includes(view.search) : true)) {
+    if (!view.getHidden().includes(node.path) && (view.search ? node.path.includes(view.search) : true)) {
       const path = node.path.split("/")
       insert(data, path, 1, view, type);
     }

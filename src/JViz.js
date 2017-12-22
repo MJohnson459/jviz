@@ -138,10 +138,8 @@ class JViz extends React.Component<Props, State> {
               {this.state.view.hideDebug ? "Show Debug" : "Hide Debug"}
             </div>
             <div className="SmallButton ColorOne" onClick={() => {
-                const view = this.state.view
-                view.hidden = []
                 this.setState({
-                    view: view,
+                    view: this.state.view.unhideItems(),
                   })
               }}>
               Unhide

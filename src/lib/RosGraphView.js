@@ -45,26 +45,32 @@ class RosGraphView {
 
   constructor() {
     this.toggled = {}
-    this.hidden = DEBUG_NAMES
+    this.hidden = []
     this.hideDebug = true
     this.search = ""
   }
 
   toggleDebug() {
     this.hideDebug = !this.hideDebug
-    if (this.hideDebug) {
-      this.hidden = DEBUG_NAMES
-    } else {
-      // TODO: this won't work when filters are added
-      this.hidden = []
-    }
-
     return this
   }
 
   hideItem = (path: string, type: string) => {
     this.hidden.push(path)
     return this
+  }
+
+  unhideItems = () => {
+    this.hidden = []
+    return this
+  }
+
+  getHidden = () => {
+    if (this.hideDebug) {
+      return [...this.hidden, ...DEBUG_NAMES]
+    } else {
+      return this.hidden
+    }
   }
 
   searchFor = (search: string) => {

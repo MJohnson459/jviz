@@ -139,9 +139,11 @@ class NodeGraph extends React.Component<Props, State> {
     let edges: Array<Edge> = []
     let nodes: Array<Node> = []
 
+    let hidden = view.getHidden()
+
       // Deal with nodes
     rosGraph.nodes.forEach((node) => {
-      if (view.hidden && view.hidden.includes(node.path))
+      if (hidden.includes(node.path))
         return
       const graphId: string = "node_" + node.path
       const group: string = this.getGroupTag(view, node)
@@ -163,7 +165,7 @@ class NodeGraph extends React.Component<Props, State> {
     })
 
     rosGraph.topics.forEach((node) => {
-      if (view.hidden.includes(node.path))
+      if (hidden.includes(node.path))
         return
       const graphId = "topic_" + node.path
       const group = this.getGroupTag(view, node)
