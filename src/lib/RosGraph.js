@@ -12,8 +12,13 @@ type PrimitiveType =
 type Node = {
   actions: Object,
   path: string,
-  services: Object,
-  topics: Object,
+  services: {
+    client: ?Array<Id>,
+  },
+  topics: {
+    publishers: ?Array<Id>,
+    subscribers: ?Array<Id>,
+  },
   type: "node",
 }
 
@@ -99,32 +104,42 @@ class RosGraph {
   }
 }
 
+function getNodeDetails(ros: Object, node: String): Promise<Node> {
+  return new Promise((resolve, reject) => {
+
+    ros.getNodeDetails(node, (subscribing, publishing, services) => {
+      resolve({
+        path: node,
+        topics: {
+          publishers: publishing,
+          subscribers: subscribing,
+        },
+        services: {
+          clients: services
+        },
+        type: "node",
+      })
+
+    // Failed callback
+    }, (message) => {
+      console.error("Failed to get node details", node, message)
+      reject(message)
+    })
+  })
+}
+
 function getNodes(ros: Object): Promise<Array<Node>> {
   return new Promise((resolve, reject) => {
     ros.getNodes((list) => {
+      let newNodes = list.map((node) => getNodeDetails(ros, node))
 
-      var updatedNodesCount = 0;
-      var newNodes = []
+      Promise.all(newNodes.map(p => p.catch(() => undefined)))
+        .then(values => {
+          let filteredValues = values.filter((n) => n !== undefined)
+          console.table(filteredValues)
+          resolve(_.sortBy(filteredValues, 'path'))
+        })
 
-      list.forEach((node) => {
-        ros.getNodeDetails(node, (details) => {
-          newNodes.push({
-            path: node,
-            topics: {
-              publishers: details.publishing,
-              subscribers: details.subscribing,
-            },
-            services: {
-              clients: details.services
-            },
-            type: "node",
-          });
-
-          if (++updatedNodesCount === list.length) {
-            return resolve(_.sortBy(newNodes, 'path'));
-          }
-        });
-      });
     }, (message) => {
       console.log('RosGraph updateRosGraph failed to getNodes: ' + message);
       return reject('RosGraph updateRosGraph failed to getNodes: ' + message);
@@ -136,8 +151,8 @@ function getTopicRelation(nodes: Array<Node>, topicName: string): {publishers: A
   let publishers = []
   let subscribers = []
   nodes.forEach((node) => {
-    if (node.topics.publishers.includes(topicName)) publishers.push(node.path)
-    if (node.topics.subscribers.includes(topicName)) subscribers.push(node.path)
+    if (node.topics.publishers && node.topics.publishers.includes(topicName)) publishers.push(node.path)
+    if (node.topics.subscribers && node.topics.subscribers.includes(topicName)) subscribers.push(node.path)
   })
   return {
     publishers: publishers,
@@ -163,6 +178,10 @@ function getTopics(ros: Object, nodes: Array<Node>): Promise<{topics: Array<Topi
         topics: sortedTopics,
         nodes: nodes
       });
+
+    // Failed callback
+    }, (message) => {
+      console.error("Failed to get topic", message)
     });
   })
 }
