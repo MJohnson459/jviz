@@ -201,7 +201,7 @@ class NodeGraph extends React.Component<Props, State> {
     }
     return (
     <div className="NodeGraph">
-      <div style={{ flex: '1 1 auto'}}>
+      <div style={{ flex: '1 1 auto', height: 0}}>
         <Graph graph={graph} options={this.state.options} style={{height: "100%"}} events={events} />
       </div>
       <div className="ButtonPanel">
