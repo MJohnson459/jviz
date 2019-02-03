@@ -2,6 +2,7 @@
 import * as React from 'react'
 import ReactTooltip from 'react-tooltip';
 import './styles/Widget.css';
+import ErrorBoundary from './ErrorBoundary';
 
 type Props = {
   name: string,
@@ -34,7 +35,9 @@ class Widget extends React.Component<Props, State> {
         <div className={'Name'}>{this.formatName(this.props.name)}</div>
         {this.props.onRequestClose ? <div className={'Close'} onClick={this.props.onRequestClose}>x</div> : false}
       </div>
-      {this.state.minimised ? false : <div className={'Main'}><div className={'Content'}>{this.props.children}</div></div>}
+      <ErrorBoundary>
+        {this.state.minimised ? false : <div className={'Main'}><div className={'Content'}>{this.props.children}</div></div>}
+      </ErrorBoundary>
     </div>
     );
   }

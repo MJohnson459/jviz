@@ -103,11 +103,11 @@ class JViz extends React.Component<Props, State> {
   }
 
   handleSearchKey = (event: {keyCode: string}) => {
-    if (event.keyCode === 27) {
-      this.setState({
-        view: this.state.view.searchFor(""),
-      })
-    }
+    // if (event.keyCode === 27) {
+    //   this.setState({
+    //     view: this.state.view.searchFor(""),
+    //   })
+    // }
   }
 
   hideItem = (path: string, type: string) => {

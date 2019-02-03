@@ -5,18 +5,18 @@ import _ from 'lodash';
 
 import { storiesOf } from '@storybook/react';
 // import { action } from '@storybook/addon-actions';
-import { linkTo } from '@storybook/addon-links';
+// import { linkTo } from '@storybook/addon-links';
 import { Welcome } from '@storybook/react/demo';
 
-import NodeTree from '../NodeTree';
-import RosGraph from '../RosGraph';
+import NodeTree from '../lib/NodeTree';
+import RosGraph from '../lib/RosGraph';
 import NodeGraph from '../NodeGraph';
 import Widget from '../Widget';
 
 import styles from '../styles/treebeard-theme';
-import '../App.css';
+import '../styles/App.css';
 
-storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
+// storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 
 function connectRos(ros) {
   return new Promise((resolve) => {

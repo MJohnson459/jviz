@@ -44,7 +44,7 @@ class Publisher extends React.Component<Props, State> {
     values: this.props.details.map((message) => message.examples),
   }
 
-  intervalId: ?number = null
+  intervalId: ?IntervalID = null
 
   frequency = [
     {interval: 0, display: "Single"},
